@@ -1,0 +1,21 @@
+{
+  "name": "scoreshot-style-prototype",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "ScoreShot — 3 Korean UI style directions (Kakao / Toss / Naver) for client UX testing",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --host"
+  },
+  "dependencies": {
+    "lucide-react": "^1.17.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "vite": "^5.4.11"
+  }
+}
