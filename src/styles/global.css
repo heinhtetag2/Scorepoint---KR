@@ -565,8 +565,10 @@ body {
 .rm-list { display: flex; flex-direction: column; gap: var(--gap); }
 .rm-list .sc-course { display: flex; align-items: center; gap: 6px; min-width: 0; }
 .rm-list .rmD-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
-.rmD-bar { height: 5px; border-radius: 999px; background: var(--surface-2); overflow: hidden; margin-top: 7px; max-width: 180px; }
-.rmD-bar span { display: block; height: 100%; background: var(--brand); border-radius: 999px; }
+.rmD-meta { display: flex; align-items: center; gap: 6px; margin-top: 4px; font-size: var(--fs-cap); color: var(--text-3); }
+.rmD-dot { color: var(--text-3); opacity: 0.6; }
+.rmD-par { font-size: 10px; font-weight: 700; color: var(--text-2); background: var(--surface-2); padding: 1px 5px; border-radius: 5px; line-height: 1.6; }
+.rmD-par.is-under { color: var(--brand); background: var(--brand-weak); }
 .rmD-badge { flex: 0 0 auto; white-space: nowrap; font-size: 10px; font-weight: 800; color: var(--brand); background: var(--brand-weak); padding: 2px 6px; border-radius: 6px; }
 .score-row.is-best { border-color: var(--brand); }
 

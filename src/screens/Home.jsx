@@ -19,6 +19,17 @@ export default function Home({ onOpenEvent }) {
   const { t, lang, pick } = useLang()
   const bestScore = Math.min(...recentMatches.map((m) => m.score))
 
+  // "5/2" → "5월 2일" (ko) / "May 2" (en)
+  const fmtRoundDate = (d) => {
+    const [mo, day] = d.split('/')
+    if (lang === 'en') {
+      const M = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+      return `${M[+mo]} ${day}`
+    }
+    return `${mo}월 ${day}일`
+  }
+  const PAR = 72
+
   // Loop carousel: clone last+first so the active card always has a card peeking both sides.
   const carouselRef = useRef(null)
   const idxRef = useRef(1)
@@ -186,7 +197,7 @@ export default function Home({ onOpenEvent }) {
         <div className="rm-list">
           {recentMatches.map((m) => {
             const best = m.score === bestScore
-            const pct = Math.max(8, Math.min(100, Math.round(((90 - m.score) / 18) * 100)))
+            const overPar = m.score - PAR
             return (
               <div className={`score-row rmD ${best ? 'is-best' : ''}`} key={m.id}>
                 <span className="sc-num num">{m.score}</span>
@@ -195,7 +206,13 @@ export default function Home({ onOpenEvent }) {
                     <span className="rmD-name">{pick(m.course, m.courseEn)}</span>
                     {best && <span className="rmD-badge">{t('bestRound')}</span>}
                   </div>
-                  <div className="rmD-bar"><span style={{ width: `${pct}%` }} /></div>
+                  <div className="rmD-meta">
+                    <span className="rmD-date num">{fmtRoundDate(m.date)}</span>
+                    <span className="rmD-dot">·</span>
+                    <span className={`rmD-par num ${overPar <= 0 ? 'is-under' : ''}`}>
+                      {overPar > 0 ? `+${overPar}` : overPar === 0 ? 'E' : overPar}
+                    </span>
+                  </div>
                 </div>
                 <span className="sc-net num">Net {m.net.toFixed(1)}</span>
                 <ChevronRight size={17} className="chev" />
