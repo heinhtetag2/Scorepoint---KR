@@ -64,6 +64,7 @@ const STR = {
   promoTitleEnd: { ko: '이 있습니다.', en: ' rounds.' },
   promoSub: { ko: '평균 스코어와 약점 홀,\n핸디 변화까지 한눈에\n스코어샷에서 확인하세요!', en: 'Average score, weak holes,\nand handicap trends — all\nat a glance in ScoreShot!' },
   parLabel: { ko: '파 대비', en: 'vs Par' },
+  strokeUnit: { ko: '타', en: 'pts' },
   kvBest: { ko: '최고 스코어', en: 'Best score' },
   kvRounds: { ko: '라운드 수', en: 'Rounds' },
   records: { ko: '경기 기록', en: 'Match records' },

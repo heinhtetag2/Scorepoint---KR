@@ -563,6 +563,8 @@ body {
 
 /* ── Recent matches (best highlight + performance bar) ─────── */
 .rm-list { display: flex; flex-direction: column; gap: var(--gap); }
+.rm-list .sc-num { display: flex; flex-direction: column; align-items: center; line-height: 1.05; min-width: 38px; }
+.rm-list .sc-unit { font-size: 10px; font-weight: 600; color: var(--text-3); margin-top: 1px; }
 .rm-list .sc-course { display: flex; align-items: center; gap: 6px; min-width: 0; }
 .rm-list .rmD-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 .rmD-meta { display: flex; align-items: center; gap: 6px; margin-top: 4px; font-size: var(--fs-cap); color: var(--text-3); }

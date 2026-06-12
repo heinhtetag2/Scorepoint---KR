@@ -200,7 +200,10 @@ export default function Home({ onOpenEvent }) {
             const overPar = m.score - PAR
             return (
               <div className={`score-row rmD ${best ? 'is-best' : ''}`} key={m.id}>
-                <span className="sc-num num">{m.score}</span>
+                <span className="sc-num num">
+                  {m.score}
+                  <span className="sc-unit">{t('strokeUnit')}</span>
+                </span>
                 <div className="sc-mid">
                   <div className="sc-course">
                     <span className="rmD-name">{pick(m.course, m.courseEn)}</span>
