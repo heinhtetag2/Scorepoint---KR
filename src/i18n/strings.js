@@ -31,7 +31,7 @@ const STR = {
   trending: { ko: '실시간 인기', en: 'Trending' },
   region: { ko: '전국', en: 'Nationwide' },
   courseMetric: { ko: '{n} 라운드 · {region}', en: '{n} rounds · {region}' },
-  upcoming: { ko: '다가오는 일정', en: 'Upcoming events' },
+  upcoming: { ko: '다가오는 행사', en: 'Upcoming events' },
   recent: { ko: '최근 경기', en: 'Recent rounds' },
   bestRound: { ko: '베스트', en: 'BEST' },
   joinedCount: { ko: '{n}/{cap}명', en: '{n}/{cap}' },
