@@ -7,6 +7,7 @@ import Profile from './screens/Profile.jsx'
 import Detail from './screens/Detail.jsx'
 import Notifications from './screens/Notifications.jsx'
 import Onboarding from './screens/Onboarding.jsx'
+import ChangelogBot from './components/ChangelogBot.jsx'
 import { useLang } from './i18n/LanguageContext.jsx'
 
 /* ScoreShot — Kakao-style direction (single, locked design) with KO/EN toggle. */
@@ -57,6 +58,8 @@ export default function App() {
           <Onboarding onDone={() => setOnboarded(true)} onIntroChange={setObImmersive} />
         </PhoneFrame>
       )}
+
+      <ChangelogBot />
     </div>
   )
 }
