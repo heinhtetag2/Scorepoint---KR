@@ -59,6 +59,14 @@ export const fmtBirth = (s) => {
   return [d.slice(0, 4), d.slice(4, 6), d.slice(6, 8)].filter(Boolean).join('.')
 }
 
+/* Korean mobile format: digits → 010-1234-5678. */
+export const fmtPhone = (s) => {
+  const d = s.replace(/\D/g, '').slice(0, 11)
+  if (d.length < 4) return d
+  if (d.length < 8) return `${d.slice(0, 3)}-${d.slice(3)}`
+  return `${d.slice(0, 3)}-${d.slice(3, 7)}-${d.slice(7)}`
+}
+
 
 export default function Onboarding({ onDone, onIntroChange }) {
   const { t, pick } = useLang()
@@ -81,6 +89,7 @@ export default function Onboarding({ onDone, onIntroChange }) {
   const [region, setRegion] = useState('capital')
   const [birth, setBirth] = useState('')
   const [gender, setGender] = useState('')
+  const [phone, setPhone] = useState('')
   const [handicap, setHandicap] = useState('')
   const [avgScore, setAvgScore] = useState('')
   const [avatarEmoji, setAvatarEmoji] = useState(null)
@@ -200,6 +209,18 @@ export default function Onboarding({ onDone, onIntroChange }) {
             onChange={(e) => setName(e.target.value)}
             placeholder={t('obNamePh')}
             maxLength={20}
+          />
+        </div>
+
+        <div className="ob-field">
+          <label className="ob-label">{t('pePhone')}</label>
+          <input
+            className="ob-input num"
+            value={phone}
+            onChange={(e) => setPhone(fmtPhone(e.target.value))}
+            placeholder={t('obPhonePh')}
+            inputMode="numeric"
+            maxLength={13}
           />
         </div>
 

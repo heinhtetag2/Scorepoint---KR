@@ -135,6 +135,7 @@ const STR = {
   obAvgScore: { ko: '평균타수', en: 'Average score' },
   obHcpPh: { ko: '예: 12', en: 'e.g. 12' },
   obAvgPh: { ko: '예: 84', en: 'e.g. 84' },
+  obPhonePh: { ko: '010-1234-5678', en: '010-1234-5678' },
   obStepOf: { ko: '{n} / {total}', en: '{n} / {total}' },
 
   obDoneTitle: { ko: '준비 완료!', en: "You're all set!" },
