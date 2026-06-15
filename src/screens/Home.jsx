@@ -15,7 +15,7 @@ const QUICK = [
   { id: 'rank', key: 'qRank', Icon: Trophy, color: '#8B5CF6', img: '/trophy.png' },
 ]
 
-export default function Home({ onOpenEvent }) {
+export default function Home({ onOpenEvent, onOpenNoti, onOpenProfile }) {
   const { t, lang, pick } = useLang()
   const bestScore = Math.min(...recentMatches.map((m) => m.score))
 
@@ -69,8 +69,12 @@ export default function Home({ onOpenEvent }) {
       <div className="appbar">
         <span className="brand">ScoreShot</span>
         <span className="actions">
-          <span className="dot-badge"><Bell size={21} strokeWidth={1.9} /></span>
-          <CircleUser size={21} strokeWidth={1.9} />
+          <span className="dot-badge" role="button" tabIndex={0} onClick={onOpenNoti}>
+            <Bell size={21} strokeWidth={1.9} />
+          </span>
+          <span role="button" tabIndex={0} onClick={onOpenProfile}>
+            <CircleUser size={21} strokeWidth={1.9} />
+          </span>
         </span>
       </div>
 

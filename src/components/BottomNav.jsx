@@ -10,7 +10,7 @@ const ITEMS = [
   { id: 'myscore', key: 'navScore', screen: 'myscore', Icon: ChartColumn },
   { id: 'club', key: 'navClub', screen: 'detail', Icon: Users, soon: true },
   { id: 'event', key: 'navEvent', screen: 'detail', Icon: CalendarDays, soon: true },
-  { id: 'my', key: 'navMy', screen: 'profile', Icon: CircleUser, soon: true },
+  { id: 'my', key: 'navMy', screen: 'profile', Icon: CircleUser },
 ]
 
 export default function BottomNav({ navKey, onNav }) {

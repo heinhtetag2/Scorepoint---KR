@@ -1,0 +1,228 @@
+/* ============================================================
+   ScoreShot · Onboarding flow
+   intro carousel → social login → profile setup → done.
+   Reads the same theme tokens as the rest of the app so it
+   re-skins with the active design direction.
+   ============================================================ */
+
+.ob {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--page);
+  color: var(--text-1);
+  font-family: var(--font);
+}
+
+/* shared onboarding buttons (standard 48px height — less chunky) */
+.ob-btn {
+  height: 48px; flex: 0 0 auto;
+  border: none;
+  border-radius: var(--btn-radius);
+  font-family: var(--font);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+  transition: filter 0.12s ease, transform 0.05s ease;
+}
+.ob-btn:active { transform: scale(0.985); }
+.ob-btn-primary { background: var(--brand); color: var(--on-brand); padding: 0 22px; }
+.ob-btn-primary:hover { filter: brightness(0.97); }
+.ob-btn-block { width: 100%; }
+
+/* Immersive frame: status bar floats transparent over full-bleed content
+   so the onboarding graphic reaches the very top of the device. */
+.phone.is-immersive .statusbar {
+  position: absolute; top: 0; left: 0; right: 0; z-index: 40;
+  background: transparent; color: #fff;
+}
+
+/* ── Intro carousel (full-bleed, reaches behind the status bar) ── */
+.ob-intro {
+  position: relative;
+  padding: 56px var(--pad) calc(20px + env(safe-area-inset-bottom, 0px));
+  justify-content: space-between;
+  color: #fff;
+}
+.ob-intro-scrim {
+  position: absolute; inset: 0; z-index: 0;
+  background:
+    radial-gradient(120% 80% at 50% 0%, transparent 38%, rgba(4,12,8,0.28) 100%),
+    linear-gradient(180deg, rgba(6,16,11,0.30) 0%, rgba(6,16,11,0.08) 30%, rgba(6,16,11,0.55) 70%, rgba(7,28,17,0.92) 100%);
+}
+.ob-intro-top {
+  position: relative; z-index: 2;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.ob-wordmark { font-size: 17px; font-weight: 800; letter-spacing: -0.4px; color: #fff; text-shadow: 0 1px 8px rgba(0,0,0,0.4); }
+.ob-skip {
+  border: none; background: rgba(255,255,255,0.18); color: #fff;
+  font-family: var(--font); font-size: 12.5px; font-weight: 600;
+  padding: 6px 13px; border-radius: 999px; cursor: pointer; backdrop-filter: blur(4px);
+}
+
+.ob-intro-body { position: relative; z-index: 2; margin-top: auto; padding-bottom: 22px; }
+.ob-eyebrow {
+  display: block;
+  font-size: 13px; font-weight: 700; letter-spacing: -0.2px;
+  color: rgba(255,255,255,0.92); text-shadow: 0 1px 6px rgba(0,0,0,0.4);
+}
+.ob-slide-title {
+  margin-top: 8px; font-size: 27px; font-weight: 800; line-height: 1.3;
+  letter-spacing: -0.6px; white-space: pre-line; text-shadow: 0 2px 12px rgba(0,0,0,0.45);
+}
+.ob-slide-sub {
+  margin-top: 12px; font-size: var(--fs-body); line-height: 1.55;
+  color: rgba(255,255,255,0.9); text-shadow: 0 1px 8px rgba(0,0,0,0.4); max-width: 280px;
+}
+
+.ob-intro-foot { position: relative; z-index: 2; display: flex; flex-direction: column; gap: 18px; }
+.ob-dots { display: flex; gap: 7px; padding-left: 2px; }
+.ob-dot {
+  width: 7px; height: 7px; border-radius: 999px; border: none; cursor: pointer;
+  background: rgba(255,255,255,0.4); transition: width 0.22s ease, background 0.22s ease;
+}
+.ob-dot.active { width: 22px; background: #fff; }
+.ob-intro .ob-btn-primary { background: #fff; color: var(--brand); width: 100%; box-shadow: 0 4px 14px rgba(0,0,0,0.16); }
+
+/* ── Social login ──────────────────────────────────────────── */
+.ob-login {
+  padding: 20px var(--pad) calc(26px + env(safe-area-inset-bottom, 0px));
+  justify-content: space-between;
+}
+.ob-login-hero { margin-top: 18%; }
+.ob-login-title { font-size: 26px; font-weight: 800; line-height: 1.32; letter-spacing: -0.6px; white-space: pre-line; }
+.ob-login-sub { margin-top: 10px; font-size: var(--fs-body); color: var(--text-2); }
+
+.ob-login-actions { display: flex; flex-direction: column; gap: 10px; }
+.ob-sso {
+  height: 48px; border-radius: var(--btn-radius); border: none; cursor: pointer;
+  font-family: var(--font); font-size: 14.5px; font-weight: 700;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  transition: filter 0.12s ease, transform 0.05s ease;
+}
+.ob-sso:active { transform: scale(0.99); }
+.ob-sso-ico { flex: 0 0 auto; display: block; }
+.ob-sso-kakao { background: #FEE500; color: #191600; }
+.ob-sso-apple { background: #111317; color: #fff; }
+.ob-sso-phone { background: var(--surface-2); color: var(--text-1); border: 1px solid var(--line); }
+.ob-terms { margin-top: 6px; text-align: center; font-size: var(--fs-cap); color: var(--text-3); line-height: 1.5; }
+
+/* ── Profile form ──────────────────────────────────────────── */
+.ob-form { padding: 12px var(--pad) calc(20px + env(safe-area-inset-bottom, 0px)); overflow-y: auto; }
+.ob-form::-webkit-scrollbar { width: 0; }
+.ob-form-head { display: flex; align-items: center; justify-content: space-between; min-height: 36px; }
+.ob-back { border: none; background: transparent; color: var(--text-1); cursor: pointer; display: inline-flex; padding: 4px; margin-left: -4px; }
+.ob-step { font-size: var(--fs-label); font-weight: 700; color: var(--text-3); }
+.ob-form-title { margin-top: 10px; font-size: 23px; font-weight: 800; letter-spacing: -0.5px; }
+.ob-form-sub { margin-top: 8px; font-size: var(--fs-body); color: var(--text-2); }
+
+/* avatar uploader (onboarding profile step) */
+.ob-avatar-wrap {
+  position: relative; align-self: center; margin: 30px auto 10px;
+  animation: obAvatarIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+.ob-avatar {
+  width: 88px; height: 88px; border-radius: 50%;
+  background: radial-gradient(circle at 50% 36%, color-mix(in srgb, var(--brand) 16%, #fff), var(--brand-weak));
+  color: var(--brand);
+  display: flex; align-items: center; justify-content: center; font-size: 34px; font-weight: 800;
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--brand) 7%, transparent);
+}
+.ob-avatar-edit {
+  position: absolute; right: 2px; bottom: 2px; width: 30px; height: 30px; border-radius: 50%;
+  background: var(--brand); color: #fff; border: 3px solid var(--page);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 6px color-mix(in srgb, var(--brand) 30%, transparent);
+  animation: obPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+}
+@keyframes obAvatarIn {
+  from { opacity: 0; transform: scale(0.7) translateY(6px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* inline avatar picker (tap avatar to open) */
+.ob-avatar-picker { margin: 14px 0 2px; display: flex; flex-direction: column; gap: 14px; animation: obRise 0.28s ease both; }
+.ob-ap-row { display: flex; gap: 8px; overflow-x: auto; padding: 2px; }
+.ob-ap-row::-webkit-scrollbar { display: none; }
+.ob-ap-swatches { display: flex; justify-content: center; gap: 10px; }
+.ob-ap-swatches .ap-swatch { max-width: 34px; }
+
+.ob-field { margin-top: 22px; }
+.ob-label { display: block; font-size: var(--fs-label); font-weight: 700; color: var(--text-2); margin-bottom: 10px; }
+.ob-input {
+  width: 100%; height: 52px; padding: 0 16px;
+  border: 1.5px solid var(--line); border-radius: var(--btn-radius);
+  background: var(--surface); color: var(--text-1);
+  font-family: var(--font); font-size: var(--fs-body); font-weight: 600;
+  transition: border-color 0.15s ease;
+}
+.ob-input::placeholder { color: var(--text-3); font-weight: 500; }
+.ob-input:focus { outline: none; border-color: var(--brand); }
+
+.ob-band-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.ob-band {
+  display: flex; flex-direction: column; gap: 2px; align-items: flex-start;
+  padding: 13px 14px; border-radius: var(--btn-radius); cursor: pointer;
+  border: 1.5px solid var(--line); background: var(--surface);
+  font-family: var(--font); transition: all 0.14s ease;
+}
+.ob-band-name { font-size: var(--fs-body); font-weight: 700; color: var(--text-1); }
+.ob-band-sub { font-size: var(--fs-cap); color: var(--text-3); }
+.ob-band.active { border-color: var(--brand); background: var(--brand-weak); }
+.ob-band.active .ob-band-name { color: var(--brand); }
+.ob-band.active .ob-band-sub { color: var(--brand); }
+
+.ob-chip-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
+.ob-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  border: 1.5px solid var(--line); background: var(--surface); color: var(--text-2);
+  border-radius: 999px; padding: 9px 15px; cursor: pointer;
+  font-family: var(--font); font-size: var(--fs-label); font-weight: 600;
+  transition: all 0.14s ease;
+}
+.ob-chip.active { border-color: var(--brand); background: var(--brand-weak); color: var(--brand); font-weight: 700; }
+
+.ob-form-foot { margin-top: 28px; }
+
+/* ── Done (animated success → auto-advances to Home) ───────── */
+.ob-done {
+  padding: 20px var(--pad) calc(26px + env(safe-area-inset-bottom, 0px));
+  align-items: stretch;
+}
+.ob-done-body { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+
+.ob-check-wrap { position: relative; display: inline-flex; align-items: center; justify-content: center; }
+/* expanding ring pulse behind the badge */
+.ob-check-ring {
+  position: absolute; width: 84px; height: 84px; border-radius: 50%;
+  background: var(--brand-weak);
+  animation: obRing 0.9s ease-out 0.12s both;
+}
+@keyframes obRing {
+  0%   { transform: scale(0.6); opacity: 0.9; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+.ob-check {
+  position: relative; z-index: 1;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 84px; height: 84px; border-radius: 50%;
+  background: var(--brand); color: var(--on-brand);
+  box-shadow: 0 12px 30px color-mix(in srgb, var(--brand) 38%, transparent);
+  animation: obPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+.ob-check svg { animation: obCheckIn 0.4s ease-out 0.32s both; }
+@keyframes obPop { 0% { transform: scale(0.3); opacity: 0; } 60% { opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+@keyframes obCheckIn { from { transform: scale(0.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+.ob-done-title {
+  margin-top: 24px; font-size: 25px; font-weight: 800; letter-spacing: -0.5px;
+  animation: obRise 0.5s ease-out 0.4s both;
+}
+.ob-done-sub {
+  margin-top: 10px; font-size: var(--fs-body); color: var(--text-2); line-height: 1.5;
+  animation: obRise 0.5s ease-out 0.54s both;
+}
+@keyframes obRise { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
