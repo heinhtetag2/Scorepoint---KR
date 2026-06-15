@@ -833,6 +833,18 @@ body {
 /* grouped menu */
 .pf-menu-group { margin-top: 6px; }
 .pf-menu-label { font-size: var(--fs-label); font-weight: 800; color: var(--text-2); padding: 10px 2px 8px; }
+.pf-menu-group .list-row { padding-left: 14px; padding-right: 14px; }
+
+/* payment edit / delete */
+.se-edit {
+  border: none; background: transparent; cursor: pointer; font-family: var(--font);
+  font-size: var(--fs-label); font-weight: 600; color: var(--text-2); padding: 4px 2px;
+}
+.pm-del {
+  flex: 0 0 auto; width: 20px; height: 20px; border-radius: 50%; border: none; cursor: pointer;
+  background: var(--negative); color: #fff;
+  display: inline-flex; align-items: center; justify-content: center;
+}
 
 .pf-logout {
   display: inline-flex; align-self: center; align-items: center; gap: 6px;

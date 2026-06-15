@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
 import {
-  ArrowLeft, Camera, ChevronRight, Check, CreditCard, Plus, Pencil,
+  ArrowLeft, Camera, ChevronRight, Check, CreditCard, Plus, Minus, Pencil,
   Headphones, Phone, MessageSquareText, FileText, Star,
-  BarChart3, CalendarDays, Wallet, Ticket,
+  BarChart3, CalendarDays, Wallet, Ticket, Banknote, MessageCircle,
 } from 'lucide-react'
 import { useLang } from '../i18n/LanguageContext.jsx'
 import { Avatar, AVATAR_IDS } from '../components/Avatars.jsx'
@@ -418,26 +418,123 @@ export function Membership({ onBack }) {
   )
 }
 
+/* 결제 수단 추가 — choose a type, register a card */
+const PAY_TYPES = [
+  { id: 'card', label: 'payTypeCard', Icon: CreditCard },
+  { id: 'pay', label: 'payTypePay', Icon: MessageCircle },
+  { id: 'bank', label: 'payTypeBank', Icon: Banknote },
+]
+function AddPaymentMethod({ onBack, onAdd }) {
+  const { t } = useLang()
+  const [type, setType] = useState('card')
+  const [num, setNum] = useState('')
+  const [exp, setExp] = useState('')
+
+  const make = () => {
+    const id = `pm-${num.slice(-4) || type}-${num.length + exp.length}`
+    if (type === 'pay') return { id, kind: 'pay', nameKo: '카카오페이', nameEn: 'KakaoPay', tail: '', primary: false }
+    if (type === 'bank') return { id, kind: 'bank', nameKo: '계좌이체', nameEn: 'Bank transfer', tail: '', primary: false }
+    return { id, kind: 'card', nameKo: t('payNewCard'), nameEn: 'New card', tail: num.replace(/\D/g, '').slice(-4) || '0000', primary: false }
+  }
+  const valid = type !== 'card' || num.replace(/\D/g, '').length >= 8
+
+  return (
+    <SubPage
+      title={t('payAddTitle')}
+      onBack={onBack}
+      footer={(
+        <div className="ap-foot">
+          <button className="ob-btn ob-btn-primary ob-btn-block" disabled={!valid} style={!valid ? { opacity: 0.5 } : undefined} onClick={() => onAdd(make())}>
+            {t('payRegister')}
+          </button>
+        </div>
+      )}
+    >
+      <div className="pe-field" style={{ marginTop: 8 }}>
+        <div className="ob-chip-wrap">
+          {PAY_TYPES.map((p) => (
+            <button key={p.id} className={`ob-chip ${type === p.id ? 'active' : ''}`} onClick={() => setType(p.id)}>
+              <p.Icon size={14} strokeWidth={2} />{t(p.label)}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {type === 'card' && (
+        <>
+          <div className="pe-field">
+            <label className="ob-label">{t('payCardNo')}</label>
+            <input
+              className="ob-input num"
+              value={num}
+              onChange={(e) => setNum(e.target.value.replace(/[^\d ]/g, '').slice(0, 19))}
+              placeholder={t('payCardNoPh')}
+              inputMode="numeric"
+            />
+          </div>
+          <div className="pe-field">
+            <label className="ob-label">{t('payExpiry')}</label>
+            <input
+              className="ob-input num"
+              value={exp}
+              onChange={(e) => setExp(e.target.value.replace(/[^\d/]/g, '').slice(0, 5))}
+              placeholder={t('payExpiryPh')}
+              inputMode="numeric"
+            />
+          </div>
+        </>
+      )}
+    </SubPage>
+  )
+}
+
 /* ── 결제 · 정산 ─────────────────────────────────────────────── */
 export function Payments({ onBack }) {
   const { t, pick, lang } = useLang()
+  const [methods, setMethods] = useState(() => paymentMethods.map((m) => ({ ...m })))
+  const [edit, setEdit] = useState(false)
+  const [adding, setAdding] = useState(false)
+
+  if (adding) {
+    return (
+      <AddPaymentMethod
+        onBack={() => setAdding(false)}
+        onAdd={(m) => { setMethods((ms) => [...ms, m]); setAdding(false) }}
+      />
+    )
+  }
+  const remove = (id) => setMethods((ms) => {
+    const next = ms.filter((m) => m.id !== id)
+    if (next.length && !next.some((m) => m.primary)) next[0].primary = true   // keep a default
+    if (next.length <= 1) setEdit(false)
+    return next
+  })
+
   return (
     <SubPage title={t('mPay')} onBack={onBack}>
-      <div className="section-head"><span className="s-title">{t('payMethods')}</span></div>
+      <div className="section-head">
+        <span className="s-title">{t('payMethods')}</span>
+        {methods.length > 0 && (
+          <button className="se-edit" onClick={() => setEdit((v) => !v)}>{edit ? t('payDone') : t('payEdit')}</button>
+        )}
+      </div>
       <div className="list">
-        {paymentMethods.map((m) => (
+        {methods.map((m) => (
           <div className="list-row" key={m.id}>
+            {edit && (
+              <button className="pm-del" onClick={() => remove(m.id)} aria-label="remove"><Minus size={14} strokeWidth={3} /></button>
+            )}
             <CreditCard size={18} strokeWidth={1.8} className="lr-ico" />
-            <span className="lr-label">
-              {pick(m.nameKo, m.nameEn)}{m.tail ? ` ·· ${m.tail}` : ''}
-            </span>
-            {m.primary && <span className="badge badge-role">{t('payPrimary')}</span>}
+            <span className="lr-label">{pick(m.nameKo, m.nameEn)}{m.tail ? ` ·· ${m.tail}` : ''}</span>
+            {!edit && m.primary && <span className="badge badge-role">{t('payPrimary')}</span>}
           </div>
         ))}
-        <div className="list-row" style={{ color: 'var(--brand)' }}>
-          <Plus size={18} strokeWidth={2} className="lr-ico accent" />
-          <span className="lr-label" style={{ color: 'var(--brand)', fontWeight: 700 }}>{t('payAdd')}</span>
-        </div>
+        {!edit && (
+          <div className="list-row" style={{ cursor: 'pointer' }} onClick={() => setAdding(true)}>
+            <Plus size={18} strokeWidth={2} className="lr-ico accent" />
+            <span className="lr-label" style={{ color: 'var(--brand)', fontWeight: 700 }}>{t('payAdd')}</span>
+          </div>
+        )}
       </div>
 
       <div className="section-head"><span className="s-title">{t('payHistory')}</span></div>
