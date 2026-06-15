@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { ChevronLeft, Check, MapPin, Smartphone, Camera, User } from 'lucide-react'
 import { useLang } from '../i18n/LanguageContext.jsx'
+import { Avatar, AVATAR_IDS } from '../components/Avatars.jsx'
 
 /* Brand glyphs — official KakaoTalk bubble & Apple logo, drawn in currentColor. */
 const KakaoIcon = (props) => (
@@ -57,8 +58,8 @@ export const fmtBirth = (s) => {
   return [d.slice(0, 4), d.slice(4, 6), d.slice(6, 8)].filter(Boolean).join('.')
 }
 
-/* Selectable avatar faces + pastel background swatches. */
-const AVATARS = ['😀', '😎', '🙂', '👩', '🧑', '🧓', '🏌️']
+/* Selectable character avatars + pastel background swatches. */
+const AVATARS = AVATAR_IDS
 const BG_COLORS = ['#F8C8D4', '#FAD9A8', '#F6EBA0', '#CDE9BE', '#C3D6FA', '#D9CDF3']
 
 export default function Onboarding({ onDone, onIntroChange }) {
@@ -173,7 +174,9 @@ export default function Onboarding({ onDone, onIntroChange }) {
 
         <div className="ob-avatar-wrap" onClick={() => setShowPicker((v) => !v)} style={{ cursor: 'pointer' }}>
           <span className="ob-avatar" style={avatarBg ? { background: avatarBg } : undefined}>
-            {avatarEmoji || (name.trim() ? name.trim().slice(0, 1) : <User size={32} strokeWidth={1.8} />)}
+            {avatarEmoji
+              ? <Avatar id={avatarEmoji} size={66} />
+              : (name.trim() ? name.trim().slice(0, 1) : <User size={32} strokeWidth={1.8} />)}
           </span>
           <span className="ob-avatar-edit"><Camera size={15} strokeWidth={2.2} /></span>
         </div>
@@ -182,7 +185,9 @@ export default function Onboarding({ onDone, onIntroChange }) {
           <div className="ob-avatar-picker">
             <div className="ob-ap-row">
               {AVATARS.map((a) => (
-                <button key={a} type="button" className={`ap-emoji ${avatarEmoji === a ? 'active' : ''}`} onClick={() => setAvatarEmoji(a)}>{a}</button>
+                <button key={a} type="button" className={`ap-emoji ${avatarEmoji === a ? 'active' : ''}`} onClick={() => setAvatarEmoji(a)}>
+                  <Avatar id={a} size={42} />
+                </button>
               ))}
             </div>
             <div className="ob-ap-swatches">

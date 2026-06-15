@@ -5,6 +5,7 @@ import {
   BarChart3, CalendarDays, Wallet, Ticket,
 } from 'lucide-react'
 import { useLang } from '../i18n/LanguageContext.jsx'
+import { Avatar, AVATAR_IDS } from '../components/Avatars.jsx'
 import { fmtBirth } from './Onboarding.jsx'
 import {
   user, account, badges, tiers, tierBenefits, pointHistory, paymentMethods,
@@ -93,7 +94,7 @@ function FieldEditor({ cfg, onDone }) {
 }
 
 /* Selectable avatar faces + pastel background swatches (Kakao-style picker). */
-const AVATARS = ['😀', '😎', '🙂', '👩', '🧑', '🧓', '🏌️']
+const AVATARS = AVATAR_IDS
 const BG_COLORS = ['#F8C8D4', '#FAD9A8', '#F6EBA0', '#CDE9BE', '#C3D6FA', '#D9CDF3']
 
 /* ── 프로필 편집 (swipeable avatar carousel + background picker) ─ */
@@ -153,7 +154,9 @@ function AvatarPicker({ emoji, bg, name, onSave, onCancel }) {
             style={i === 0 ? undefined : { background: color }}
             onClick={() => pick(i)}
           >
-            <span>{i === 0 ? (name.trim().slice(0, 1) || '🙂') : a}</span>
+            {i === 0
+              ? <span className="ap-slide-initial">{name.trim().slice(0, 1) || '🙂'}</span>
+              : <Avatar id={a} size={90} />}
             {i === idx && i === 0 && <span className="ap-cam"><Camera size={16} strokeWidth={2.2} /></span>}
           </div>
         ))}
@@ -250,7 +253,7 @@ export function ProfileEdit({ onBack }) {
       <div className="pe2-hero">
         <div className="pe-avatar-wrap" style={{ margin: 0, cursor: 'pointer' }} onClick={() => setEditing('avatar')}>
           <span className="pe-avatar" style={avatarBg ? { background: avatarBg } : undefined}>
-            {avatar || name.trim().slice(0, 1) || '🙂'}
+            {avatar ? <Avatar id={avatar} size={46} /> : (name.trim().slice(0, 1) || '🙂')}
           </span>
           <span className="pe-avatar-edit"><Pencil size={13} strokeWidth={2.4} /></span>
         </div>
