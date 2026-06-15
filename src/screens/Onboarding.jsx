@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { ChevronLeft, Check, MapPin, Smartphone, Camera, User } from 'lucide-react'
+import { ChevronLeft, Check, MapPin, Smartphone, Pencil, User } from 'lucide-react'
 import { useLang } from '../i18n/LanguageContext.jsx'
 import { Avatar } from '../components/Avatars.jsx'
 import { AvatarPicker } from './ProfileScreens.jsx'
@@ -189,7 +189,7 @@ export default function Onboarding({ onDone, onIntroChange }) {
               ? <Avatar id={avatarEmoji} size={66} />
               : (name.trim() ? name.trim().slice(0, 1) : <User size={32} strokeWidth={1.8} />)}
           </span>
-          <span className="ob-avatar-edit"><Camera size={15} strokeWidth={2.2} /></span>
+          <span className="ob-avatar-edit"><Pencil size={13} strokeWidth={2.4} /></span>
         </div>
 
         <div className="ob-field">
