@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import {
   ArrowLeft, Camera, ChevronRight, Check, CreditCard, Plus, Pencil,
   Headphones, Phone, MessageSquareText, FileText, Star,
@@ -94,13 +94,41 @@ function FieldEditor({ cfg, onDone }) {
 
 /* Selectable avatar faces + pastel background swatches (Kakao-style picker). */
 const AVATARS = ['😀', '😎', '🙂', '👩', '🧑', '🧓', '🏌️']
-const BG_COLORS = ['#F8C8D4', '#FAD9A8', '#F6EBA0', '#CDE9BE', '#BFC7D1', '#C3D6FA', '#D9CDF3']
+const BG_COLORS = ['#F8C8D4', '#FAD9A8', '#F6EBA0', '#CDE9BE', '#C3D6FA', '#D9CDF3']
 
-/* ── 프로필 편집 (avatar + background picker) ────────────────── */
+/* ── 프로필 편집 (swipeable avatar carousel + background picker) ─ */
 function AvatarPicker({ emoji, bg, name, onSave, onCancel }) {
   const { t } = useLang()
-  const [em, setEm] = useState(emoji || AVATARS[0])
+  const [idx, setIdx] = useState(Math.max(0, AVATARS.indexOf(emoji || AVATARS[0])))
   const [color, setColor] = useState(bg || BG_COLORS[3])
+  const railRef = useRef(null)
+
+  const centerOf = (el, slide) => slide.offsetLeft - (el.clientWidth - slide.offsetWidth) / 2
+
+  // center the initial avatar without animation
+  useEffect(() => {
+    const el = railRef.current
+    if (el && el.children[idx]) el.scrollLeft = centerOf(el, el.children[idx])
+  }, [])
+
+  // pick the slide nearest the rail center as you swipe
+  const onScroll = () => {
+    const el = railRef.current
+    if (!el) return
+    const c = el.scrollLeft + el.clientWidth / 2
+    let best = 0, bestD = Infinity
+    Array.from(el.children).forEach((s, i) => {
+      const d = Math.abs((s.offsetLeft + s.offsetWidth / 2) - c)
+      if (d < bestD) { bestD = d; best = i }
+    })
+    if (best !== idx) setIdx(best)
+  }
+
+  const pick = (i) => {
+    const el = railRef.current
+    if (el && el.children[i]) el.scrollTo({ left: centerOf(el, el.children[i]), behavior: 'smooth' })
+    setIdx(i)
+  }
 
   return (
     <SubPage
@@ -108,23 +136,27 @@ function AvatarPicker({ emoji, bg, name, onSave, onCancel }) {
       onBack={onCancel}
       footer={(
         <div className="ap-foot">
-          <button className="ob-btn ob-btn-primary ob-btn-block" onClick={() => onSave(em, color)}>
+          <button className="ob-btn ob-btn-primary ob-btn-block" onClick={() => onSave(AVATARS[idx], color)}>
             {t('peComplete')}
           </button>
         </div>
       )}
     >
-      <div className="ap-hero">
-        <span className="ap-avatar" style={{ background: color }}>{em}</span>
-        <span className="ap-cam"><Camera size={16} strokeWidth={2.2} /></span>
-      </div>
-      <div className="ap-name">{name}<Pencil size={13} strokeWidth={2.2} /></div>
-
-      <div className="ap-emoji-row">
-        {AVATARS.map((a) => (
-          <button key={a} className={`ap-emoji ${em === a ? 'active' : ''}`} onClick={() => setEm(a)}>{a}</button>
+      <div className="ap-carousel" ref={railRef} onScroll={onScroll}>
+        {AVATARS.map((a, i) => (
+          <div
+            key={a}
+            className={`ap-slide ${i === idx ? 'active' : ''}`}
+            style={{ background: color }}
+            onClick={() => pick(i)}
+          >
+            <span>{a}</span>
+            {i === idx && <span className="ap-cam"><Camera size={16} strokeWidth={2.2} /></span>}
+          </div>
         ))}
       </div>
+
+      <div className="ap-name">{name}<Pencil size={13} strokeWidth={2.2} /></div>
 
       <div className="ap-swatches">
         {BG_COLORS.map((c) => (

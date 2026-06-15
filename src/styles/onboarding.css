@@ -148,7 +148,7 @@
 .ob-ap-row { display: flex; gap: 8px; overflow-x: auto; padding: 2px; }
 .ob-ap-row::-webkit-scrollbar { display: none; }
 .ob-ap-swatches { display: flex; justify-content: center; gap: 10px; }
-.ob-ap-swatches .ap-swatch { max-width: 34px; }
+.ob-ap-swatches .ap-swatch { width: 36px; height: 36px; }
 
 .ob-field { margin-top: 22px; }
 .ob-label { display: block; font-size: var(--fs-label); font-weight: 700; color: var(--text-2); margin-bottom: 10px; }

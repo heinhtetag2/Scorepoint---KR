@@ -915,45 +915,50 @@ body {
 .pe-field { margin-top: 16px; }
 .pe-field .ob-input[readonly] { background: var(--surface-2); color: var(--text-3); }
 
-/* 프로필 편집 — avatar + background picker */
-.ap-hero { position: relative; width: 112px; margin: 22px auto 0; }
-.ap-avatar {
-  width: 112px; height: 112px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center; font-size: 56px;
-  box-shadow: 0 0 0 3px var(--page), 0 0 0 6px var(--brand);
+/* 프로필 편집 — swipeable avatar carousel + background picker */
+.ap-carousel {
+  display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory;
+  margin: 14px calc(-1 * var(--pad)) 0;
+  padding: 12px calc(50% - 56px);
 }
+.ap-carousel::-webkit-scrollbar { display: none; }
+.ap-slide {
+  flex: 0 0 112px; height: 112px; border-radius: 50%; scroll-snap-align: center;
+  position: relative; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; font-size: 54px;
+  transform: scale(0.7); opacity: 0.5;
+  transition: transform 0.22s ease, opacity 0.22s ease;
+}
+.ap-slide.active { transform: scale(1); opacity: 1; box-shadow: 0 0 0 3px var(--page), 0 0 0 6px var(--brand); }
 .ap-cam {
-  position: absolute; right: 2px; bottom: 2px; width: 34px; height: 34px; border-radius: 50%;
+  position: absolute; right: 6px; bottom: 6px; width: 34px; height: 34px; border-radius: 50%;
   background: var(--brand); color: #fff; border: 3px solid var(--page);
   display: flex; align-items: center; justify-content: center;
   box-shadow: 0 2px 8px color-mix(in srgb, var(--brand) 30%, transparent);
 }
 .ap-name {
   display: flex; align-items: center; justify-content: center; gap: 6px;
-  font-size: 18px; font-weight: 800; letter-spacing: -0.3px; margin-top: 16px;
+  font-size: 18px; font-weight: 800; letter-spacing: -0.3px; margin-top: 18px;
 }
 .ap-name svg { color: var(--brand); }
 
-.ap-emoji-row {
-  display: flex; gap: 10px; overflow-x: auto; padding: 4px 2px 2px; margin-top: 26px;
-}
-.ap-emoji-row::-webkit-scrollbar { display: none; }
+/* emoji choose-circles (used by onboarding inline picker) */
 .ap-emoji {
-  flex: 0 0 auto; width: 54px; height: 54px; border-radius: 50%; cursor: pointer;
+  flex: 0 0 auto; width: 52px; height: 52px; border-radius: 50%; cursor: pointer;
   background: var(--surface-2); border: 2px solid transparent;
-  display: flex; align-items: center; justify-content: center; font-size: 28px;
+  display: flex; align-items: center; justify-content: center; font-size: 27px;
   transition: border-color 0.14s ease, transform 0.05s ease;
 }
 .ap-emoji.active { border-color: var(--brand); }
 .ap-emoji:active { transform: scale(0.94); }
 
-.ap-swatches { display: flex; justify-content: space-between; gap: 8px; margin-top: 18px; padding: 0 2px; }
+.ap-swatches { display: flex; justify-content: center; gap: 9px; margin-top: 26px; padding: 0 2px; }
 .ap-swatch {
-  flex: 1; aspect-ratio: 1; max-width: 42px; border-radius: 50%; cursor: pointer; border: none;
+  flex: 0 0 auto; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; border: none;
   display: flex; align-items: center; justify-content: center; color: #fff;
   transition: transform 0.12s ease;
 }
-.ap-swatch.active { transform: scale(1.06); box-shadow: 0 2px 8px rgba(0,0,0,0.18); }
+.ap-swatch.active { transform: scale(1.08); box-shadow: 0 2px 8px rgba(0,0,0,0.18); }
 .ap-swatch svg { filter: drop-shadow(0 1px 1px rgba(0,0,0,0.25)); }
 
 .ap-notice { margin-top: 32px; }

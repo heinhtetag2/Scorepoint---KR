@@ -59,7 +59,7 @@ export const fmtBirth = (s) => {
 
 /* Selectable avatar faces + pastel background swatches. */
 const AVATARS = ['😀', '😎', '🙂', '👩', '🧑', '🧓', '🏌️']
-const BG_COLORS = ['#F8C8D4', '#FAD9A8', '#F6EBA0', '#CDE9BE', '#BFC7D1', '#C3D6FA', '#D9CDF3']
+const BG_COLORS = ['#F8C8D4', '#FAD9A8', '#F6EBA0', '#CDE9BE', '#C3D6FA', '#D9CDF3']
 
 export default function Onboarding({ onDone, onIntroChange }) {
   const { t, pick } = useLang()
