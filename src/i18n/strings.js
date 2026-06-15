@@ -130,6 +130,11 @@ const STR = {
   obHcp: { ko: '실력 · 평균 타수', en: 'Level · average score' },
   obRegion: { ko: '주로 치는 지역', en: 'Where you usually play' },
   obComplete: { ko: '완료', en: 'Done' },
+  obOptional: { ko: '(선택)', en: '(optional)' },
+  obHandicap: { ko: '핸디캡', en: 'Handicap' },
+  obAvgScore: { ko: '평균타수', en: 'Average score' },
+  obHcpPh: { ko: '예: 12', en: 'e.g. 12' },
+  obAvgPh: { ko: '예: 84', en: 'e.g. 84' },
   obStepOf: { ko: '{n} / {total}', en: '{n} / {total}' },
 
   obDoneTitle: { ko: '준비 완료!', en: "You're all set!" },

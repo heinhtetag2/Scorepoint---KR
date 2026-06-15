@@ -82,6 +82,8 @@ export default function Onboarding({ onDone, onIntroChange }) {
   const [region, setRegion] = useState('capital')
   const [birth, setBirth] = useState('')
   const [gender, setGender] = useState('')
+  const [handicap, setHandicap] = useState('')
+  const [avgScore, setAvgScore] = useState('')
   const [avatarEmoji, setAvatarEmoji] = useState(null)
   const [avatarBg, setAvatarBg] = useState(null)
   const [showPicker, setShowPicker] = useState(false)
@@ -209,6 +211,31 @@ export default function Onboarding({ onDone, onIntroChange }) {
             placeholder={t('obNamePh')}
             maxLength={20}
           />
+        </div>
+
+        <div className="ob-field">
+          <div className="ob-field-row">
+            <div>
+              <label className="ob-label">{t('obHandicap')} <span className="ob-opt">{t('obOptional')}</span></label>
+              <input
+                className="ob-input"
+                value={handicap}
+                onChange={(e) => setHandicap(e.target.value.replace(/\D/g, '').slice(0, 2))}
+                placeholder={t('obHcpPh')}
+                inputMode="numeric"
+              />
+            </div>
+            <div>
+              <label className="ob-label">{t('obAvgScore')} <span className="ob-opt">{t('obOptional')}</span></label>
+              <input
+                className="ob-input"
+                value={avgScore}
+                onChange={(e) => setAvgScore(e.target.value.replace(/\D/g, '').slice(0, 3))}
+                placeholder={t('obAvgPh')}
+                inputMode="numeric"
+              />
+            </div>
+          </div>
         </div>
 
         <div className="ob-field">

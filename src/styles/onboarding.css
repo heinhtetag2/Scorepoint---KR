@@ -151,6 +151,9 @@
 .ob-ap-swatches .ap-swatch { width: 36px; height: 36px; }
 
 .ob-field { margin-top: 22px; }
+.ob-field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.ob-field-row .ob-label { margin-bottom: 10px; }
+.ob-opt { font-weight: 500; color: var(--text-3); }
 .ob-label { display: block; font-size: var(--fs-label); font-weight: 700; color: var(--text-2); margin-bottom: 10px; }
 .ob-input {
   width: 100%; height: 52px; padding: 0 16px;
