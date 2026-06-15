@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react'
 import {
-  Search, Bell, CircleUser, MapPin, Star,
+  Search, Bell, MapPin, Star,
   Camera, Users, CalendarDays, Trophy, Wallet, ChevronRight,
   BarChart3, Lightbulb,
 } from 'lucide-react'
@@ -72,8 +72,8 @@ export default function Home({ onOpenEvent, onOpenNoti, onOpenProfile }) {
           <span className="dot-badge" role="button" tabIndex={0} onClick={onOpenNoti}>
             <Bell size={21} strokeWidth={1.9} />
           </span>
-          <span role="button" tabIndex={0} onClick={onOpenProfile}>
-            <CircleUser size={21} strokeWidth={1.9} />
+          <span className="appbar-avatar" role="button" tabIndex={0} onClick={onOpenProfile}>
+            {pick(user.name, user.nameEn).slice(0, 1)}
           </span>
         </span>
       </div>

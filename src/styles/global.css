@@ -143,6 +143,12 @@ body {
 .appbar .actions > * { display: inline-flex; align-items: center; }
 .appbar .actions svg { display: block; }
 .appbar .actions span { position: relative; cursor: pointer; }
+.appbar-avatar {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--brand-weak); color: var(--brand);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 800; cursor: pointer; flex: 0 0 auto;
+}
 .dot-badge::after {
   content: ''; position: absolute; top: -1px; right: -2px;
   width: 7px; height: 7px; border-radius: 50%; background: var(--point);

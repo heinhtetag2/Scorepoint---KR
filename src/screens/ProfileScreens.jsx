@@ -217,7 +217,7 @@ export function ProfileEdit({ onBack }) {
           <span className="pe-avatar" style={avatarBg ? { background: avatarBg } : undefined}>
             {avatar || name.trim().slice(0, 1) || '🙂'}
           </span>
-          <span className="pe-avatar-edit"><Camera size={15} strokeWidth={2.2} /></span>
+          <span className="pe-avatar-edit"><Pencil size={13} strokeWidth={2.4} /></span>
         </div>
         <div className="pe2-name">{name}</div>
       </div>
