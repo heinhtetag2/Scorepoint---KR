@@ -930,6 +930,7 @@ body {
   transition: transform 0.22s ease, opacity 0.22s ease;
 }
 .ap-slide.active { transform: scale(1); opacity: 1; box-shadow: 0 0 0 3px var(--page), 0 0 0 6px var(--brand); }
+.ap-slide-default { background: var(--brand-weak); color: var(--brand); font-size: 42px; font-weight: 800; }
 .ap-cam {
   position: absolute; right: 6px; bottom: 6px; width: 34px; height: 34px; border-radius: 50%;
   background: var(--brand); color: #fff; border: 3px solid var(--page);
