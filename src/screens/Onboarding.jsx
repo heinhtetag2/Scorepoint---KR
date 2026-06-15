@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { ChevronLeft, Check, MapPin, Smartphone, Camera, User } from 'lucide-react'
 import { useLang } from '../i18n/LanguageContext.jsx'
-import { Avatar, AVATAR_IDS } from '../components/Avatars.jsx'
+import { Avatar } from '../components/Avatars.jsx'
+import { AvatarPicker } from './ProfileScreens.jsx'
 
 /* Brand glyphs — official KakaoTalk bubble & Apple logo, drawn in currentColor. */
 const KakaoIcon = (props) => (
@@ -58,9 +59,6 @@ export const fmtBirth = (s) => {
   return [d.slice(0, 4), d.slice(4, 6), d.slice(6, 8)].filter(Boolean).join('.')
 }
 
-/* Selectable character avatars + pastel background swatches. */
-const AVATARS = AVATAR_IDS
-const BG_COLORS = ['#F8C8D4', '#FAD9A8', '#F6EBA0', '#CDE9BE', '#C3D6FA', '#D9CDF3']
 
 export default function Onboarding({ onDone, onIntroChange }) {
   const { t, pick } = useLang()
@@ -160,6 +158,19 @@ export default function Onboarding({ onDone, onIntroChange }) {
   }
 
   /* ── Profile setup ──────────────────────────────────────── */
+  // Avatar picker opens as its own page (not inline) from the profile step.
+  if (step === 'profile' && showPicker) {
+    return (
+      <AvatarPicker
+        emoji={avatarEmoji}
+        bg={avatarBg}
+        name={name.trim() || pick('회원', 'You')}
+        onCancel={() => setShowPicker(false)}
+        onSave={(em, c) => { setAvatarEmoji(em); setAvatarBg(c); setShowPicker(false) }}
+      />
+    )
+  }
+
   if (step === 'profile') {
     return (
       <div className="ob ob-form">
@@ -172,7 +183,7 @@ export default function Onboarding({ onDone, onIntroChange }) {
         <h2 className="ob-form-title">{t('obProfileTitle')}</h2>
         <p className="ob-form-sub">{t('obProfileSub')}</p>
 
-        <div className="ob-avatar-wrap" onClick={() => setShowPicker((v) => !v)} style={{ cursor: 'pointer' }}>
+        <div className="ob-avatar-wrap" onClick={() => setShowPicker(true)} style={{ cursor: 'pointer' }}>
           <span className="ob-avatar" style={avatarBg ? { background: avatarBg } : undefined}>
             {avatarEmoji
               ? <Avatar id={avatarEmoji} size={66} />
@@ -180,32 +191,6 @@ export default function Onboarding({ onDone, onIntroChange }) {
           </span>
           <span className="ob-avatar-edit"><Camera size={15} strokeWidth={2.2} /></span>
         </div>
-
-        {showPicker && (
-          <div className="ob-avatar-picker">
-            <div className="ob-ap-row">
-              {AVATARS.map((a) => (
-                <button key={a} type="button" className={`ap-emoji ${avatarEmoji === a ? 'active' : ''}`} onClick={() => setAvatarEmoji(a)}>
-                  <Avatar id={a} size={42} />
-                </button>
-              ))}
-            </div>
-            <div className="ob-ap-swatches">
-              {BG_COLORS.map((c) => (
-                <button
-                  key={c}
-                  type="button"
-                  className={`ap-swatch ${avatarBg === c ? 'active' : ''}`}
-                  style={{ background: c }}
-                  onClick={() => setAvatarBg(c)}
-                  aria-label="background color"
-                >
-                  {avatarBg === c && <Check size={16} strokeWidth={3} />}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
 
         <div className="ob-field">
           <label className="ob-label">{t('obName')}</label>

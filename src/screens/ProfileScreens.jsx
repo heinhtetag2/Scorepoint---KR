@@ -98,7 +98,7 @@ const AVATARS = AVATAR_IDS
 const BG_COLORS = ['#F8C8D4', '#FAD9A8', '#F6EBA0', '#CDE9BE', '#C3D6FA', '#D9CDF3']
 
 /* ── 프로필 편집 (swipeable avatar carousel + background picker) ─ */
-function AvatarPicker({ emoji, bg, name, onSave, onCancel }) {
+export function AvatarPicker({ emoji, bg, name, onSave, onCancel }) {
   const { t } = useLang()
   // Slide 0 = default "your photo" text avatar (camera badge); slides 1+ = preset avatars.
   const SLIDES = ['default', ...AVATARS]
