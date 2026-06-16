@@ -60,10 +60,10 @@ export default function App() {
     screen === 'club' ? <Clubs clubs={clubs} onOpenClub={openClub} onCreate={() => setScreen('clubCreate')} onSearch={() => setScreen('clubSearch')} /> :
     screen === 'clubSearch' ? <ClubSearch onBack={() => setScreen('club')} onOpenClub={openClub} onNearby={() => setScreen('nearby')} /> :
     screen === 'nearby' ? <NearbyClubs onBack={() => setScreen('clubSearch')} onOpenClub={openClub} /> :
-    screen === 'clubDetail' ? <ClubDetail club={club} onBack={() => handleNav('club', 'club')} onOpenEvent={openEvent} onSettings={() => setScreen('clubSettings')} onNewRound={() => setScreen('createRound')} /> :
+    screen === 'clubDetail' ? <ClubDetail club={club} onBack={() => handleNav('club', 'club')} onOpenEvent={openEvent} onSettings={() => setScreen('clubSettings')} onNewRound={() => setScreen('createRound')} onMemberMng={() => setScreen('clubMembers')} /> :
     screen === 'clubSettings' ? <ClubSettings club={club} onBack={() => setScreen('clubDetail')} onEdit={() => setScreen('clubEdit')} onMembers={() => setScreen('clubMembers')} onNoti={() => setScreen('clubNoti')} onLeave={() => removeClub(club?.id)} /> :
     screen === 'clubEdit' ? <ClubCreate edit club={club} onBack={() => setScreen('clubSettings')} onCreate={() => setScreen('clubSettings')} /> :
-    screen === 'clubMembers' ? <ClubMembers club={club} onBack={() => setScreen('clubSettings')} /> :
+    screen === 'clubMembers' ? <ClubMembers club={club} onBack={() => setScreen('clubDetail')} /> :
     screen === 'clubNoti' ? <ClubNoti onBack={() => setScreen('clubSettings')} /> :
     screen === 'createRound' ? <CreateRound onBack={() => setScreen('clubDetail')} onCreate={() => setScreen('clubDetail')} /> :
     screen === 'clubCreate' ? <ClubCreate onBack={() => setScreen('club')} onCreate={addClub} /> :

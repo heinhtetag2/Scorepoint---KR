@@ -353,6 +353,36 @@ export const clubMembers = [
   { id: 'cm8', nameKr: '오세훈', nameEn: 'Oh Se-hun', role: '회원', handicap: 9, paid: true },
 ]
 
+/* Extended club members — used by the new ClubDetail (member/ranking tabs) */
+export const clubMembersFull = [
+  { id: 'cf1', nameKr: '문양희', nameEn: 'Moon Yang-hee', initials: 'door', color: '#0A7A37', roleKey: 'owner', handicap: 12, avg: 84.2, paid: true },
+  { id: 'cf2', nameKr: '홍길동', nameEn: 'Hong Gil-dong', initials: 'red', color: '#E2571F', roleKey: 'general', handicap: 9, avg: 82.0, paid: true },
+  { id: 'cf3', nameKr: '김철수', nameEn: 'Kim Cheol-su', initials: 'awee', color: '#9A7D3A', roleKey: 'management', handicap: 16, avg: 88.4, paid: true },
+  { id: 'cf4', nameKr: '박영희', nameEn: 'Park Young-hee', initials: 'Gour', color: '#3B82F6', roleKey: 'member', handicap: 20, avg: 91.2, paid: true },
+  { id: 'cf5', nameKr: '이민수', nameEn: 'Lee Min-soo', initials: 'this', color: '#8B5CF6', roleKey: 'member', handicap: 24, avg: 95.0, paid: true },
+  { id: 'cf6', nameKr: '정해성', nameEn: 'Jeong Hae-seong', initials: 'fect', color: '#0EA5A0', roleKey: 'member', handicap: 14, avg: 86.1, paid: false },
+  { id: 'cf7', nameKr: '최윤아', nameEn: 'Choi Yoon-ah', initials: 'Choi', color: '#E91E8C', roleKey: 'member', handicap: 18, avg: 90.3, paid: true },
+  { id: 'cf8', nameKr: '강대호', nameEn: 'Kang Dae-ho', initials: 'river', color: '#4CAF50', roleKey: 'member', handicap: 11, avg: 83.5, paid: true },
+]
+
+/* Club ranking — sorted by avg strokes ascending */
+export const clubRanking = [
+  { rank: 1, nameKr: '홍길동', nameEn: 'Hong Gil-dong', initials: 'red', color: '#E2571F', handicap: 9, score: 82.0, scoreLabel: '82 hits' },
+  { rank: 2, nameKr: '강대호', nameEn: 'Kang Dae-ho', initials: 'river', color: '#4CAF50', handicap: 11, score: 83.5, scoreLabel: '83.5 strokes' },
+  { rank: 3, nameKr: '문양희', nameEn: 'Moon Yang-hee', initials: 'door', color: '#0A7A37', handicap: 12, score: 84.2, scoreLabel: '84.2 Ta' },
+  { rank: 4, nameKr: '정해성', nameEn: 'Jeong Hae-seong', handicap: 14, score: 86.1 },
+  { rank: 5, nameKr: '김철수', nameEn: 'Kim Cheol-su', handicap: 16, score: 88.4 },
+  { rank: 6, nameKr: '최윤아', nameEn: 'Choi Yoon-ah', handicap: 18, score: 90.3 },
+  { rank: 7, nameKr: '박영희', nameEn: 'Park Young-hee', handicap: 20, score: 91.2 },
+  { rank: 8, nameKr: '이민수', nameEn: 'Lee Min-soo', handicap: 24, score: 95.0 },
+]
+
+/* Pending membership applicants */
+export const pendingApplicants = [
+  { id: 'pa1', nameKr: '서지훈', nameEn: 'Seo Ji-hoon', initials: 'west', color: '#3B82F6' },
+  { id: 'pa2', nameKr: '오현진', nameEn: 'Oh Hyun-jin', initials: 'oh', color: '#E91E8C' },
+]
+
 /* Korean regions (시·도) for the region picker. */
 export const regions = [
   { ko: '서울', en: 'Seoul' }, { ko: '경기', en: 'Gyeonggi' }, { ko: '인천', en: 'Incheon' },
