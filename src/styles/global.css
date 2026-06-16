@@ -631,7 +631,9 @@ body {
 .ledger-bal .lb-v em { font-style: normal; font-size: var(--fs-cap); color: var(--positive); font-weight: 600; }
 
 .sticky-cta {
-  position: sticky; bottom: 0; margin: auto calc(-1 * var(--pad)) -24px;
+  position: sticky; bottom: 0;
+  margin-top: auto;
+  margin-left: calc(-1 * var(--pad)); margin-right: calc(-1 * var(--pad));
   padding: 18px var(--pad) calc(16px + env(safe-area-inset-bottom, 8px));
   background: linear-gradient(to top, var(--page) 82%, transparent);
 }

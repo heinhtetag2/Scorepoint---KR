@@ -149,11 +149,11 @@ export default function ClubDetail({ club, onBack, onOpenEvent, onSettings, onNe
           </div>
         )}
 
-        {/* ── Ranking tab — clean standard design ── */}
+        {/* ── Ranking tab ── */}
         {tab === 'ranking' && (
           <>
             {/* period toggle */}
-            <div style={{ display: 'flex', background: 'var(--surface-2)', borderRadius: 12, padding: 3, marginBottom: 14 }}>
+            <div style={{ display: 'flex', background: 'var(--surface-2)', borderRadius: 12, padding: 3, marginBottom: 10 }}>
               {RANK_PERIODS.map((p) => (
                 <button key={p.id} onClick={() => setRankPeriod(p.id)}
                   style={{
@@ -167,52 +167,48 @@ export default function ClubDetail({ club, onBack, onOpenEvent, onSettings, onNe
                   }}>{p.label}</button>
               ))}
             </div>
+            <p style={{ fontSize: 11, color: 'var(--text-3)', textAlign: 'center', marginBottom: 10 }}>
+              {lang === 'ko' ? '평균 타수 기준 · 낮을수록 높은 순위' : 'Based on average strokes · Lower is higher'}
+            </p>
 
-            {/* top 3 cards */}
-            <div style={{ display: 'flex', gap: 8, marginBottom: 4 }}>
-              {[top3[1], top3[0], top3[2]].map((r, col) => {
-                if (!r) return null
-                const isFirst = r.rank === 1
-                const medals = ['🥈', '🥇', '🥉']
-                return (
-                  <div key={r.rank}
-                    style={{
-                      flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center',
-                      background: 'var(--surface)', borderRadius: 14,
-                      border: isFirst ? '2px solid var(--brand)' : '1px solid var(--line)',
-                      padding: isFirst ? '16px 8px 14px' : '12px 8px 12px',
-                      position: 'relative',
-                    }}>
-                    <span style={{ position: 'absolute', top: -10, fontSize: 20 }}>{medals[col]}</span>
-                    <MemberAvatar name={lang === 'ko' ? r.nameKr : r.nameEn} color={r.color || '#888'} size={isFirst ? 48 : 40} />
-                    <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-1)', margin: '8px 0 3px', letterSpacing: -0.2, textAlign: 'center' }}>
-                      {lang === 'ko' ? r.nameKr : r.nameEn}
-                    </p>
-                    <p style={{ fontSize: 13, fontWeight: 800, color: isFirst ? 'var(--brand)' : 'var(--text-2)', margin: 0 }} className="num">
-                      {r.score}타
-                    </p>
-                    <p style={{ fontSize: 11, color: 'var(--text-3)', margin: '2px 0 0' }}>
-                      {lang === 'ko' ? `핸디 ${r.handicap}` : `HCP ${r.handicap}`}
-                    </p>
-                  </div>
-                )
-              })}
+            {/* podium */}
+            <div className="card" style={{ background: 'linear-gradient(135deg, #0A7A37 0%, #1a9e4a 100%)', padding: '20px 12px 0', marginBottom: 4 }}>
+              <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'center', gap: 8 }}>
+                {[1, 0, 2].map((idx, col) => {
+                  const r = top3[idx]
+                  if (!r) return null
+                  const isFirst = idx === 0
+                  const blockH = [80, 104, 64][col]
+                  const blockColor = ['#C0C0C0', '#FFD700', '#CD7F32'][col]
+                  const name = lang === 'ko' ? r.nameKr : r.nameEn
+                  return (
+                    <div key={r.rank} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
+                      {isFirst && <Crown size={16} color="#E0A100" style={{ marginBottom: 4 }} />}
+                      <MemberAvatar name={name} color={r.color || '#666'} size={isFirst ? 52 : 42} />
+                      <p style={{ fontSize: 13, fontWeight: 700, color: '#fff', margin: '6px 0 2px', letterSpacing: -0.2 }}>{name}</p>
+                      <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.7)', margin: '0 0 8px' }} className="num">
+                        {r.score}{lang === 'ko' ? '타' : ' strokes'}
+                      </p>
+                      <div style={{ width: '100%', height: blockH, background: blockColor, borderRadius: '8px 8px 0 0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <span style={{ fontSize: 22, fontWeight: 900, color: 'rgba(0,0,0,0.2)' }}>{r.rank}</span>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
             </div>
 
             {/* rest of list */}
             <div className="card cd-list">
               {rest.map((r) => (
-                <div className="cd-mem" key={r.rank} style={{ gap: 12 }}>
-                  <span style={{ width: 22, fontWeight: 700, fontSize: 14, color: 'var(--text-3)', textAlign: 'center', flexShrink: 0 }} className="num">
-                    {r.rank}
-                  </span>
-                  <MemberAvatar name={lang === 'ko' ? r.nameKr : r.nameEn} color="#9CA3AF" size={34} />
+                <div className="cd-mem" key={r.rank}>
+                  <span style={{ width: 24, fontWeight: 700, fontSize: 15, color: 'var(--text-3)', textAlign: 'center', flexShrink: 0 }} className="num">{r.rank}</span>
                   <span className="cd-mem-name" style={{ flex: 1 }}>{lang === 'ko' ? r.nameKr : r.nameEn}</span>
-                  <span style={{ fontSize: 12, color: 'var(--text-3)' }}>
-                    {lang === 'ko' ? `핸디 ${r.handicap}` : `HCP ${r.handicap}`}
+                  <span className="cd-mem-hcp num" style={{ color: 'var(--text-3)', fontSize: 12 }}>
+                    {lang === 'ko' ? `핸디캡 ${r.handicap}` : `Handicap ${r.handicap}`}
                   </span>
-                  <span className="num" style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-2)', minWidth: 54, textAlign: 'right' }}>
-                    {r.score}{lang === 'ko' ? '타' : ''}
+                  <span className="cd-mem-hcp num" style={{ minWidth: 70, textAlign: 'right', color: 'var(--text-2)' }}>
+                    {r.score}{lang === 'ko' ? '타' : ' strokes'}
                   </span>
                 </div>
               ))}
