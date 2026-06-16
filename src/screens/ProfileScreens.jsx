@@ -940,14 +940,318 @@ export function CustomerCenter({ onBack }) {
   )
 }
 
+/* ── Policy detail shared shell ─────────────────────────────── */
+function PolicyDoc({ title, onBack, children }) {
+  return (
+    <SubPage title={title} onBack={onBack}>
+      <div style={{ padding: '4px 0 32px' }}>{children}</div>
+    </SubPage>
+  )
+}
+
+function PolicySection({ heading, children }) {
+  return (
+    <div style={{ marginBottom: 24 }}>
+      {heading && (
+        <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-1)', marginBottom: 6, letterSpacing: -0.2 }}>
+          {heading}
+        </p>
+      )}
+      <p style={{ fontSize: 13, lineHeight: 1.75, color: 'var(--text-2)', letterSpacing: -0.1 }}>
+        {children}
+      </p>
+    </div>
+  )
+}
+
+function PolicyItem({ n, children }) {
+  return (
+    <div style={{ display: 'flex', gap: 6, marginBottom: 8 }}>
+      <span style={{ fontSize: 13, color: 'var(--text-3)', flexShrink: 0, minWidth: 20 }}>{n}.</span>
+      <p style={{ fontSize: 13, lineHeight: 1.75, color: 'var(--text-2)', margin: 0 }}>{children}</p>
+    </div>
+  )
+}
+
+function PolicyDate({ ko, en }) {
+  const { lang } = useLang()
+  return (
+    <p style={{ fontSize: 12, color: 'var(--text-3)', marginBottom: 20 }}>
+      {lang === 'ko' ? ko : en}
+    </p>
+  )
+}
+
+/* ── Terms of Service ───────────────────────────────────────── */
+function TermsOfService({ onBack }) {
+  const { lang } = useLang()
+  const isKo = lang === 'ko'
+  return (
+    <PolicyDoc title={isKo ? '서비스 이용약관' : 'Terms of Service'} onBack={onBack}>
+      <PolicyDate ko="시행일: 2025년 1월 1일" en="Effective: January 1, 2025" />
+      <PolicySection heading={isKo ? '제1조 (목적)' : 'Article 1 — Purpose'}>
+        {isKo
+          ? '이 약관은 ScoreShot(이하 "서비스")이 제공하는 골프 스코어 기록, 이벤트 관리, 클럽 운영 서비스의 이용에 관한 기본적인 사항을 규정함을 목적으로 합니다.'
+          : 'These Terms govern your use of ScoreShot ("Service"), including golf score tracking, event management, and club administration features provided by ScoreShot Inc.'}
+      </PolicySection>
+      <PolicySection heading={isKo ? '제2조 (정의)' : 'Article 2 — Definitions'}>
+        {isKo ? (
+          <>
+            <PolicyItem n="①">"서비스"란 ScoreShot이 제공하는 모든 앱, 웹, API 기반 서비스를 말합니다.</PolicyItem>
+            <PolicyItem n="②">"회원"이란 이 약관에 동의하고 서비스를 이용하는 자를 말합니다.</PolicyItem>
+            <PolicyItem n="③">"콘텐츠"란 회원이 서비스 내에 게시·등록한 점수, 사진, 텍스트 등 모든 정보를 의미합니다.</PolicyItem>
+          </>
+        ) : (
+          <>
+            <PolicyItem n="1">"Service" means all apps, APIs, and web interfaces operated by ScoreShot Inc.</PolicyItem>
+            <PolicyItem n="2">"Member" means any person who agrees to these Terms and uses the Service.</PolicyItem>
+            <PolicyItem n="3">"Content" means scores, photos, text, and any other material posted by Members.</PolicyItem>
+          </>
+        )}
+      </PolicySection>
+      <PolicySection heading={isKo ? '제3조 (서비스 이용)' : 'Article 3 — Service Use'}>
+        {isKo
+          ? '회원은 서비스를 이용함에 있어 법령, 이 약관, 서비스 정책을 준수해야 합니다. 타인의 권리를 침해하거나 서비스의 정상적인 운영을 방해하는 행위는 금지됩니다.'
+          : 'Members must comply with applicable laws, these Terms, and our policies. Acts that infringe others\' rights or disrupt the normal operation of the Service are prohibited.'}
+      </PolicySection>
+      <PolicySection heading={isKo ? '제4조 (회원의 의무)' : 'Article 4 — Member Obligations'}>
+        {isKo ? (
+          <>
+            <PolicyItem n="①">타인의 개인정보를 무단으로 수집·사용하지 않을 것</PolicyItem>
+            <PolicyItem n="②">허위 정보를 등록하거나 타인을 사칭하지 않을 것</PolicyItem>
+            <PolicyItem n="③">서비스에 악성코드를 배포하거나 해킹을 시도하지 않을 것</PolicyItem>
+            <PolicyItem n="④">상업적 목적의 광고나 스팸을 게시하지 않을 것</PolicyItem>
+          </>
+        ) : (
+          <>
+            <PolicyItem n="1">Do not collect or use others' personal information without consent.</PolicyItem>
+            <PolicyItem n="2">Do not register false information or impersonate others.</PolicyItem>
+            <PolicyItem n="3">Do not distribute malware or attempt unauthorized access.</PolicyItem>
+            <PolicyItem n="4">Do not post commercial advertisements or spam.</PolicyItem>
+          </>
+        )}
+      </PolicySection>
+      <PolicySection heading={isKo ? '제5조 (서비스 변경 및 중단)' : 'Article 5 — Changes & Suspension'}>
+        {isKo
+          ? 'ScoreShot은 운영상 또는 기술상의 필요에 따라 서비스의 전부 또는 일부를 변경하거나 일시 중단할 수 있으며, 이에 대해 회원에게 사전 고지합니다. 단, 긴급한 경우 사후 고지할 수 있습니다.'
+          : 'ScoreShot may modify or temporarily suspend the Service for operational or technical reasons, with prior notice to Members. In urgent cases, notice may be given after the fact.'}
+      </PolicySection>
+      <PolicySection heading={isKo ? '제6조 (책임의 한계)' : 'Article 6 — Limitation of Liability'}>
+        {isKo
+          ? 'ScoreShot은 천재지변, 불가항력, 서비스 점검 등 회사의 귀책사유가 없는 경우로 인한 서비스 중단에 대해 책임을 지지 않습니다. 회원이 서비스를 통해 얻은 정보로 인해 발생한 손해에 대해서도 회사는 책임을 부담하지 않습니다.'
+          : 'ScoreShot is not liable for service interruptions caused by force majeure, scheduled maintenance, or circumstances beyond its control. ScoreShot is not responsible for damages arising from information obtained through the Service.'}
+      </PolicySection>
+      <PolicySection heading={isKo ? '제7조 (준거법 및 관할)' : 'Article 7 — Governing Law'}>
+        {isKo
+          ? '이 약관은 대한민국 법률에 따라 해석되며, 서비스 이용과 관련된 분쟁은 서울중앙지방법원을 제1심 전속 관할법원으로 합니다.'
+          : 'These Terms are governed by the laws of the Republic of Korea. Disputes relating to the Service shall be subject to the exclusive jurisdiction of the Seoul Central District Court.'}
+      </PolicySection>
+    </PolicyDoc>
+  )
+}
+
+/* ── Privacy Policy ─────────────────────────────────────────── */
+function PrivacyPolicy({ onBack }) {
+  const { lang } = useLang()
+  const isKo = lang === 'ko'
+  return (
+    <PolicyDoc title={isKo ? '개인정보 처리방침' : 'Privacy Policy'} onBack={onBack}>
+      <PolicyDate ko="시행일: 2025년 1월 1일" en="Effective: January 1, 2025" />
+      <PolicySection heading={isKo ? '수집하는 개인정보 항목' : 'Information We Collect'}>
+        {isKo
+          ? 'ScoreShot은 서비스 제공을 위해 다음 정보를 수집합니다: 이름, 이메일 주소, 전화번호, 프로필 사진, 골프 스코어 및 라운드 기록, 클럽 활동 정보, 기기 정보(OS, 기기 모델, 앱 버전), 서비스 이용 기록(접속 일시, IP 주소).'
+          : 'ScoreShot collects: name, email address, phone number, profile photo, golf scores and round history, club activity, device information (OS, model, app version), and service usage logs (access time, IP address).'}
+      </PolicySection>
+      <PolicySection heading={isKo ? '개인정보 수집 및 이용 목적' : 'Why We Collect It'}>
+        {isKo ? (
+          <>
+            <PolicyItem n="①">회원 가입 및 본인 확인</PolicyItem>
+            <PolicyItem n="②">골프 스코어 기록 및 통계 제공</PolicyItem>
+            <PolicyItem n="③">이벤트·클럽 서비스 운영</PolicyItem>
+            <PolicyItem n="④">고객 문의 응대 및 공지사항 전달</PolicyItem>
+            <PolicyItem n="⑤">서비스 개선 및 신규 서비스 개발</PolicyItem>
+          </>
+        ) : (
+          <>
+            <PolicyItem n="1">Member registration and identity verification</PolicyItem>
+            <PolicyItem n="2">Golf score recording and statistics</PolicyItem>
+            <PolicyItem n="3">Event and club service operation</PolicyItem>
+            <PolicyItem n="4">Customer support and notifications</PolicyItem>
+            <PolicyItem n="5">Service improvement and new feature development</PolicyItem>
+          </>
+        )}
+      </PolicySection>
+      <PolicySection heading={isKo ? '개인정보 보유 및 이용 기간' : 'Retention Period'}>
+        {isKo
+          ? '회원 탈퇴 시까지 보유합니다. 단, 관계 법령에 의해 보존 의무가 있는 경우에는 해당 기간 동안 보관합니다. 전자상거래 관련 기록은 5년, 접속 로그는 3개월 보관됩니다.'
+          : 'Data is retained until account deletion. Records required by law are kept for the applicable period: e-commerce records for 5 years, access logs for 3 months.'}
+      </PolicySection>
+      <PolicySection heading={isKo ? '개인정보 제3자 제공' : 'Third-Party Sharing'}>
+        {isKo
+          ? 'ScoreShot은 원칙적으로 회원의 개인정보를 외부에 제공하지 않습니다. 다만, 회원의 사전 동의가 있거나 법령에 근거한 경우에는 예외로 합니다.'
+          : 'ScoreShot does not share personal information with third parties without consent, except as required by law or with prior member agreement.'}
+      </PolicySection>
+      <PolicySection heading={isKo ? '개인정보 처리 위탁' : 'Processing Entrusted to Third Parties'}>
+        {isKo
+          ? 'ScoreShot은 서비스 운영을 위해 일부 업무를 외부 전문업체에 위탁합니다: Amazon Web Services (서버 호스팅 및 데이터 저장), Google Firebase (푸시 알림), Sentry (오류 추적).'
+          : 'ScoreShot entrusts certain operations to third parties: Amazon Web Services (hosting & storage), Google Firebase (push notifications), Sentry (error tracking).'}
+      </PolicySection>
+      <PolicySection heading={isKo ? '회원의 권리' : 'Your Rights'}>
+        {isKo
+          ? '회원은 언제든지 본인의 개인정보를 조회·수정할 수 있으며, 수집·이용에 대한 동의를 철회할 수 있습니다. 개인정보 삭제 요청은 앱 내 설정 > 계정 > 회원 탈퇴를 통해 진행하거나 고객센터로 문의하시기 바랍니다.'
+          : 'Members may view, edit, or withdraw consent for their personal information at any time. To request deletion, use Settings → Account → Delete Account, or contact our support team.'}
+      </PolicySection>
+      <PolicySection heading={isKo ? '개인정보 보호 책임자' : 'Privacy Officer'}>
+        {isKo
+          ? '개인정보 처리방침에 관한 문의는 아래로 연락하시기 바랍니다.\n이름: 김도현 / 직책: 개인정보 보호 책임자\n이메일: privacy@scoreshot.kr'
+          : 'For privacy inquiries, contact us at:\nName: Dohyun Kim / Title: Privacy Officer\nEmail: privacy@scoreshot.kr'}
+      </PolicySection>
+    </PolicyDoc>
+  )
+}
+
+/* ── Location Service Terms ─────────────────────────────────── */
+function LocationTerms({ onBack }) {
+  const { lang } = useLang()
+  const isKo = lang === 'ko'
+  return (
+    <PolicyDoc title={isKo ? '위치기반 서비스 약관' : 'Location Service Terms'} onBack={onBack}>
+      <PolicyDate ko="시행일: 2025년 1월 1일" en="Effective: January 1, 2025" />
+      <PolicySection heading={isKo ? '위치기반 서비스 개요' : 'Overview'}>
+        {isKo
+          ? 'ScoreShot은 위치정보의 보호 및 이용 등에 관한 법률에 따라 회원의 위치 정보를 수집·이용합니다. 이 약관은 위치기반 서비스 이용에 관한 사항을 규정합니다.'
+          : 'ScoreShot collects and uses location data in accordance with applicable law. These Terms govern the use of location-based services within the app.'}
+      </PolicySection>
+      <PolicySection heading={isKo ? '수집하는 위치 정보' : 'Location Data Collected'}>
+        {isKo ? (
+          <>
+            <PolicyItem n="①">GPS 기반 현재 위치 (위도·경도)</PolicyItem>
+            <PolicyItem n="②">골프 라운드 경로 및 이동 거리</PolicyItem>
+            <PolicyItem n="③">가까운 골프 클럽 및 코스 감지</PolicyItem>
+          </>
+        ) : (
+          <>
+            <PolicyItem n="1">GPS-based current location (latitude & longitude)</PolicyItem>
+            <PolicyItem n="2">Round route and distance tracking</PolicyItem>
+            <PolicyItem n="3">Nearby golf club and course detection</PolicyItem>
+          </>
+        )}
+      </PolicySection>
+      <PolicySection heading={isKo ? '위치 정보 이용 목적' : 'Purpose of Use'}>
+        {isKo ? (
+          <>
+            <PolicyItem n="①">주변 골프장 및 클럽 검색 및 추천</PolicyItem>
+            <PolicyItem n="②">라운드 중 홀별 거리 및 코스 가이드 제공</PolicyItem>
+            <PolicyItem n="③">스코어 자동 등록 시 위치 기반 코스 인식</PolicyItem>
+            <PolicyItem n="④">이벤트 장소 확인 및 경로 안내</PolicyItem>
+          </>
+        ) : (
+          <>
+            <PolicyItem n="1">Search and recommend nearby golf courses</PolicyItem>
+            <PolicyItem n="2">Hole distance and course guidance during rounds</PolicyItem>
+            <PolicyItem n="3">Location-based course recognition for automatic score logging</PolicyItem>
+            <PolicyItem n="4">Event venue confirmation and directions</PolicyItem>
+          </>
+        )}
+      </PolicySection>
+      <PolicySection heading={isKo ? '위치 정보 보유 기간' : 'Retention Period'}>
+        {isKo
+          ? '위치 정보는 서비스 제공 목적 달성 후 즉시 파기하는 것을 원칙으로 합니다. 단, 라운드 기록에 포함된 위치 데이터는 회원 요청 시까지 보관됩니다.'
+          : 'Location data is deleted immediately after the purpose is fulfilled. Location data embedded in round records is retained until the member requests deletion.'}
+      </PolicySection>
+      <PolicySection heading={isKo ? '위치 정보 제3자 제공' : 'Third-Party Sharing'}>
+        {isKo
+          ? '회원의 위치 정보는 원칙적으로 제3자에게 제공되지 않습니다. 단, 회원의 동의가 있거나 법령에 근거한 경우에는 예외로 합니다.'
+          : 'Location data is not shared with third parties without consent, except as required by law.'}
+      </PolicySection>
+      <PolicySection heading={isKo ? '위치 서비스 동의 철회' : 'Withdrawing Consent'}>
+        {isKo
+          ? '회원은 언제든지 기기 설정에서 위치 권한을 거부하거나 앱 내 설정에서 위치 서비스 사용을 비활성화할 수 있습니다. 위치 서비스를 비활성화하면 일부 기능이 제한될 수 있습니다.'
+          : 'Members may revoke location permissions at any time in device settings or disable location services within the app. Some features may be limited without location access.'}
+      </PolicySection>
+    </PolicyDoc>
+  )
+}
+
+/* ── Open-source Licenses ───────────────────────────────────── */
+const OSS_LIST = [
+  { name: 'React', version: '18.3.1', license: 'MIT', author: 'Meta Platforms, Inc.' },
+  { name: 'Vite', version: '5.4.11', license: 'MIT', author: 'Evan You & Vite contributors' },
+  { name: 'Lucide React', version: '0.462.0', license: 'ISC', author: 'Lucide contributors' },
+  { name: 'react-dom', version: '18.3.1', license: 'MIT', author: 'Meta Platforms, Inc.' },
+  { name: 'esbuild', version: '0.21.5', license: 'MIT', author: 'Evan Wallace' },
+  { name: 'rollup', version: '4.24.0', license: 'MIT', author: 'Lukas Taegert-Atkinson' },
+  { name: 'postcss', version: '8.4.47', license: 'MIT', author: 'Andrey Sitnik' },
+  { name: 'autoprefixer', version: '10.4.20', license: 'MIT', author: 'Andrey Sitnik' },
+]
+
+function OpenSourceLicenses({ onBack }) {
+  const { lang } = useLang()
+  const isKo = lang === 'ko'
+  const [expanded, setExpanded] = useState(null)
+
+  const MIT_TEXT = `Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.`
+
+  const ISC_TEXT = `Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted, provided that the above copyright notice and this permission notice appear in all copies.\n\nTHE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE.`
+
+  return (
+    <PolicyDoc title={isKo ? '오픈소스 라이선스' : 'Open-source Licenses'} onBack={onBack}>
+      <p style={{ fontSize: 13, color: 'var(--text-3)', marginBottom: 16, lineHeight: 1.6 }}>
+        {isKo
+          ? 'ScoreShot은 아래의 오픈소스 소프트웨어를 사용합니다.'
+          : 'ScoreShot uses the following open-source software.'}
+      </p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+        {OSS_LIST.map((lib) => (
+          <div key={lib.name}
+            style={{ background: 'var(--surface)', borderRadius: expanded === lib.name ? 12 : 10, overflow: 'hidden', transition: 'border-radius .2s' }}>
+            <button
+              onClick={() => setExpanded(expanded === lib.name ? null : lib.name)}
+              style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, padding: '13px 16px', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' }}>
+              <div style={{ flex: 1 }}>
+                <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-1)', margin: 0, letterSpacing: -0.2 }}>{lib.name}</p>
+                <p style={{ fontSize: 12, color: 'var(--text-3)', margin: '2px 0 0', letterSpacing: -0.1 }}>v{lib.version} · {lib.author}</p>
+              </div>
+              <span style={{
+                fontSize: 11, fontWeight: 700, color: 'var(--brand)',
+                background: 'color-mix(in srgb, var(--brand) 12%, transparent)',
+                borderRadius: 6, padding: '3px 8px', letterSpacing: 0.2,
+              }}>{lib.license}</span>
+              <ChevronRight size={15} style={{
+                color: 'var(--text-3)',
+                transform: expanded === lib.name ? 'rotate(90deg)' : 'rotate(0deg)',
+                transition: 'transform .2s',
+              }} />
+            </button>
+            {expanded === lib.name && (
+              <div style={{ padding: '0 16px 16px', borderTop: '1px solid var(--divider)' }}>
+                <p style={{ fontSize: 11, color: 'var(--text-2)', lineHeight: 1.7, marginTop: 12, whiteSpace: 'pre-wrap', fontFamily: 'monospace', letterSpacing: 0 }}>
+                  {lib.license === 'ISC' ? ISC_TEXT : MIT_TEXT}
+                </p>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </PolicyDoc>
+  )
+}
+
 /* ── 약관 및 정책 ────────────────────────────────────────────── */
 export function Terms({ onBack }) {
   const { t, pick } = useLang()
+  const [page, setPage] = useState(null)
+
+  if (page === 'pl1') return <TermsOfService onBack={() => setPage(null)} />
+  if (page === 'pl2') return <PrivacyPolicy onBack={() => setPage(null)} />
+  if (page === 'pl3') return <LocationTerms onBack={() => setPage(null)} />
+  if (page === 'pl4') return <OpenSourceLicenses onBack={() => setPage(null)} />
+
   return (
     <SubPage title={t('mTerms')} onBack={onBack}>
       <div className="list" style={{ marginTop: 6 }}>
         {policies.map((p) => (
-          <div className="list-row" key={p.id}>
+          <div className="list-row" key={p.id} onClick={() => setPage(p.id)} style={{ cursor: 'pointer' }}>
             <FileText size={17} strokeWidth={1.8} className="lr-ico" />
             <span className="lr-label">{pick(p.ko, p.en)}</span>
             <ChevronRight size={17} className="chev" />
