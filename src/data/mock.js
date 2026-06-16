@@ -38,6 +38,59 @@ export const events = [
   },
 ]
 
+/* Rich event feed for the 일정(Event) tab — list + detail + create.
+   status: 'scheduled' | 'ended'. */
+export const eventList = [
+  {
+    id: 'ev1', status: 'scheduled', dday: 6,
+    clubKo: '타고플러스 골프클럽', clubEn: 'Tago Plus Golf Club',
+    titleKo: '2026년 6월 정기모임', titleEn: 'June 2026 Monthly Meeting',
+    courseKo: '남서울CC', courseEn: 'Namseoul CC', subKo: '동코스', subEn: 'East Course',
+    date: '2026-06-15', time: '08:00', fee: 150000, capacity: 32,
+    joined: 24, absent: 3, mood: 2,
+  },
+  {
+    id: 'ev2', status: 'ended',
+    clubKo: '타고플러스 골프클럽', clubEn: 'Tago Plus Golf Club',
+    titleKo: '5월 정기 라운딩', titleEn: 'May Regular Rounding',
+    courseKo: '레이크힐스CC', courseEn: 'Lakehills GC', subKo: '', subEn: '',
+    date: '2026-05-18', time: '07:30', fee: 130000, capacity: 28,
+    joined: 24, absent: 4, mood: 5,
+  },
+  {
+    id: 'ev3', status: 'ended',
+    clubKo: '타고플러스 골프클럽', clubEn: 'Tago Plus Golf Club',
+    titleKo: '창립기념 컨퍼런스', titleEn: 'Founding Anniversary Conference',
+    courseKo: '베어크리크GC', courseEn: 'Bear Creek GC', subKo: '', subEn: '',
+    date: '2026-04-06', time: '08:30', fee: 180000, capacity: 36,
+    joined: 32, absent: 4, mood: 6,
+  },
+]
+
+/* Attendees on the event detail, grouped by status.
+   status: 'present' (출석) | 'absent' (불참) | 'mood' (분위기 — left a reaction). */
+export const eventAttendees = [
+  { id: 'ea1', nameKo: '문양희', nameEn: 'Moon Yang-hee', color: '#0A7A37', status: 'present' },
+  { id: 'ea2', nameKo: '홍길동', nameEn: 'Hong Gil-dong', color: '#1E8E5A', status: 'present' },
+  { id: 'ea3', nameKo: '김철수', nameEn: 'Kim Cheol-su', color: '#C77B3B', status: 'present' },
+  { id: 'ea4', nameKo: '박영희', nameEn: 'Park Young-hee', color: '#3B82F6', status: 'present' },
+  { id: 'ea5', nameKo: '이민수', nameEn: 'Lee Min-soo', color: '#8B5CF6', status: 'present' },
+  { id: 'ea6', nameKo: '정해성', nameEn: 'Jeong Hae-seong', color: '#2563EB', status: 'present' },
+  { id: 'eb1', nameKo: '윤서연', nameEn: 'Yoon Seo-yeon', color: '#94A3B8', status: 'absent' },
+  { id: 'eb2', nameKo: '강도현', nameEn: 'Kang Do-hyun', color: '#94A3B8', status: 'absent' },
+  { id: 'eb3', nameKo: '한지우', nameEn: 'Han Ji-woo', color: '#94A3B8', status: 'absent' },
+  { id: 'ec1', nameKo: '오지호', nameEn: 'Oh Ji-ho', color: '#0EA5A0', status: 'mood', emoji: '😊' },
+  { id: 'ec2', nameKo: '장미래', nameEn: 'Jang Mi-rae', color: '#E2571F', status: 'mood', emoji: '🔥' },
+]
+
+/* Organizer tools for an event (kept for reuse; not currently rendered). */
+export const eventTools = [
+  { id: 'group', icon: 'grid', titleKo: '조 편성', titleEn: 'Group formation', subKo: '4인 1조 · AI 자동 편성', subEn: '4 per team · AI auto formation' },
+  { id: 'results', icon: 'camera', titleKo: '결과 등록', titleEn: 'Register results', subKo: '성적표 사진 > 일괄 등록', subEn: 'Report card photo > Bulk registration' },
+  { id: 'awards', icon: 'trophy', titleKo: '신페리오 계산 · 시상', titleEn: 'Shinperio Calculation · Awards', subKo: '순위 계산 후 시상', subEn: 'Awards after ranking calculation' },
+  { id: 'settle', icon: 'receipt', titleKo: '정산 · 이체', titleEn: 'Settlement · Transfer', subKo: '영수증 촬영 > 1인당 자동 계산', subEn: 'Photo receipt > Auto per-person', locked: true },
+]
+
 export const scoreTrend = [88, 86, 87, 84, 85, 82, 83, 80, 82, 79]
 
 export const myRecords = [
@@ -48,10 +101,79 @@ export const myRecords = [
   { id: 'r5', score: 79, net: 71.0, course: '레이크사이드', courseEn: 'Lakeside', sub: '아폴로', subEn: 'Apollo', date: '2026-04-18' },
 ]
 
+/* Standard par-72 layout (front 36 / back 36) used for every record's scorecard. */
+export const HOLE_PARS = [4, 4, 3, 5, 4, 4, 3, 4, 5, 4, 3, 4, 4, 5, 4, 3, 4, 5]
+
+/* Build a believable 18-hole scorecard whose strokes sum EXACTLY to `gross`.
+   Deterministic from `seed` (record index) so a given record always renders the
+   same card. Plants 2 birdies for realism, then fills bogeys/doubles to hit gross. */
+export function buildScorecard(gross, seed = 0) {
+  const holes = HOLE_PARS.slice()
+  const birdieCand = HOLE_PARS.map((p, i) => (p >= 4 ? i : -1)).filter((i) => i >= 0)
+  const b1 = birdieCand[(seed * 2 + 1) % birdieCand.length]
+  let b2 = birdieCand[(seed * 2 + 5) % birdieCand.length]
+  if (b2 === b1) b2 = birdieCand[(seed * 2 + 6) % birdieCand.length]
+  const birdies = new Set([b1, b2])
+  holes[b1] -= 1
+  holes[b2] -= 1
+
+  let need = gross - 72 + 2 // strokes to add back after the two birdies
+  let idx = seed % 18
+  let guard = 0
+  while (need > 0 && guard < 1000) {
+    if (!birdies.has(idx) && holes[idx] - HOLE_PARS[idx] < 2) {
+      holes[idx] += 1
+      need -= 1
+    }
+    idx = (idx + 1) % 18
+    guard += 1
+  }
+
+  const tally = { eagle: 0, birdie: 0, par: 0, bogey: 0, double: 0 }
+  holes.forEach((s, i) => {
+    const d = s - HOLE_PARS[i]
+    if (d <= -2) tally.eagle += 1
+    else if (d === -1) tally.birdie += 1
+    else if (d === 0) tally.par += 1
+    else if (d === 1) tally.bogey += 1
+    else tally.double += 1
+  })
+
+  const out = holes.slice(0, 9).reduce((a, b) => a + b, 0)
+  const inn = holes.slice(9).reduce((a, b) => a + b, 0)
+  return { holes, out, in: inn, tally }
+}
+
 export const recentMatches = [
   { id: 'm1', score: 82, net: 70.0, course: '남서울CC', courseEn: 'Namseoul CC', date: '5/2' },
   { id: 'm2', score: 79, net: 71.0, course: '레이크사이드', courseEn: 'Lakeside', date: '4/18' },
   { id: 'm3', score: 85, net: 72.5, course: '제이드팰리스', courseEn: 'Jade Palace', date: '4/3' },
+]
+
+/* The round a fresh scan "recognizes" — used by the scan review screen. */
+export const scannedRound = {
+  id: 'scan1', score: 83, net: 71.5,
+  course: '남서울CC', courseEn: 'Namseoul CC', sub: '동코스', subEn: 'East Course',
+  date: '2026-06-16',
+}
+
+/* The user's saved playing partners (golf friends / club mates). Source for the
+   companion picker. The scanned round's companions are the first three of these. */
+export const partners = [
+  { ko: '김민준', en: 'Kim Min-jun' },
+  { ko: '박서준', en: 'Park Seo-jun' },
+  { ko: '이도윤', en: 'Lee Do-yoon' },
+  { ko: '최유나', en: 'Choi Yu-na' },
+  { ko: '정해인', en: 'Jung Hae-in' },
+  { ko: '한지우', en: 'Han Ji-woo' },
+]
+
+/* Playing partners for a round — fixed gross scores. The signed-in user
+   (myRecords[].score) is merged in and the four are ranked at render time. */
+export const roundCompanions = [
+  { id: 'cp1', name: '김민준', nameEn: 'Kim Min-jun', avatar: 'cap', gross: 80 },
+  { id: 'cp2', name: '박서준', nameEn: 'Park Seo-jun', avatar: 'shades', gross: 86 },
+  { id: 'cp3', name: '이도윤', nameEn: 'Lee Do-yoon', avatar: 'senior', gross: 90 },
 ]
 
 const UNSPLASH = (id) => `https://images.unsplash.com/photo-${id}?w=900&q=75&auto=format&fit=crop`
@@ -147,10 +269,134 @@ export const policies = [
   { id: 'pl4', ko: '오픈소스 라이선스', en: 'Open-source Licenses' },
 ]
 
+/* ── Club feature subscription (구독 관리 / 요금제) ──────────────
+   The user is on "Club Premium". planId matches one of subPlans below. */
+export const subscription = {
+  planId: 'premium',
+  price: 99000,
+  nextDate: '2026-07-09',
+  cardKo: '신한카드', cardEn: 'Shinhan Card', cardTail: '1234',
+}
+
+/* Three tiers for the rate-plan picker. price 0 = free. */
+export const subPlans = [
+  {
+    id: 'free', price: 0,
+    segKo: '개인 골퍼', segEn: 'Individual golfer',
+    nameKo: 'Free', nameEn: 'Free',
+    featsKo: ['개인 스코어 무제한', 'AI 성적표 인식', '개인 랭킹·통계'],
+    featsEn: ['Unlimited personal score', 'AI report-card recognition', 'Individual rankings & stats'],
+  },
+  {
+    id: 'basic', price: 29000,
+    segKo: '소규모 모임', segEn: 'Small club',
+    nameKo: 'Club Basic', nameEn: 'Club Basic',
+    featsKo: ['멤버 100명까지', '행사·조편성·신페리오', '회비·정산 관리', '공지 자동 생성'],
+    featsEn: ['Up to 100 members', 'Events · grouping · New Peoria', 'Membership fee & settlement', 'Auto announcement generation'],
+  },
+  {
+    id: 'premium', price: 99000, suggested: true,
+    segKo: '기업·대형 골프 모임', segEn: 'Corporate & large clubs',
+    nameKo: 'Club Premium', nameEn: 'Club Premium',
+    featsKo: ['멤버 무제한', '기본 전체 기능', '전담 운영 지원', '브랜드 모임 페이지'],
+    featsEn: ['Unlimited membership', 'All core features', 'Dedicated ops support', 'Branded club page'],
+  },
+]
+
+/* Monthly billing history for the subscription. */
+export const subHistory = [
+  { id: 'sb1', planKo: 'Club Premium', planEn: 'Club Premium', amount: 99000, date: '2026-06-01' },
+  { id: 'sb2', planKo: 'Club Premium', planEn: 'Club Premium', amount: 99000, date: '2026-05-01' },
+  { id: 'sb3', planKo: 'Club Basic', planEn: 'Club Basic', amount: 29000, date: '2026-04-01' },
+]
+
 export const clubs = [
-  { id: 'c1', nameKr: '강남골프회', nameEn: 'Gangnam Golf', role: '회원', roleEn: 'Member', members: 42, unpaid: 0 },
-  { id: 'c2', nameKr: '회사동호회', nameEn: 'Company Club', role: '총무', roleEn: 'Organizer', members: 28, unpaid: 2 },
-  { id: 'c3', nameKr: '주말번개', nameEn: 'Weekend Lightning', role: '회원', roleEn: 'Member', members: 16, unpaid: 0 },
+  { id: 'c1', nameKr: '강남골프회', nameEn: 'Gangnam Golf', role: '회원', roleEn: 'Member', members: 42, unpaid: 0, nextKr: '6월 14일 (토) 라운드', nextEn: 'Round · Sat Jun 14', icon: 'flag', img: UNSPLASH('1500932334442-8761ee4810a7') },
+  { id: 'c2', nameKr: '회사동호회', nameEn: 'Company Club', role: '총무', roleEn: 'Organizer', members: 28, unpaid: 2, nextKr: '6월 20일 (목) 라운드', nextEn: 'Round · Thu Jun 20', icon: 'building', img: UNSPLASH('1611374243147-44a702c2d44c') },
+  { id: 'c3', nameKr: '주말번개', nameEn: 'Weekend Lightning', role: '회원', roleEn: 'Member', members: 16, unpaid: 0, nextKr: '', nextEn: '', icon: 'zap', img: UNSPLASH('1535131749006-b7f58c99034b') },
+]
+
+/* The signed-in member's own dues for a club (내 회비 / billing details).
+   status: 'pending' (awaiting organizer confirmation) | 'unpaid' | 'paid'. */
+export const myFees = {
+  payerKo: '문양희', payerEn: 'Moon Yang-hee',
+  methodKo: '클럽 계좌로 직접 이체', methodEn: 'Direct transfer to club account',
+  items: [
+    {
+      id: 'fee1', catKo: '연회비', catEn: 'Annual fee',
+      titleKo: '2026 연회비', titleEn: '2026 Annual Fee',
+      amount: 200000, due: '2026-05-31', status: 'pending',
+      noteKo: '총무 확인 후 완료로 처리돼요.', noteEn: 'Marked complete after the organizer confirms.',
+    },
+    {
+      id: 'fee2', catKo: '행사비', catEn: 'Event fee',
+      titleKo: '6월 정기모임 참가비', titleEn: 'June Monthly Meeting Fee',
+      amount: 150000, due: '2026-06-13', status: 'unpaid',
+    },
+    {
+      id: 'fee3', catKo: '연회비', catEn: 'Annual fee',
+      titleKo: '2025 연회비', titleEn: '2025 Annual Fee',
+      amount: 200000, due: '2025-05-31', status: 'paid', paidOn: '2025-05-20',
+    },
+  ],
+}
+
+/* Members of a club — used by the club detail 멤버 / 정산 tabs. */
+export const clubMembers = [
+  { id: 'cm1', nameKr: '김총무', nameEn: 'Kim Chong-mu', role: '총무', handicap: 8, paid: true },
+  { id: 'cm2', nameKr: '문양희', nameEn: 'Moon Yang-hee', role: '회원', handicap: 12, paid: true, me: true },
+  { id: 'cm3', nameKr: '박서준', nameEn: 'Park Seo-jun', role: '회원', handicap: 15, paid: false },
+  { id: 'cm4', nameKr: '이도윤', nameEn: 'Lee Do-yoon', role: '회원', handicap: 10, paid: true },
+  { id: 'cm5', nameKr: '최유나', nameEn: 'Choi Yu-na', role: '회원', handicap: 18, paid: true },
+  { id: 'cm6', nameKr: '정해인', nameEn: 'Jung Hae-in', role: '회원', handicap: 14, paid: false },
+  { id: 'cm7', nameKr: '한지우', nameEn: 'Han Ji-woo', role: '회원', handicap: 21, paid: true },
+  { id: 'cm8', nameKr: '오세훈', nameEn: 'Oh Se-hun', role: '회원', handicap: 9, paid: true },
+]
+
+/* Korean regions (시·도) for the region picker. */
+export const regions = [
+  { ko: '서울', en: 'Seoul' }, { ko: '경기', en: 'Gyeonggi' }, { ko: '인천', en: 'Incheon' },
+  { ko: '강원', en: 'Gangwon' }, { ko: '충북', en: 'Chungbuk' }, { ko: '충남', en: 'Chungnam' },
+  { ko: '대전', en: 'Daejeon' }, { ko: '전북', en: 'Jeonbuk' }, { ko: '전남', en: 'Jeonnam' },
+  { ko: '광주', en: 'Gwangju' }, { ko: '경북', en: 'Gyeongbuk' }, { ko: '경남', en: 'Gyeongnam' },
+  { ko: '대구', en: 'Daegu' }, { ko: '울산', en: 'Ulsan' }, { ko: '부산', en: 'Busan' },
+  { ko: '제주', en: 'Jeju' },
+]
+
+/* Round formats for the create-round page. */
+export const roundFormats = [
+  { id: 'newperio', ko: '신페리오', en: 'New Peoria' },
+  { id: 'stroke', ko: '스트로크', en: 'Stroke play' },
+  { id: 'fourball', ko: '포볼', en: 'Fourball' },
+]
+
+/* Club types for the create-club page. */
+export const clubTypes = [
+  { id: 'regular', ko: '정기 모임', en: 'Regular', emoji: '⛳' },
+  { id: 'company', ko: '회사 동호회', en: 'Company', emoji: '🏢' },
+  { id: 'friends', ko: '친구 모임', en: 'Friends', emoji: '🍻' },
+  { id: 'open', ko: '오픈 번개', en: 'Open meetup', emoji: '⚡' },
+]
+
+/* Clubs near the user, sorted by distance — the "내 주변 모임" page. */
+export const nearbyClubs = [
+  { id: 'nb1', nameKr: '한강 라이더스', nameEn: 'Hangang Riders', regionKr: '서울 강서', regionEn: 'Gangseo, Seoul', members: 54, km: 1.2, icon: 'bike', img: UNSPLASH('1500932334442-8761ee4810a7') },
+  { id: 'nb2', nameKr: '주말번개', nameEn: 'Weekend Lightning', regionKr: '서울 송파', regionEn: 'Songpa, Seoul', members: 16, km: 2.4, icon: 'zap', img: UNSPLASH('1535131749006-b7f58c99034b') },
+  { id: 'nb3', nameKr: '새벽 골퍼스', nameEn: 'Dawn Golfers', regionKr: '경기 성남', regionEn: 'Seongnam', members: 31, km: 5.8, icon: 'sunrise', img: UNSPLASH('1593111774240-d529f12cf4bb') },
+  { id: 'nb4', nameKr: '그린피 모임', nameEn: 'Green Fee Club', regionKr: '경기 분당', regionEn: 'Bundang', members: 27, km: 7.1, icon: 'flag', img: UNSPLASH('1611374243147-44a702c2d44c') },
+  { id: 'nb5', nameKr: '시니어 클럽', nameEn: 'Senior Club', regionKr: '인천 연수', regionEn: 'Incheon', members: 22, km: 12.3, icon: 'target', img: UNSPLASH('1500932334442-8761ee4810a7') },
+]
+
+/* Search hub seed data (모임 검색). */
+export const searchRecent = ['강남골프회', '성남', '레이크사이드']
+export const searchPopular = ['남서울CC', '강남골프회', '성남', '주말번개', '레이크사이드', '회사동호회']
+export const searchRegions = ['서울', '경기', '강원', '인천', '부산', '제주']
+
+/* Clubs the user could join — shown in the 모임 hub's discover section. */
+export const recommendedClubs = [
+  { id: 'rc1', nameKr: '한강 라이더스', nameEn: 'Hangang Riders', regionKr: '서울 강서', regionEn: 'Seoul', members: 54, tagKr: '주말 라운드', tagEn: 'Weekend', icon: 'bike', img: UNSPLASH('1500932334442-8761ee4810a7') },
+  { id: 'rc2', nameKr: '새벽 골퍼스', nameEn: 'Dawn Golfers', regionKr: '경기 성남', regionEn: 'Seongnam', members: 31, tagKr: '새벽 번개', tagEn: 'Early bird', icon: 'sunrise', img: UNSPLASH('1593111774240-d529f12cf4bb') },
+  { id: 'rc3', nameKr: '시니어 클럽', nameEn: 'Senior Club', regionKr: '인천 연수', regionEn: 'Incheon', members: 22, tagKr: '시니어', tagEn: 'Senior', icon: 'target', img: UNSPLASH('1611374243147-44a702c2d44c') },
 ]
 
 export const eventDetail = {

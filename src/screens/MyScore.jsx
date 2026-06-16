@@ -1,4 +1,4 @@
-import { SlidersHorizontal, Camera, ChevronRight, TrendingDown } from 'lucide-react'
+import { SlidersHorizontal, ScanLine, ChevronRight, TrendingDown } from 'lucide-react'
 import { SectionHead } from '../components/ui.jsx'
 import Spark from '../components/Spark.jsx'
 import { useLang } from '../i18n/LanguageContext.jsx'
@@ -6,7 +6,7 @@ import { user, scoreTrend, myRecords } from '../data/mock.js'
 
 const PAR = 72
 
-export default function MyScore() {
+export default function MyScore({ onOpenRecord, onScan }) {
   const { t, pick } = useLang()
 
   // Improvement = older half avg − recent half avg (lower score is better)
@@ -31,20 +31,6 @@ export default function MyScore() {
       </div>
 
       <div className="screen ms-screen">
-        {/* Promo hero — rounds logged + 3D illustration */}
-        <div className="ms-promo">
-          <h3 className="ms-promo-title">
-            {t('promoTitle')}<br />
-            <span className="ms-promo-hl num">{t('promoCount', { n: user.games })}</span>{t('promoTitleEnd')}
-          </h3>
-          <div className="ms-promo-body">
-            <p className="ms-promo-sub">{t('promoSub')}</p>
-          </div>
-          <div className="ms-promo-art">
-            <img src="/trophy.png" alt="" loading="lazy" onError={(e) => { e.currentTarget.style.display = 'none' }} />
-          </div>
-        </div>
-
         {/* Hero — average score */}
         <div className="ms-hero">
           <div className="ms-hero-label">{t('avgScore')} · {t('hcp', { h: user.handicap })}</div>
@@ -83,7 +69,7 @@ export default function MyScore() {
             const d = r.score - PAR
             const isBest = r.score === bestScore
             return (
-              <div className={`ms-rec ${isBest ? 'is-best' : ''}`} key={r.id}>
+              <div className={`ms-rec ${isBest ? 'is-best' : ''}`} key={r.id} onClick={() => onOpenRecord?.(r)} role="button" tabIndex={0}>
                 <div className="ms-rec-score">
                   <b className="num">{r.score}</b>
                   <span className="ms-diff num">{d >= 0 ? '+' : ''}{d}</span>
@@ -104,7 +90,7 @@ export default function MyScore() {
       </div>
 
       {/* Floating action button — score registration */}
-      <button className="ms-fab"><Camera size={16} strokeWidth={2.2} /> {t('scoreRegister')}</button>
+      <button className="ms-fab" onClick={onScan}><ScanLine size={17} strokeWidth={2.2} /> {t('scoreRegister')}</button>
     </>
   )
 }

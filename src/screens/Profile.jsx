@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react'
 import {
-  Pencil, ChevronRight, Wallet, Crown, Award, Bell, Globe, Headphones,
-  FileText, Info, LogOut,
+  Pencil, ChevronRight, Wallet, Award, Bell, Globe, Headphones,
+  FileText, Info, LogOut, Gem, Coins,
 } from 'lucide-react'
 import { useLang } from '../i18n/LanguageContext.jsx'
 import { user, account } from '../data/mock.js'
 import {
-  ProfileEdit, Points, Badges, Membership, Payments,
+  ProfileEdit, Points, Badges, Payments,
   NotificationSettings, LanguageSettings, CustomerCenter, Terms,
+  Subscription,
 } from './ProfileScreens.jsx'
+import MyFee from './MyFee.jsx'
 
 /* Grouped menu — each row routes to a pushed sub-screen (or shows a value). */
 const MENU = [
@@ -16,7 +18,8 @@ const MENU = [
     group: 'pGroupActivity',
     rows: [
       { id: 'pay', key: 'mPay', Icon: Wallet, to: 'pay' },
-      { id: 'tier', key: 'mTier', Icon: Crown, to: 'tier', valueKey: 'tier' },
+      { id: 'fee', key: 'mFee', Icon: Coins, to: 'fee' },
+      { id: 'sub', key: 'mSub', Icon: Gem, to: 'sub' },
       { id: 'badges', key: 'mBadges', Icon: Award, to: 'badges' },
     ],
   },
@@ -51,7 +54,8 @@ export default function Profile({ onPushedChange }) {
   const back = () => setSub(null)
   if (sub === 'edit') return <ProfileEdit onBack={back} />
   if (sub === 'pay') return <Payments onBack={back} />
-  if (sub === 'tier') return <Membership onBack={back} />
+  if (sub === 'fee') return <MyFee onBack={back} />
+  if (sub === 'sub') return <Subscription onBack={back} />
   if (sub === 'badges') return <Badges onBack={back} />
   if (sub === 'points') return <Points onBack={back} />
   if (sub === 'noti') return <NotificationSettings onBack={back} />
@@ -60,13 +64,11 @@ export default function Profile({ onPushedChange }) {
   if (sub === 'terms') return <Terms onBack={back} />
 
   const valueFor = (vk) =>
-    vk === 'tier' ? pick(account.tierKo, account.tierEn) :
     vk === 'lang' ? (lang === 'ko' ? '한국어' : 'English') : null
 
   const STATS = [
     { id: 'points', label: t('pPoints'), value: account.points.toLocaleString(), to: 'points' },
     { id: 'coupons', label: t('pCoupons'), value: t('pCouponsN', { n: account.coupons }), to: null },
-    { id: 'tier', label: t('pTier'), value: pick(account.tierKo, account.tierEn), to: 'tier' },
     { id: 'badges', label: t('pBadges'), value: account.badges, to: 'badges' },
   ]
 
@@ -110,15 +112,6 @@ export default function Profile({ onPushedChange }) {
               <span className="pf-stat-lbl">{s.label}</span>
             </button>
           ))}
-        </div>
-
-        {/* Promo */}
-        <div className="pf-promo" onClick={() => setSub('tier')}>
-          <div className="pf-promo-txt">
-            <span className="pf-promo-eyebrow">{pick(account.tierKo, account.tierEn)} {t('pTier')}</span>
-            <span className="pf-promo-title">{pick('등급 혜택 4가지 받는 중', '4 tier benefits active')}</span>
-          </div>
-          <ChevronRight size={18} className="pf-go" />
         </div>
 
         {/* Grouped menu */}

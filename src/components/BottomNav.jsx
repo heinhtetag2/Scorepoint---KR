@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { House, ChartColumn, Users, CalendarDays, CircleUser } from 'lucide-react'
+import { House, ChartColumn, Users, Flag, CircleUser } from 'lucide-react'
 import { useLang } from '../i18n/LanguageContext.jsx'
 
 /* Korean-standard 5-tab bottom navigation with text labels under line icons.
@@ -8,8 +8,8 @@ import { useLang } from '../i18n/LanguageContext.jsx'
 const ITEMS = [
   { id: 'home', key: 'navHome', screen: 'home', Icon: House },
   { id: 'myscore', key: 'navScore', screen: 'myscore', Icon: ChartColumn },
-  { id: 'club', key: 'navClub', screen: 'detail', Icon: Users, soon: true },
-  { id: 'event', key: 'navEvent', screen: 'detail', Icon: CalendarDays, soon: true },
+  { id: 'club', key: 'navClub', screen: 'club', Icon: Users },
+  { id: 'event', key: 'navEvent', screen: 'events', Icon: Flag },
   { id: 'my', key: 'navMy', screen: 'profile', Icon: CircleUser },
 ]
 

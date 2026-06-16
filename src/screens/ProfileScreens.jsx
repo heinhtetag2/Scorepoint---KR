@@ -3,13 +3,16 @@ import {
   ArrowLeft, Camera, ChevronRight, Check, CreditCard, Plus, Minus, Pencil,
   Headphones, Phone, MessageSquareText, FileText, Star,
   BarChart3, CalendarDays, Wallet, Ticket, Banknote, MessageCircle,
+  Crown, RefreshCw, Receipt, Download,
 } from 'lucide-react'
 import { useLang } from '../i18n/LanguageContext.jsx'
+import { Button } from '../components/ui.jsx'
 import { Avatar, AVATAR_IDS } from '../components/Avatars.jsx'
 import { fmtBirth } from './Onboarding.jsx'
 import {
   user, account, badges, tiers, tierBenefits, pointHistory, paymentMethods,
   paymentHistory, notiPrefs, faqs, policies, money,
+  subscription, subPlans, subHistory,
 } from '../data/mock.js'
 
 const BENEFIT_ICON = { report: BarChart3, event: CalendarDays, settle: Wallet, coupon: Ticket }
@@ -418,25 +421,299 @@ export function Membership({ onBack }) {
   )
 }
 
+/* ── 요금제 (rate-plan picker) ───────────────────────────────── */
+export function RatePlans({ onBack, currentId = subscription.planId, onPay }) {
+  const { t, pick } = useLang()
+  const [sel, setSel] = useState(currentId)
+  const selPlan = subPlans.find((p) => p.id === sel)
+  const isCurrent = sel === currentId
+
+  return (
+    <SubPage
+      title={t('rpTitle')}
+      onBack={onBack}
+      footer={(
+        <div className="ap-foot">
+          <button
+            className="ob-btn ob-btn-primary ob-btn-block"
+            disabled={isCurrent}
+            style={isCurrent ? { opacity: 0.5 } : undefined}
+            onClick={() => onPay?.(sel)}
+          >
+            {isCurrent ? t('rpCurrentCta') : t('rpPayNamed', { plan: pick(selPlan.nameKo, selPlan.nameEn) })}
+          </button>
+        </div>
+      )}
+    >
+      <p className="rp-lead">{t('rpSubtitle')}</p>
+      <div className="plan-list">
+        {subPlans.map((p) => {
+          const active = sel === p.id
+          const feats = pick(p.featsKo, p.featsEn)
+          return (
+            <button key={p.id} className={`plan-card ${active ? 'active' : ''}`} onClick={() => setSel(p.id)}>
+              {p.suggested && <span className="plan-suggest">{t('rpSuggested')}</span>}
+              <div className="plan-head">
+                <div className="plan-head-txt">
+                  <span className="plan-seg">{pick(p.segKo, p.segEn)}</span>
+                  <span className="plan-name">{pick(p.nameKo, p.nameEn)}</span>
+                </div>
+                <span className={`plan-radio ${active ? 'on' : ''}`}>{active && <Check size={13} strokeWidth={3} />}</span>
+              </div>
+              <div className="plan-price num">
+                {p.price === 0 ? t('rpFree') : <>{p.price.toLocaleString()}<em>{t('rpPerMonth')}</em></>}
+              </div>
+              <ul className="plan-feats">
+                {feats.map((f) => (
+                  <li key={f}><Check size={15} strokeWidth={2.6} className="plan-feat-ico" />{f}</li>
+                ))}
+              </ul>
+              {p.id === currentId && <span className="plan-current">{t('rpInUse')}</span>}
+            </button>
+          )
+        })}
+      </div>
+    </SubPage>
+  )
+}
+
+/* A single receipt, reached by tapping a row in the receipt list. */
+function SubReceiptDetail({ item, onBack }) {
+  const { t, pick, lang } = useLang()
+  const total = item.amount
+  const supply = Math.round(total / 1.1)
+  const vat = total - supply
+  const receiptNo = `SS-${item.date.replace(/-/g, '')}-${subscription.cardTail}`
+  const itemName = pick(item.planKo, item.planEn)
+  const method = `${pick(subscription.cardKo, subscription.cardEn)} ·· ${subscription.cardTail}`
+  const rows = [
+    { k: t('srItem'), v: itemName },
+    { k: t('srDate'), v: item.date, num: true },
+    { k: t('srMethod'), v: method },
+    { k: t('srNo'), v: receiptNo, num: true },
+  ]
+
+  // Build a printable HTML receipt and download it as a file.
+  const download = () => {
+    const row = (k, v, strong) => `<tr><td>${k}</td><td style="text-align:right${strong ? ';font-weight:700;color:#0A7A37' : ''}">${v}</td></tr>`
+    const html = `<!doctype html><html><head><meta charset="utf-8"><title>${t('srTitle')} ${receiptNo}</title>
+<style>body{font-family:-apple-system,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;max-width:420px;margin:32px auto;padding:0 20px;color:#1A1D21}
+h1{font-size:18px;margin:0 0 4px}.sub{color:#6B7077;font-size:13px;margin:0 0 20px}
+.amt{font-size:26px;font-weight:800;letter-spacing:-1px;margin:18px 0 6px}.paid{display:inline-block;font-size:12px;font-weight:700;color:#0A7A37;background:#E5F4EA;padding:3px 10px;border-radius:999px}
+table{width:100%;border-collapse:collapse;margin-top:20px}td{padding:9px 0;font-size:14px;border-bottom:1px solid #EFEFEF}td:first-child{color:#6B7077}
+.tot td{border-top:2px solid #1A1D21;border-bottom:none;padding-top:12px;font-weight:700}</style></head>
+<body><h1>ScoreShot ${t('srTitle')}</h1><p class="sub">${receiptNo}</p>
+<div class="amt">${money(total, lang)}</div><span class="paid">${t('srPaidStatus')}</span>
+<table><tr><td>${t('srItem')}</td><td style="text-align:right">${itemName}</td></tr>
+${row(t('srDate'), item.date)}${row(t('srMethod'), method)}${row(t('srNo'), receiptNo)}
+${row(t('srSupply'), money(supply, lang))}${row(t('srVat'), money(vat, lang))}
+<tr class="tot"><td>${t('srTotal')}</td><td style="text-align:right;color:#0A7A37">${money(total, lang)}</td></tr></table>
+</body></html>`
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `receipt-${receiptNo}.html`
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+    URL.revokeObjectURL(url)
+  }
+
+  return (
+    <SubPage
+      title={t('srTitle')}
+      onBack={onBack}
+      footer={(
+        <div className="ap-foot">
+          <button className="ob-btn ob-btn-primary ob-btn-block" onClick={download}>
+            <Download size={17} strokeWidth={2.2} style={{ marginRight: 6, verticalAlign: '-3px' }} />{t('srDownload')}
+          </button>
+        </div>
+      )}
+    >
+      <div className="sub-hero sr-hero">
+        <span className="sub-hero-label">{t('srTotal')}</span>
+        <span className="sub-hero-num num">{money(total, lang)}</span>
+        <span className="badge badge-role" style={{ marginTop: 12, display: 'inline-flex' }}>{t('srPaidStatus')}</span>
+      </div>
+      <div className="info-rows" style={{ marginTop: 14 }}>
+        {rows.map((r) => (
+          <div className="info-row" key={r.k}>
+            <span className="info-k">{r.k}</span>
+            <span className={`info-v ${r.num ? 'num' : ''}`}>{r.v}</span>
+          </div>
+        ))}
+      </div>
+      <div className="kv-list" style={{ marginTop: 14 }}>
+        <div className="kv-row"><div className="kv-main"><span className="kv-title">{t('srSupply')}</span></div><span className="kv-amt num">{money(supply, lang)}</span></div>
+        <div className="kv-row"><div className="kv-main"><span className="kv-title">{t('srVat')}</span></div><span className="kv-amt num">{money(vat, lang)}</span></div>
+        <div className="kv-row sr-total"><div className="kv-main"><span className="kv-title">{t('srTotal')}</span></div><span className="kv-amt num">{money(total, lang)}</span></div>
+      </div>
+    </SubPage>
+  )
+}
+
+/* Read-only receipt list reached from 결제 내역 · 영수증. */
+function SubReceipts({ onBack }) {
+  const { t, pick, lang } = useLang()
+  const [sel, setSel] = useState(null)
+  if (sel) return <SubReceiptDetail item={sel} onBack={() => setSel(null)} />
+  return (
+    <SubPage title={t('subReceiptTitle')} onBack={onBack}>
+      <p className="rp-lead">{t('subReceiptNote')}</p>
+      <div className="list">
+        {subHistory.map((h) => (
+          <div className="list-row" key={h.id} style={{ cursor: 'pointer' }} onClick={() => setSel(h)}>
+            <Receipt size={18} strokeWidth={1.8} className="lr-ico" />
+            <div className="sub-act-txt">
+              <span className="lr-label">{pick(h.planKo, h.planEn)}</span>
+              <span className="sub-act-sub num">{h.date} · {money(h.amount, lang)}</span>
+            </div>
+            <span className="lr-value accent">{t('subReceiptOne')}</span>
+            <ChevronRight size={17} className="chev" />
+          </div>
+        ))}
+      </div>
+    </SubPage>
+  )
+}
+
+/* ── 구독 관리 (subscription management) ─────────────────────── */
+export function Subscription({ onBack }) {
+  const { t, pick, lang } = useLang()
+  const [planId, setPlanId] = useState(subscription.planId)
+  const [card, setCard] = useState(subscription.cardTail)
+  const [view, setView] = useState(null)          // 'plans' | 'pay' | 'receipt'
+  const [confirm, setConfirm] = useState(false)    // cancel dialog
+  const [ending, setEnding] = useState(false)      // subscription set to end
+  const [toast, setToast] = useState(false)
+  const toastTimer = useRef()
+  const flash = () => { setToast(true); clearTimeout(toastTimer.current); toastTimer.current = setTimeout(() => setToast(false), 1800) }
+  const plan = subPlans.find((p) => p.id === planId)
+
+  if (view === 'plans') {
+    return <RatePlans onBack={() => setView(null)} currentId={planId} onPay={(id) => { setPlanId(id); setEnding(false); setView(null) }} />
+  }
+  if (view === 'pay') {
+    return (
+      <AddPaymentMethod
+        onBack={() => setView(null)}
+        onAdd={(m) => { if (m.tail) setCard(m.tail); setView(null); flash() }}
+      />
+    )
+  }
+  if (view === 'receipt') return <SubReceipts onBack={() => setView(null)} />
+
+  const ACTIONS = [
+    { id: 'plan', Icon: RefreshCw, label: t('subPlanChange'), sub: t('subPlanChangeSub'), onClick: () => setView('plans') },
+    { id: 'pay', Icon: CreditCard, label: t('subPayMethod'), onClick: () => setView('pay') },
+    { id: 'receipt', Icon: Receipt, label: t('subReceipt'), onClick: () => setView('receipt') },
+  ]
+
+  return (
+    <SubPage
+      title={t('subTitle')}
+      onBack={onBack}
+      footer={toast && (<div className="app-toast" role="status"><Check size={15} strokeWidth={2.8} />{t('subCardChanged')}</div>)}
+    >
+      {/* current plan hero */}
+      <div className={`tier-card sub-card ${ending ? 'is-ending' : ''}`}>
+        <div className="tier-top">
+          <span className="sub-card-eyebrow"><Crown size={14} strokeWidth={2.4} />{pick(plan.nameKo, plan.nameEn)}</span>
+          <span className="sub-pill">{ending ? t('subEndingPill') : t('subInUse')}</span>
+        </div>
+        <div className="sub-card-price num">
+          {plan.price === 0 ? t('rpFree') : <>{plan.price.toLocaleString()}<em>{t('subPerMonth')}</em></>}
+        </div>
+        <div className="sub-card-meta num">
+          {ending ? t('subEndingNote', { date: subscription.nextDate }) : t('subNext', { date: subscription.nextDate, tail: card })}
+        </div>
+      </div>
+
+      {/* manage actions */}
+      <div className="list" style={{ marginTop: 14 }}>
+        {ACTIONS.map((a) => (
+          <div className="list-row" key={a.id} onClick={a.onClick} style={{ cursor: 'pointer' }}>
+            <a.Icon size={18} strokeWidth={1.8} className="lr-ico" />
+            <div className="sub-act-txt">
+              <span className="lr-label">{a.label}</span>
+              {a.sub && <span className="sub-act-sub">{a.sub}</span>}
+            </div>
+            <ChevronRight size={17} className="chev" />
+          </div>
+        ))}
+      </div>
+
+      {/* billing history */}
+      <div className="section-head"><span className="s-title">{t('subHistoryTitle')}</span></div>
+      <div className="kv-list">
+        {subHistory.map((h) => (
+          <div className="kv-row" key={h.id}>
+            <div className="kv-main">
+              <span className="kv-title">{pick(h.planKo, h.planEn)}</span>
+              <span className="kv-sub num">{h.date}</span>
+            </div>
+            <span className="kv-amt num">{money(h.amount, lang)}</span>
+          </div>
+        ))}
+      </div>
+
+      {!ending && <button className="sub-cancel" onClick={() => setConfirm(true)}>{t('subCancel')}</button>}
+
+      {confirm && (
+        <>
+          <div className="dialog-scrim" onClick={() => setConfirm(false)} />
+          <div className="dialog">
+            <div className="dialog-title">{t('subCancelTitle')}</div>
+            <div className="dialog-body">{t('subCancelBody')}</div>
+            <div className="dialog-actions">
+              <Button variant="secondary" onClick={() => setConfirm(false)}>{t('subKeep')}</Button>
+              <Button variant="danger" onClick={() => { setConfirm(false); setEnding(true) }}>{t('subCancelDo')}</Button>
+            </div>
+          </div>
+        </>
+      )}
+    </SubPage>
+  )
+}
+
 /* 결제 수단 추가 — choose a type, register a card */
 const PAY_TYPES = [
   { id: 'card', label: 'payTypeCard', Icon: CreditCard },
   { id: 'pay', label: 'payTypePay', Icon: MessageCircle },
   { id: 'bank', label: 'payTypeBank', Icon: Banknote },
 ]
+const BANKS = [
+  { id: 'shinhan', ko: '신한', en: 'Shinhan' },
+  { id: 'kb', ko: '국민', en: 'KB' },
+  { id: 'woori', ko: '우리', en: 'Woori' },
+  { id: 'hana', ko: '하나', en: 'Hana' },
+  { id: 'nh', ko: '농협', en: 'NH' },
+  { id: 'kakao', ko: '카카오뱅크', en: 'KakaoBank' },
+  { id: 'toss', ko: '토스뱅크', en: 'Toss' },
+]
 function AddPaymentMethod({ onBack, onAdd }) {
-  const { t } = useLang()
+  const { t, pick } = useLang()
   const [type, setType] = useState('card')
   const [num, setNum] = useState('')
   const [exp, setExp] = useState('')
+  const [bank, setBank] = useState(null)
+  const [acct, setAcct] = useState('')
 
   const make = () => {
-    const id = `pm-${num.slice(-4) || type}-${num.length + exp.length}`
+    const id = `pm-${num.slice(-4) || acct.slice(-4) || type}-${num.length + exp.length + acct.length}`
     if (type === 'pay') return { id, kind: 'pay', nameKo: '카카오페이', nameEn: 'KakaoPay', tail: '', primary: false }
-    if (type === 'bank') return { id, kind: 'bank', nameKo: '계좌이체', nameEn: 'Bank transfer', tail: '', primary: false }
+    if (type === 'bank') {
+      const b = BANKS.find((x) => x.id === bank)
+      return { id, kind: 'bank', nameKo: `${b.ko}은행`, nameEn: `${b.en} Bank`, tail: acct.slice(-4), primary: false }
+    }
     return { id, kind: 'card', nameKo: t('payNewCard'), nameEn: 'New card', tail: num.replace(/\D/g, '').slice(-4) || '0000', primary: false }
   }
-  const valid = type !== 'card' || num.replace(/\D/g, '').length >= 8
+  const valid =
+    type === 'card' ? num.replace(/\D/g, '').length >= 8 :
+    type === 'bank' ? (bank && acct.length >= 6) :
+    true
 
   return (
     <SubPage
@@ -483,6 +760,41 @@ function AddPaymentMethod({ onBack, onAdd }) {
             />
           </div>
         </>
+      )}
+
+      {type === 'bank' && (
+        <>
+          <div className="pe-field">
+            <label className="ob-label">{t('payBankPick')}</label>
+            <div className="ob-chip-wrap">
+              {BANKS.map((b) => (
+                <button key={b.id} className={`ob-chip ${bank === b.id ? 'active' : ''}`} onClick={() => setBank(b.id)}>
+                  {pick(b.ko, b.en)}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="pe-field">
+            <label className="ob-label">{t('payAcctNo')}</label>
+            <input
+              className="ob-input num"
+              value={acct}
+              onChange={(e) => setAcct(e.target.value.replace(/\D/g, '').slice(0, 16))}
+              placeholder={t('payAcctPh')}
+              inputMode="numeric"
+            />
+          </div>
+        </>
+      )}
+
+      {type === 'pay' && (
+        <div className="pay-note">
+          <span className="pay-note-ico"><MessageCircle size={20} strokeWidth={2} /></span>
+          <div className="pay-note-txt">
+            <span className="pay-note-title">{t('payPayNoteTitle')}</span>
+            <span className="pay-note-sub">{t('payPayNote')}</span>
+          </div>
+        </div>
       )}
     </SubPage>
   )
