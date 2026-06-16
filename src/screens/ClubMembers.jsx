@@ -53,7 +53,7 @@ export default function ClubMembers({ club, onBack }) {
                 if (action && !pending.find(p => p.id === pa.id)) return null
                 return (
                   <div className="cd-mem" key={pa.id} style={{ opacity: action ? 0.5 : 1, transition: 'opacity .3s' }}>
-                    <span className="cd-mem-av" style={{ background: pa.color, color: '#fff' }}>
+                    <span className="cd-mem-av" style={{ background: pa.color, color: '#fff', display:'flex', alignItems:'center', justifyContent:'center' }}>
                       {(lang === 'ko' ? pa.nameKr : pa.nameEn).charAt(0)}
                     </span>
                     <span className="cd-mem-name" style={{ flex: 1 }}>
