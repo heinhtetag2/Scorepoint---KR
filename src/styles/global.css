@@ -506,7 +506,7 @@ body {
 .event-card--past .ec-illust { color: var(--text-3); opacity: 0.15; }
 .ev-host {
   flex: 0 0 auto; font-size: 10.5px; font-weight: 700; letter-spacing: -0.1px;
-  color: var(--brand); background: var(--brand-weak); border-radius: 6px; padding: 2px 7px;
+  color: var(--point); background: color-mix(in srgb, var(--point) 12%, #fff); border-radius: 6px; padding: 2px 7px;
 }
 .ev-top { display: flex; align-items: center; gap: 7px; margin-bottom: 7px; }
 .dday {
@@ -515,6 +515,17 @@ body {
 }
 .dday.soft { background: var(--brand-weak); color: var(--brand); }
 .ev-status { font-size: var(--fs-cap); font-weight: 700; color: var(--brand); background: var(--brand-weak); padding: 3px 8px; border-radius: 7px; }
+.ev-host-chip {
+  display: inline-flex; align-items: center; gap: 3px;
+  font-size: var(--fs-cap); font-weight: 800; letter-spacing: -0.2px;
+  color: var(--point); background: color-mix(in srgb, var(--point) 12%, #fff); padding: 3px 8px; border-radius: 7px;
+}
+/* Host RSVP overview — three stat tiles */
+.ev-host-stats { display: flex; padding: 4px 0; }
+.ev-host-stats .ehs-tile { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 13px 6px; }
+.ev-host-stats .ehs-tile + .ehs-tile { border-left: 1px solid var(--line); }
+.ev-host-stats .ehs-num { font-size: 19px; font-weight: 800; color: var(--text-1); letter-spacing: -0.4px; }
+.ev-host-stats .ehs-label { font-size: 11.5px; color: var(--text-3); }
 .ev-title { font-size: 16px; font-weight: var(--w-title); letter-spacing: -0.3px; }
 .ev-meta { font-size: var(--fs-label); color: var(--text-2); margin-top: 5px; line-height: 1.55; }
 .ev-meta b { color: var(--text-1); font-weight: 700; }
@@ -1505,6 +1516,27 @@ body {
   transition: border-color .12s, background .12s;
 }
 .cd-new-round:active { background: var(--brand-weak); border-color: var(--brand); }
+/* Member-management entry on the club Members tab */
+.cd-manage-row {
+  display: flex; align-items: center; gap: 12px; width: 100%; cursor: pointer;
+  margin-bottom: 10px; padding: 13px 14px;
+  border: 1px solid var(--line); border-radius: var(--card-radius); background: var(--surface);
+  font-family: var(--font); text-align: left; transition: background .12s;
+}
+.cd-manage-row:active { background: var(--surface-2); }
+.cd-manage-row .cmr-ico {
+  flex: 0 0 auto; width: 36px; height: 36px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--brand-weak); color: var(--brand);
+}
+.cd-manage-row .cmr-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.cd-manage-row .cmr-title { font-size: 14px; font-weight: 700; color: var(--text-1); letter-spacing: -0.2px; }
+.cd-manage-row .cmr-sub { font-size: 12px; color: var(--text-3); }
+.cd-manage-row .cmr-badge {
+  flex: 0 0 auto; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px;
+  background: var(--point); color: #fff; font-size: 11.5px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+}
 .cd-list { padding: 2px var(--pad); flex-shrink: 0; overflow: visible; }
 .cd-mem { display: flex; align-items: center; gap: 11px; padding: 11px 0; border-bottom: 1px solid var(--line); }
 .cd-mem:last-child { border-bottom: none; }
@@ -1697,6 +1729,85 @@ body {
 .invite-name { flex: 1; min-width: 0; font-size: 14px; font-weight: 600; color: var(--text-1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .invite-btn { flex: 0 0 auto; border: 1px solid var(--brand); background: var(--brand-weak); color: var(--brand); font-family: var(--font); font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 8px; cursor: pointer; }
 .invite-btn.is-sent { border-color: var(--line); background: var(--surface-2); color: var(--text-2); }
+
+/* ── Guest registration form (in invite sheet) ─────────────── */
+.edit-sheet .field { margin-bottom: 14px; }
+.guest-consent {
+  display: flex; align-items: flex-start; gap: 10px; width: 100%; text-align: left; cursor: pointer;
+  border: 1.5px solid var(--line); border-radius: 12px; padding: 14px; background: var(--surface);
+  font-family: var(--font);
+}
+.guest-consent .gc-box {
+  flex: 0 0 auto; width: 20px; height: 20px; border-radius: 6px; margin-top: 1px;
+  border: 1.8px solid var(--line); background: var(--surface);
+  display: flex; align-items: center; justify-content: center; transition: all .15s;
+}
+.guest-consent .gc-box.on { background: var(--brand); border-color: var(--brand); }
+.guest-consent .gc-text { font-size: 12.5px; color: var(--text-2); line-height: 1.6; }
+
+/* ── Scanned scorecard preview (on review screen) ──────────── */
+.sv-scan-thumb {
+  width: 100%; display: flex; align-items: center; gap: 12px; margin-bottom: 14px;
+  padding: 10px; border: 1px solid var(--line); border-radius: 14px;
+  background: var(--surface); cursor: pointer; font-family: var(--font); text-align: left;
+}
+.sv-scan-thumb:active { transform: scale(0.99); }
+.sv-scan-thumb-img {
+  flex: 0 0 auto; width: 96px; height: 68px; border-radius: 9px; overflow: hidden;
+  position: relative; box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+}
+/* shrink the faux card to fit the thumbnail box */
+.sv-scan-thumb-img .scan-paper {
+  position: absolute; top: 0; left: 0; width: 240px; transform: scale(0.4); transform-origin: top left;
+}
+.sv-scan-thumb-meta { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.sv-scan-thumb-label { font-size: 14px; font-weight: 700; color: var(--text-1); letter-spacing: -0.2px; }
+.sv-scan-thumb-view { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; color: var(--brand); }
+
+/* the paper card itself */
+.scan-paper {
+  background: #f6f4ec; border-radius: 6px; padding: 12px 13px 14px;
+  box-shadow: inset 0 0 30px rgba(120,110,80,0.10);
+  background-image: linear-gradient(105deg, rgba(255,255,255,0.5), rgba(0,0,0,0.03));
+}
+.scan-paper .sc-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 9px; }
+.scan-paper .sc-title { font-size: 12px; font-weight: 800; color: #3a352a; letter-spacing: -0.2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.scan-paper .sc-date { font-size: 10.5px; color: #7c745f; flex: 0 0 auto; }
+.scan-paper .sc-grid { border-top: 1.5px solid #cbc3aa; }
+.scan-paper .sc-grid + .sc-grid { margin-top: 6px; }
+.scan-paper .sc-row { display: grid; grid-template-columns: 34px repeat(9, 1fr); align-items: center; border-bottom: 1px solid #ddd6c0; }
+.scan-paper .sc-rk { font-size: 9px; font-weight: 700; color: #8a8068; padding: 3px 2px; letter-spacing: 0.3px; }
+.scan-paper .sc-rk-score { color: #5a5240; }
+.scan-paper .sc-cell { font-size: 11px; text-align: center; padding: 3px 0; color: #5a5446; border-left: 1px solid #e6dfc9; font-variant-numeric: tabular-nums; }
+.scan-paper .sc-row-head .sc-cell { font-weight: 700; color: #6c6450; }
+.scan-paper .sc-par { color: #9a9176; }
+.scan-paper .sc-hand {
+  font-family: 'Bradley Hand', 'Segoe Script', 'Comic Sans MS', cursive;
+  font-weight: 700; font-size: 13px; color: #1f3a8a; transform: rotate(-3deg);
+}
+/* large (viewer) variant */
+.scan-paper.is-large { width: min(86vw, 360px); padding: 20px 20px 24px; border-radius: 8px; }
+.scan-paper.is-large .sc-title { font-size: 15px; }
+.scan-paper.is-large .sc-date { font-size: 12px; }
+.scan-paper.is-large .sc-cell { font-size: 13.5px; padding: 6px 0; }
+.scan-paper.is-large .sc-rk { font-size: 10.5px; padding: 6px 2px; }
+.scan-paper.is-large .sc-hand { font-size: 17px; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+/* full-screen viewer */
+.scan-viewer {
+  position: absolute; inset: 0; z-index: 60; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 16px;
+  background: rgba(18,20,18,0.82); backdrop-filter: blur(3px);
+  animation: fadeIn 0.18s ease;
+}
+.scan-viewer-x {
+  position: absolute; top: 16px; right: 16px; width: 38px; height: 38px; border-radius: 50%;
+  border: none; background: rgba(255,255,255,0.16); color: #fff;
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+}
+.scan-viewer-body { box-shadow: 0 18px 50px rgba(0,0,0,0.5); border-radius: 8px; }
+.scan-viewer-cap { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.85); }
 
 /* ── Scan (score capture) — dark camera viewfinder ─────────── */
 .scan-screen {

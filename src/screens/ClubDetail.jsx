@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import { ArrowLeft, Settings, ChevronRight, Crown, Plus, UserPlus, CheckCircle2, AlertCircle, MessageCircle, MessageSquare, Share2, Lock, Check, MoreVertical, Trash2 } from 'lucide-react'
+import { ArrowLeft, Settings, ChevronRight, Crown, Plus, UserPlus, UserCog, CheckCircle2, AlertCircle, MessageCircle, MessageSquare, Share2, Lock, Check, MoreVertical, Trash2 } from 'lucide-react'
 import { Segmented, Button } from '../components/ui.jsx'
 import ClubAvatar from '../components/ClubAvatar.jsx'
 import CourseIllust from '../components/CourseIllust.jsx'
 import { useLang } from '../i18n/LanguageContext.jsx'
-import { clubs, clubMembers, clubMembersFull, clubRanking, partners, events, settlement, money } from '../data/mock.js'
+import { clubs, clubMembers, clubMembersFull, clubRanking, partners, events, settlement, money, pendingApplicants } from '../data/mock.js'
 
 const COLORS = ['#0A7A37', '#3B82F6', '#8B5CF6', '#E2571F', '#0EA5A0']
 const MEDAL_COLORS = ['#E0A100', '#9AA0AC', '#C77B3B']
@@ -211,26 +211,32 @@ export default function ClubDetail({ club, onBack, onOpenEvent, onSettings, onNe
                 </div>
               )
             })}
-            {organizer && (
-              <button className="cd-new-round" onClick={onNewRound}>
-                <Plus size={17} strokeWidth={2.4} />
-                {lang === 'ko' ? '라운드 만들기' : 'New round'}
-              </button>
-            )}
+            <button className="cd-new-round" onClick={onNewRound}>
+              <Plus size={17} strokeWidth={2.4} />
+              {lang === 'ko' ? '라운드 만들기' : 'New round'}
+            </button>
           </>
         )}
 
         {/* ── Members tab — role badges + handicap + avg; owners can manage ── */}
         {tab === 'members' && (
           <>
-            {organizer && (
-              <p style={{ fontSize: 12, color: 'var(--text-3)', margin: '2px 2px 8px' }}>
-                {lang === 'ko' ? '멤버를 탭해 역할을 바꾸거나 내보낼 수 있어요' : 'Tap a member to change their role or remove them'}
-              </p>
-            )}
+            {/* Full member management — role/remove inline below, plus join requests */}
+            <button className="cd-manage-row" onClick={onMemberMng}>
+              <span className="cmr-ico"><UserCog size={18} strokeWidth={1.9} /></span>
+              <span className="cmr-body">
+                <span className="cmr-title">{t('csMembersMng')}</span>
+                <span className="cmr-sub">{lang === 'ko' ? '역할 변경 · 가입 신청 관리' : 'Roles · join requests'}</span>
+              </span>
+              {pendingApplicants.length > 0 && <span className="cmr-badge num">{pendingApplicants.length}</span>}
+              <ChevronRight size={17} className="chev" />
+            </button>
+            <p style={{ fontSize: 12, color: 'var(--text-3)', margin: '2px 2px 8px' }}>
+              {lang === 'ko' ? '멤버를 탭해 역할을 바꾸거나 내보낼 수 있어요' : 'Tap a member to change their role or remove them'}
+            </p>
             <div className="card cd-list">
               {members.map((m) => {
-                const manageable = organizer && m.roleKey !== 'owner'
+                const manageable = m.roleKey !== 'owner'
                 return (
                   <div className="cd-mem" key={m.id} style={{ gap: 10, cursor: manageable ? 'pointer' : 'default' }}
                     onClick={manageable ? () => setManageMember(m) : undefined}>
@@ -266,8 +272,25 @@ export default function ClubDetail({ club, onBack, onOpenEvent, onSettings, onNe
             </p>
 
             {/* podium */}
-            <div className="card" style={{ background: 'linear-gradient(135deg, #0A7A37 0%, #1a9e4a 100%)', padding: '20px 12px 0', marginBottom: 4 }}>
-              <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'center', gap: 8 }}>
+            <div className="card" style={{ position: 'relative', overflow: 'hidden', background: 'linear-gradient(135deg, #0A7A37 0%, #1a9e4a 100%)', padding: '20px 12px 0', marginBottom: 4 }}>
+              {/* decorative golf scene behind the podium */}
+              <svg viewBox="0 0 320 220" preserveAspectRatio="xMidYMid slice" aria-hidden="true"
+                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', color: '#fff', opacity: 0.09, pointerEvents: 'none' }}>
+                {/* rolling fairway curves */}
+                <path d="M-10 70 Q90 30 180 70 T340 70" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+                <path d="M-10 120 Q110 80 220 120 T350 120" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+                {/* flag + pin on a mound, top-right */}
+                <path d="M286 18 V70" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+                <path d="M286 20 L312 28 L286 38 Z" fill="currentColor" />
+                <ellipse cx="286" cy="72" rx="20" ry="5" fill="currentColor" opacity="0.5" />
+                {/* dotted ball trajectory toward the pin */}
+                <path d="M30 150 Q150 60 282 56" stroke="currentColor" strokeWidth="2.5" strokeDasharray="1 12" strokeLinecap="round" fill="none" />
+                {/* scattered golf balls */}
+                <circle cx="30" cy="150" r="5" fill="currentColor" />
+                <circle cx="250" cy="180" r="7" fill="none" stroke="currentColor" strokeWidth="2" />
+                <circle cx="60" cy="40" r="9" fill="none" stroke="currentColor" strokeWidth="2" />
+              </svg>
+              <div style={{ position: 'relative', display: 'flex', alignItems: 'flex-end', justifyContent: 'center', gap: 8 }}>
                 {[1, 0, 2].map((idx, col) => {
                   const r = top3[idx]
                   if (!r) return null

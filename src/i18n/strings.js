@@ -222,6 +222,9 @@ const STR = {
   ccCreate: { ko: '만들기', en: 'Create' },
   ccImage: { ko: '대표 이미지', en: 'Cover image' },
   ccImageAdd: { ko: '대표 이미지 추가', en: 'Add a cover image' },
+  ccInvite: { ko: '멤버 초대', en: 'Invite members' },
+  ccInviteHint: { ko: '함께할 친구를 선택하세요 (선택)', en: 'Select friends to invite (optional)' },
+  ccInviteCount: { ko: '{n}명 초대됨', en: '{n} invited' },
 
   // club search
   searchRecentTitle: { ko: '최근 검색', en: 'Recent searches' },
@@ -270,6 +273,8 @@ const STR = {
   // scan review (recognized score confirmation)
   svTitle: { ko: '스코어 확인', en: 'Review score' },
   svRecognized: { ko: '스코어를 인식했어요. 잘못된 칸은 눌러서 수정하세요.', en: 'Scores recognized. Tap a cell to fix it.' },
+  svScanned: { ko: '스캔한 스코어카드', en: 'Scanned scorecard' },
+  svViewOriginal: { ko: '원본 보기', en: 'View original' },
   svRound: { ko: '라운드 정보', en: 'Round info' },
   svCourse: { ko: '골프장', en: 'Course' },
   svLayout: { ko: '코스', en: 'Layout' },
@@ -566,6 +571,31 @@ const STR = {
   balance: { ko: '잔액', en: 'Balance' },
   ctaClose: { ko: '정산 마감 · 결과 공유하기', en: 'Close settlement · Share results' },
   ctaRegister: { ko: '참가 신청하기 · {fee}', en: 'Register · {fee}' },
+  // host / organizer view of an event you created
+  hostTag: { ko: '주최', en: 'Host' },
+  hostStatsTitle: { ko: '참가 현황', en: 'RSVP overview' },
+  hostAttending: { ko: '참석', en: 'Attending' },
+  hostAbsent: { ko: '불참', en: 'Absent' },
+  hostMood: { ko: '미정', en: 'Pending' },
+  hostInvite: { ko: '선수 초대하기', en: 'Invite players' },
+  hostInviteTitle: { ko: '선수 초대', en: 'Invite players' },
+  hostInviteSub: { ko: '{event}에 함께할 선수를 초대하세요', en: 'Invite players to {event}' },
+  hostInvited: { ko: '{n}명 초대됨', en: '{n} invited' },
+  hostNoRegister: { ko: '내가 주최한 행사예요', en: "You're hosting this event" },
+  // invite sheet — member invite vs manual guest registration
+  inviteMembersTab: { ko: '회원 초대', en: 'Invite members' },
+  guestTab: { ko: '게스트 추가', en: 'Add guest' },
+  guestTitle: { ko: '게스트 등록', en: 'Guest Registration' },
+  guestSub: { ko: '비회원 동반 참가자', en: 'Non-member accompanying participants' },
+  guestName: { ko: '이름', en: 'Name' },
+  guestNamePlace: { ko: '게스트 이름', en: 'Guest name' },
+  guestContact: { ko: '연락처', en: 'Contact' },
+  guestRecommender: { ko: '추천인 (회원)', en: 'Recommender (Member)' },
+  guestRecommenderPlace: { ko: '예: 문양희', en: 'e.g. Moon Yang-hee' },
+  guestConsent: { ko: '(필수) 게스트 개인정보 수집·이용에 동의합니다. 수집된 정보는 행사 운영 목적으로만 사용됩니다.', en: '(Required) I agree to the collection and use of guest personal information. The collected information will be used solely for the purpose of event operation.' },
+  guestAdd: { ko: '게스트 추가하기', en: 'Add guest' },
+  guestAdded: { ko: '게스트가 추가되었어요', en: 'Guest added' },
+  guestBadge: { ko: '게스트', en: 'Guest' },
 }
 
 export default STR

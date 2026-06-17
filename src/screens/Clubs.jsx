@@ -25,7 +25,6 @@ export default function Clubs({ clubs = seedClubs, onOpenClub, onCreate, onSearc
         <span className="title">{t('navClub')}</span>
         <span className="actions">
           <span role="button" tabIndex={0} onClick={onSearch}><Search size={20} strokeWidth={1.9} /></span>
-          <span role="button" tabIndex={0} onClick={onCreate}><Plus size={22} strokeWidth={2} /></span>
         </span>
       </div>
 
@@ -68,9 +67,6 @@ export default function Clubs({ clubs = seedClubs, onOpenClub, onCreate, onSearc
           })}
         </div>
 
-        {/* Create a club */}
-        <button className="club-create" onClick={onCreate}><Plus size={17} strokeWidth={2.4} /> {t('clubsCreate')}</button>
-
         {/* Discover */}
         <SectionHead title={hl(t('clubsRecommend'))} />
         <div className="card rec-card">
@@ -92,6 +88,11 @@ export default function Clubs({ clubs = seedClubs, onOpenClub, onCreate, onSearc
             )
           })}
         </div>
+
+        {/* Floating create-club button */}
+        <button className="evt-fab" onClick={onCreate}>
+          <Plus size={17} strokeWidth={2.4} /> {t('clubsCreate')}
+        </button>
       </div>
     </>
   )

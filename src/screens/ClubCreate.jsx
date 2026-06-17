@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { ArrowLeft, ChevronRight, Check, ImagePlus, Flag, Building2, Users, Zap } from 'lucide-react'
 import { Button } from '../components/ui.jsx'
 import { useLang } from '../i18n/LanguageContext.jsx'
-import { clubTypes, regions } from '../data/mock.js'
+import { clubTypes, regions, partners } from '../data/mock.js'
 
 /* club-type chip icons (replaces emoji) */
 const TYPE_ICON = { regular: Flag, company: Building2, friends: Users, open: Zap }
@@ -16,6 +16,9 @@ export default function ClubCreate({ onBack, onCreate, edit = false, club }) {
   const [region, setRegion] = useState(null)
   const [img, setImg] = useState(edit && club ? club.img : null)
   const [regionOpen, setRegionOpen] = useState(false)
+  const [invited, setInvited] = useState(() => new Set())
+
+  const toggleInvite = (k) => setInvited((s) => { const n = new Set(s); n.has(k) ? n.delete(k) : n.add(k); return n })
 
   const valid = name.trim().length > 0
 
@@ -29,7 +32,7 @@ export default function ClubCreate({ onBack, onCreate, edit = false, club }) {
       id: 'c' + Date.now(),
       nameKr: nm, nameEn: nm,
       role: '총무', roleEn: 'Organizer',
-      members: 1, unpaid: 0,
+      members: 1 + invited.size, unpaid: 0,
       nextKr: '', nextEn: '',
       icon: TYPE_ICON[type] || 'flag',
       img: img || null,
@@ -92,6 +95,30 @@ export default function ClubCreate({ onBack, onCreate, edit = false, club }) {
           <label className="field-label">{t('ccDesc')}</label>
           <textarea className="field-input field-area" rows={3} placeholder={t('ccDescPlace')} />
         </div>
+
+        {/* Invite members — pick saved partners to add on creation */}
+        {!edit && (
+          <div className="field">
+            <label className="field-label">{t('ccInvite')}</label>
+            <p style={{ fontSize: 12, color: 'var(--text-3)', margin: '0 2px 8px' }}>
+              {invited.size > 0 ? t('ccInviteCount', { n: invited.size }) : t('ccInviteHint')}
+            </p>
+            <div className="card cd-list">
+              {partners.map((p) => {
+                const sel = invited.has(p.ko)
+                return (
+                  <div className="invite-row" key={p.ko}>
+                    <span className="invite-av">{pick(p.ko, p.en).charAt(0)}</span>
+                    <span className="invite-name">{pick(p.ko, p.en)}</span>
+                    <button className={`invite-btn ${sel ? 'is-sent' : ''}`} onClick={() => toggleInvite(p.ko)}>
+                      {sel ? t('inviteSent') : t('inviteSend')}
+                    </button>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )}
 
         <div className="sticky-cta">
           <Button variant="primary" className="btn-block" disabled={!valid} onClick={submit}>{edit ? t('commonSave') : t('ccCreate')}</Button>

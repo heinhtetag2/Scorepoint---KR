@@ -50,6 +50,15 @@ export const eventList = [
     joined: 24, absent: 3, mood: 2,
   },
   {
+    id: 'ev4', status: 'scheduled', dday: 12, mine: false,
+    clubKo: '서울 라이더스', clubEn: 'Seoul Riders',
+    hostKo: '이상훈', hostEn: 'Lee Sang-hoon',
+    titleKo: '여름 친선 라운드', titleEn: 'Summer Friendly Round',
+    courseKo: '레이크우드CC', courseEn: 'Lakewood CC', subKo: '남코스', subEn: 'South Course',
+    date: '2026-06-21', time: '06:50', fee: 120000, capacity: 24,
+    joined: 16, absent: 2, mood: 4,
+  },
+  {
     id: 'ev2', status: 'ended',
     clubKo: '타고플러스 골프클럽', clubEn: 'Tago Plus Golf Club',
     titleKo: '5월 정기 라운딩', titleEn: 'May Regular Rounding',

@@ -3,12 +3,12 @@ import {
   ArrowLeft, Share2, CalendarClock, Wallet, Users, UsersRound, Flag, MapPin, CreditCard,
   Megaphone, Crown, User, Medal, Check, X, Link, Trophy,
   LayoutGrid, Camera, Receipt, Lock, ChevronRight, Info, ScanLine, Download, AlertTriangle,
-  MoreVertical, Trash2, Pencil,
+  MoreVertical, Trash2, Pencil, UserPlus,
 } from 'lucide-react'
 import KakaoLogo from '../components/KakaoLogo.jsx'
 import { Segmented, Button } from '../components/ui.jsx'
 import { useLang } from '../i18n/LanguageContext.jsx'
-import { eventDetail as ev, participants as initParticipants, eventTools, leaderboard, settlement, money, paymentMethods } from '../data/mock.js'
+import { eventDetail as ev, participants as initParticipants, eventTools, leaderboard, settlement, money, paymentMethods, partners } from '../data/mock.js'
 import Scan from './Scan.jsx'
 import EventVerify from './EventVerify.jsx'
 import ShinperioResult from './ShinperioResult.jsx'
@@ -94,7 +94,7 @@ function ReceiptRow({ label, value, last }) {
 }
 
 /* ── Registration bottom sheet ───────────────────────────────── */
-function RegisterSheet({ onClose, onSuccess, lang, pick, t }) {
+function RegisterSheet({ onClose, onSuccess, lang, pick, t, e = ev }) {
   const [payId, setPayId] = useState(paymentMethods.find(p => p.primary)?.id ?? paymentMethods[0].id)
   const [step, setStep] = useState('form') // 'form' | 'loading' | 'success'
   const assignedGroup = 'G3'
@@ -134,8 +134,8 @@ function RegisterSheet({ onClose, onSuccess, lang, pick, t }) {
             </p>
 
             <div style={{ width: '100%', background: 'var(--surface-2)', borderRadius: 14, padding: '14px 16px', marginBottom: 20 }}>
-              <ReceiptRow label={lang === 'ko' ? '행사' : 'Event'} value={pick(ev.titleKr, ev.titleEn)} />
-              <ReceiptRow label={lang === 'ko' ? '일시' : 'Date'} value={`${pick(ev.date, ev.dateEn)} ${ev.time}`} />
+              <ReceiptRow label={lang === 'ko' ? '행사' : 'Event'} value={pick(e.titleKr, e.titleEn)} />
+              <ReceiptRow label={lang === 'ko' ? '일시' : 'Date'} value={`${pick(e.date, e.dateEn)} ${e.time}`} />
               <ReceiptRow label={lang === 'ko' ? '조' : 'Group'} value={assignedGroup} />
               <ReceiptRow label={lang === 'ko' ? '결제' : 'Payment'} value={lang === 'ko' ? selectedMethod.nameKo : selectedMethod.nameEn} last />
               <div style={{
@@ -146,7 +146,7 @@ function RegisterSheet({ onClose, onSuccess, lang, pick, t }) {
                   {lang === 'ko' ? '결제 금액' : 'Total paid'}
                 </span>
                 <span style={{ fontSize: 15, fontWeight: 800, color: 'var(--positive)', letterSpacing: -0.3 }} className="num">
-                  {pick(ev.fee, ev.feeEn)}
+                  {pick(e.fee, e.feeEn)}
                 </span>
               </div>
             </div>
@@ -178,12 +178,12 @@ function RegisterSheet({ onClose, onSuccess, lang, pick, t }) {
 
             <div style={{ background: 'var(--surface-2)', borderRadius: 14, padding: '14px 16px', marginBottom: 18 }}>
               <p style={{ fontSize: 15, fontWeight: 800, color: 'var(--text-1)', margin: '0 0 8px', letterSpacing: -0.3 }}>
-                {pick(ev.titleKr, ev.titleEn)}
+                {pick(e.titleKr, e.titleEn)}
               </p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
-                <SummaryRow icon={<CalendarClock size={13} strokeWidth={1.9} />} text={`${pick(ev.date, ev.dateEn)} ${ev.time}`} />
-                <SummaryRow icon={<MapPin size={13} strokeWidth={1.9} />} text={pick(ev.course, ev.courseEn)} />
-                <SummaryRow icon={<Users size={13} strokeWidth={1.9} />} text={lang === 'ko' ? `현재 ${ev.joined}/${ev.capacity}명 신청` : `${ev.joined}/${ev.capacity} joined`} />
+                <SummaryRow icon={<CalendarClock size={13} strokeWidth={1.9} />} text={`${pick(e.date, e.dateEn)} ${e.time}`} />
+                <SummaryRow icon={<MapPin size={13} strokeWidth={1.9} />} text={pick(e.course, e.courseEn)} />
+                <SummaryRow icon={<Users size={13} strokeWidth={1.9} />} text={lang === 'ko' ? `현재 ${e.joined ?? ev.joined}/${e.capacity}명 신청` : `${e.joined ?? ev.joined}/${e.capacity} joined`} />
               </div>
             </div>
 
@@ -249,7 +249,7 @@ function RegisterSheet({ onClose, onSuccess, lang, pick, t }) {
             </div>
 
             <CtaButton onClick={confirm} loading={step === 'loading'}>
-              {lang === 'ko' ? `결제하기 · ${pick(ev.fee, ev.feeEn)}` : `Confirm & Pay ${pick(ev.fee, ev.feeEn)}`}
+              {lang === 'ko' ? `결제하기 · ${pick(e.fee, e.feeEn)}` : `Confirm & Pay ${pick(e.fee, e.feeEn)}`}
             </CtaButton>
           </>
         )}
@@ -574,6 +574,103 @@ function DeleteEventSheet({ onClose, onConfirm, lang }) {
   )
 }
 
+/* ── Player invite sheet (host only) — invite members or add a guest ─ */
+function PlayerInviteSheet({ onClose, onAddGuest, e = ev, lang, pick, t }) {
+  const [mode, setMode] = useState('invite')   // 'invite' | 'guest'
+  const [invited, setInvited] = useState(() => new Set())
+  const toggle = (k) => setInvited((s) => { const n = new Set(s); n.has(k) ? n.delete(k) : n.add(k); return n })
+
+  // guest registration form
+  const [gName, setGName] = useState('')
+  const [gContact, setGContact] = useState('')
+  const [gRec, setGRec] = useState('')
+  const [gConsent, setGConsent] = useState(false)
+  const guestValid = gName.trim().length > 0 && gConsent
+
+  function submitGuest() {
+    onAddGuest?.({ name: gName.trim(), contact: gContact.trim(), recommender: gRec.trim() })
+    onClose()
+  }
+
+  return (
+    <>
+      <SheetScrim onClick={onClose} />
+      <SheetWrap>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+          <button onClick={onClose} style={{ border: 'none', background: 'none', padding: 2, cursor: 'pointer', color: 'var(--text-3)' }}>
+            <X size={20} />
+          </button>
+          <span style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-1)', letterSpacing: -0.2 }}>
+            {mode === 'invite' ? t('hostInviteTitle') : t('guestTitle')}
+          </span>
+          <span style={{ width: 24 }} />
+        </div>
+
+        {/* mode toggle — app design-system tabs */}
+        <div style={{ marginBottom: 16 }}>
+          <Segmented
+            items={[{ id: 'invite', label: t('inviteMembersTab') }, { id: 'guest', label: t('guestTab') }]}
+            value={mode}
+            onChange={setMode}
+          />
+        </div>
+
+        {mode === 'invite' ? (
+          <>
+            <p style={{ fontSize: 13, color: 'var(--text-3)', textAlign: 'center', margin: '0 0 14px' }}>
+              {t('hostInviteSub', { event: pick(e.titleKr, e.titleEn) })}
+            </p>
+            <div className="invite-list">
+              {partners.map((p) => {
+                const sent = invited.has(p.ko)
+                return (
+                  <div className="invite-row" key={p.ko}>
+                    <span className="invite-av">{pick(p.ko, p.en).charAt(0)}</span>
+                    <span className="invite-name">{pick(p.ko, p.en)}</span>
+                    <button className={`invite-btn ${sent ? 'is-sent' : ''}`} onClick={() => toggle(p.ko)}>
+                      {sent ? t('inviteSent') : t('inviteSend')}
+                    </button>
+                  </div>
+                )
+              })}
+            </div>
+            <div style={{ marginTop: 18 }}>
+              <CtaButton onClick={onClose}>
+                {invited.size > 0 ? t('hostInvited', { n: invited.size }) : (lang === 'ko' ? '완료' : 'Done')}
+              </CtaButton>
+            </div>
+          </>
+        ) : (
+          <>
+            <p style={{ fontSize: 13, color: 'var(--text-3)', textAlign: 'center', margin: '0 0 16px' }}>
+              {t('guestSub')}
+            </p>
+            <div className="field">
+              <label className="field-label">{t('guestName')}</label>
+              <input className="field-input" value={gName} onChange={(ev) => setGName(ev.target.value)} placeholder={t('guestNamePlace')} />
+            </div>
+            <div className="field">
+              <label className="field-label">{t('guestContact')}</label>
+              <input className="field-input" value={gContact} onChange={(ev) => setGContact(ev.target.value)} placeholder="010-0000-0000" inputMode="tel" />
+            </div>
+            <div className="field">
+              <label className="field-label">{t('guestRecommender')}</label>
+              <input className="field-input" value={gRec} onChange={(ev) => setGRec(ev.target.value)} placeholder={t('guestRecommenderPlace')} />
+            </div>
+            <button className="guest-consent" onClick={() => setGConsent((v) => !v)}>
+              <span className={`gc-box ${gConsent ? 'on' : ''}`}>{gConsent && <Check size={13} strokeWidth={3} color="#fff" />}</span>
+              <span className="gc-text">{t('guestConsent')}</span>
+            </button>
+            <div style={{ marginTop: 18 }}>
+              <CtaButton onClick={submitGuest} disabled={!guestValid}>{t('guestAdd')}</CtaButton>
+            </div>
+          </>
+        )}
+      </SheetWrap>
+    </>
+  )
+}
+
 function ShareChip({ emoji, icon, label, bg, color, onClick, loading }) {
   return (
     <button onClick={onClick}
@@ -606,15 +703,40 @@ export default function Detail({ onBack, onImmersiveChange, event, onDelete }) {
   const [showCancel, setShowCancel] = useState(false)
   const [showMenu, setShowMenu] = useState(false)
   const [showDelete, setShowDelete] = useState(false)
+  const [showInvite, setShowInvite] = useState(false)
   const [toast, setToast] = useState(null)
   const [registered, setRegistered] = useState(false)
   const [participants, setParticipants] = useState(initParticipants)
-  const [joinedCount, setJoinedCount] = useState(ev.joined)
+  const [joinedCount, setJoinedCount] = useState(event?.joined ?? ev.joined)
 
+  // Hero/title/info reflect the card that was opened; format/notice fall back to
+  // the rich sample so every event reads completely.
+  const fmtMd = (iso) => { const [, m, d] = String(iso).split('-'); return `${+m}/${+d}` }
+  const ed = event ? {
+    ...ev,
+    titleKr: event.titleKo, titleEn: event.titleEn,
+    course: event.courseKo, courseEn: event.courseEn,
+    date: fmtMd(event.date), dateEn: fmtMd(event.date), time: event.time,
+    fee: `${event.fee / 10000}만원`, feeEn: `₩${Number(event.fee).toLocaleString()}`,
+    capacity: event.capacity, dday: event.dday,
+  } : ev
+
+  // Host view: the signed-in user created this event (carries the 주최/Host tag).
+  // Hosts don't register — they get RSVP stats and player-invite controls instead.
+  const isHost = !!event?.mine
+  const hostStats = {
+    attending: event?.joined ?? ev.joined,
+    absent: event?.absent ?? 0,
+    pending: event?.mood ?? Math.max(0, (event?.capacity ?? ev.capacity) - (event?.joined ?? ev.joined) - (event?.absent ?? 0)),
+  }
+
+  // Rankings/settlement only make sense once the round has been played — show
+  // that tab on past events only, not on upcoming ones still gathering players.
+  const isPast = event?.status === 'ended'
   const TABS = [
     { id: 'info', label: t('tabInfo') },
     { id: 'people', label: t('tabPeople') },
-    { id: 'rank', label: t('tabRank') },
+    ...(isPast ? [{ id: 'rank', label: t('tabRank') }] : []),
   ]
 
   function handleRegisterSuccess({ group }) {
@@ -633,6 +755,16 @@ export default function Detail({ onBack, onImmersiveChange, event, onDelete }) {
     setShowCancel(false)
     setJoinedCount(c => Math.max(0, c - 1))
     setParticipants(prev => prev.filter(p => !p.isMe))
+  }
+
+  function handleAddGuest(guest) {
+    setJoinedCount(c => c + 1)
+    setParticipants(prev => [
+      ...prev,
+      { id: 'guest' + prev.length, nameKr: guest.name, nameEn: guest.name, role: '', group: Math.floor(prev.length / 4) + 1, paid: false, guest: true },
+    ])
+    setTab('people')
+    flashToast(lang === 'ko' ? '게스트가 추가되었어요' : 'Guest added')
   }
 
   function flashToast(msg) {
@@ -655,14 +787,14 @@ export default function Detail({ onBack, onImmersiveChange, event, onDelete }) {
     <CreateEvent
       edit
       initial={{
-        id: ev.id,
-        name: pick(ev.titleKr, ev.titleEn),
-        course: pick(ev.course, ev.courseEn),
-        date: '2026-05-14',
-        time: ev.time,
-        fee: String(ev.feeEn).replace(/[^0-9]/g, ''),
-        cap: String(ev.capacity),
-        joined: ev.joined,
+        id: event?.id ?? ev.id,
+        name: pick(ed.titleKr, ed.titleEn),
+        course: pick(ed.course, ed.courseEn),
+        date: event?.date ?? '2026-05-14',
+        time: ed.time,
+        fee: String(ed.feeEn).replace(/[^0-9]/g, ''),
+        cap: String(ed.capacity),
+        joined: joinedCount,
       }}
       onBack={() => setSubScreen(null)}
       onCreate={() => { setSubScreen(null); flashToast(lang === 'ko' ? '행사 정보를 수정했어요' : 'Event updated') }}
@@ -673,7 +805,7 @@ export default function Detail({ onBack, onImmersiveChange, event, onDelete }) {
     <>
       <div className="appbar">
         <button className="icon-btn" onClick={onBack} aria-label="Back"><ArrowLeft size={20} /></button>
-        <span className="title" style={{ flex: 1, textAlign: 'center' }}>{pick(ev.titleKr, ev.titleEn)}</span>
+        <span className="title" style={{ flex: 1, textAlign: 'center' }}>{pick(ed.titleKr, ed.titleEn)}</span>
         <button className="icon-btn" aria-label={lang === 'ko' ? '더보기' : 'More'} onClick={() => setShowMenu(true)}>
           <MoreVertical size={20} strokeWidth={1.9} />
         </button>
@@ -690,27 +822,46 @@ export default function Detail({ onBack, onImmersiveChange, event, onDelete }) {
             <circle cx="14" cy="104" r="4.5" fill="currentColor" />
           </svg>
           <div className="dh-chips">
-            <span className="dday">D-{ev.dday}</span>
+            <span className="dday">D-{ed.dday}</span>
             <span className="ev-status">{t('open')}</span>
+            {isHost && <span className="ev-host-chip"><Crown size={11} strokeWidth={2.4} /> {t('hostTag')}</span>}
           </div>
-          <div className="dh-title">{pick(ev.course, ev.courseEn)}</div>
-          <div className="dh-row"><CalendarClock size={15} strokeWidth={1.9} /><b>{pick(ev.date, ev.dateEn)} {ev.time}</b></div>
-          <div className="dh-row"><Wallet size={15} strokeWidth={1.9} />{t('feeLine', { fee: pick(ev.fee, ev.feeEn), note: pick(ev.feeNote, ev.feeNoteEn) })}</div>
-          <div className="dh-row"><Users size={15} strokeWidth={1.9} /><b className="num">{t('joinedLine', { n: joinedCount, cap: ev.capacity })}</b></div>
+          <div className="dh-title">{pick(ed.course, ed.courseEn)}</div>
+          <div className="dh-row"><CalendarClock size={15} strokeWidth={1.9} /><b>{pick(ed.date, ed.dateEn)} {ed.time}</b></div>
+          <div className="dh-row"><Wallet size={15} strokeWidth={1.9} />{t('feeLine', { fee: pick(ed.fee, ed.feeEn), note: pick(ev.feeNote, ev.feeNoteEn) })}</div>
+          <div className="dh-row"><Users size={15} strokeWidth={1.9} /><b className="num">{t('joinedLine', { n: joinedCount, cap: ed.capacity })}</b></div>
         </div>
 
         <Segmented items={TABS} value={tab} onChange={setTab} />
 
         {tab === 'info' && (
           <>
+            {/* Host-only: RSVP overview at a glance */}
+            {isHost && (
+              <div className="card ev-host-stats">
+                <div className="ehs-tile">
+                  <span className="ehs-num num">{hostStats.attending}</span>
+                  <span className="ehs-label">{t('hostAttending')}</span>
+                </div>
+                <div className="ehs-tile">
+                  <span className="ehs-num num">{hostStats.absent}</span>
+                  <span className="ehs-label">{t('hostAbsent')}</span>
+                </div>
+                <div className="ehs-tile">
+                  <span className="ehs-num num">{hostStats.pending}</span>
+                  <span className="ehs-label">{t('hostMood')}</span>
+                </div>
+              </div>
+            )}
             <div className="card info-block">
               <div className="ib-row"><span className="ib-ico"><Flag size={15} strokeWidth={1.9} /></span><span className="ib-k">{t('rowFormat')}</span><span className="ib-v">{pick(ev.formatKr, ev.formatEn)} · {pick(ev.groupKr, ev.groupEn)}</span></div>
-              <div className="ib-row"><span className="ib-ico"><MapPin size={15} strokeWidth={1.9} /></span><span className="ib-k">{t('rowCourse')}</span><span className="ib-v">{pick(ev.course, ev.courseEn)} · {t('viewMap')}</span></div>
-              <div className="ib-row"><span className="ib-ico"><CreditCard size={15} strokeWidth={1.9} /></span><span className="ib-k">{t('rowFee')}</span><span className="ib-v num">{pick(ev.fee, ev.feeEn)} · {pick(ev.feeNote, ev.feeNoteEn)}</span></div>
+              <div className="ib-row"><span className="ib-ico"><MapPin size={15} strokeWidth={1.9} /></span><span className="ib-k">{t('rowCourse')}</span><span className="ib-v">{pick(ed.course, ed.courseEn)} · {t('viewMap')}</span></div>
+              <div className="ib-row"><span className="ib-ico"><CreditCard size={15} strokeWidth={1.9} /></span><span className="ib-k">{t('rowFee')}</span><span className="ib-v num">{pick(ed.fee, ed.feeEn)} · {pick(ev.feeNote, ev.feeNoteEn)}</span></div>
             </div>
             <div className="notice-box"><Megaphone size={16} strokeWidth={1.9} /><span>{pick(ev.noticeKr, ev.noticeEn)}</span></div>
 
-            {/* General Affairs Tools */}
+            {/* General Affairs Tools — host/organizer only */}
+            {isHost && <>
             <div className="section-head">
               <span className="s-head-left"><span className="s-title">{t('edToolsTitle')}</span></span>
             </div>
@@ -733,6 +884,7 @@ export default function Detail({ onBack, onImmersiveChange, event, onDelete }) {
                 )
               })}
             </div>
+            </>}
           </>
         )}
 
@@ -749,6 +901,11 @@ export default function Detail({ onBack, onImmersiveChange, event, onDelete }) {
                 <span className="pr-name">
                   {pick(p.nameKr, p.nameEn)}
                   {p.role === '총무' && <span className="badge badge-role">{t('organizer')}</span>}
+                  {p.guest && (
+                    <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--point)', background: 'color-mix(in srgb, var(--point) 12%, #fff)', borderRadius: 6, padding: '2px 6px', marginLeft: 6 }}>
+                      {t('guestBadge')}
+                    </span>
+                  )}
                   {p.isMe && (
                     <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--brand)', background: 'var(--brand-weak)', borderRadius: 6, padding: '2px 6px', marginLeft: 6 }}>
                       {lang === 'ko' ? '나' : 'You'}
@@ -800,41 +957,50 @@ export default function Detail({ onBack, onImmersiveChange, event, onDelete }) {
           </>
         )}
 
-        <div className="sticky-cta">
-          {tab === 'rank' ? (
-            <Button variant="primary" className="btn-block" onClick={() => setShowSettle(true)}>
-              {t('ctaClose')}
-            </Button>
-          ) : registered ? (
-            <div style={{ display: 'flex', gap: 10 }}>
-              <span style={{
-                flex: 1, height: 52, borderRadius: 'var(--btn-radius)',
-                background: 'var(--positive-weak)', color: 'var(--positive)',
-                fontFamily: 'var(--font)', fontWeight: 700, fontSize: 15,
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-              }}>
-                <Check size={18} strokeWidth={2.5} />
-                {lang === 'ko' ? '참가 신청 완료' : 'Registered'}
-              </span>
-              <button onClick={() => setShowCancel(true)} style={{
-                flexShrink: 0, height: 52, padding: '0 18px', borderRadius: 'var(--btn-radius)',
-                border: '1.5px solid color-mix(in srgb, var(--negative) 40%, transparent)',
-                background: 'var(--negative-weak)', color: 'var(--negative)',
-                fontFamily: 'var(--font)', fontWeight: 700, fontSize: 15, letterSpacing: -0.2, cursor: 'pointer',
-              }}>
-                {lang === 'ko' ? '참가 취소' : 'Cancel'}
-              </button>
-            </div>
-          ) : (
-            <Button variant="primary" className="btn-block" onClick={() => setShowRegister(true)}>
-              {t('ctaRegister', { fee: pick(ev.fee, ev.feeEn) })}
-            </Button>
-          )}
-        </div>
+        {/* Bottom action — rank tab closes settlement; the host invites players from
+            the Players tab; players register on upcoming events. */}
+        {(tab === 'rank' || (isHost && tab === 'people') || (!isHost && !isPast)) && (
+          <div className="sticky-cta">
+            {tab === 'rank' ? (
+              <Button variant="primary" className="btn-block" onClick={() => setShowSettle(true)}>
+                {t('ctaClose')}
+              </Button>
+            ) : isHost ? (
+              <Button variant="primary" className="btn-block" onClick={() => setShowInvite(true)}>
+                <UserPlus size={16} strokeWidth={2} style={{ marginRight: 6, verticalAlign: '-3px' }} />{t('hostInvite')}
+              </Button>
+            ) : registered ? (
+              <div style={{ display: 'flex', gap: 10 }}>
+                <span style={{
+                  flex: 1, height: 52, borderRadius: 'var(--btn-radius)',
+                  background: 'var(--positive-weak)', color: 'var(--positive)',
+                  fontFamily: 'var(--font)', fontWeight: 700, fontSize: 15,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                }}>
+                  <Check size={18} strokeWidth={2.5} />
+                  {lang === 'ko' ? '참가 신청 완료' : 'Registered'}
+                </span>
+                <button onClick={() => setShowCancel(true)} style={{
+                  flexShrink: 0, height: 52, padding: '0 18px', borderRadius: 'var(--btn-radius)',
+                  border: '1.5px solid color-mix(in srgb, var(--negative) 40%, transparent)',
+                  background: 'var(--negative-weak)', color: 'var(--negative)',
+                  fontFamily: 'var(--font)', fontWeight: 700, fontSize: 15, letterSpacing: -0.2, cursor: 'pointer',
+                }}>
+                  {lang === 'ko' ? '참가 취소' : 'Cancel'}
+                </button>
+              </div>
+            ) : (
+              <Button variant="primary" className="btn-block" onClick={() => setShowRegister(true)}>
+                {t('ctaRegister', { fee: pick(ed.fee, ed.feeEn) })}
+              </Button>
+            )}
+          </div>
+        )}
       </div>
 
       {showRegister && (
         <RegisterSheet
+          e={ed}
           onClose={() => setShowRegister(false)}
           onSuccess={handleRegisterSuccess}
           lang={lang} pick={pick} t={t}
@@ -853,6 +1019,15 @@ export default function Detail({ onBack, onImmersiveChange, event, onDelete }) {
           onClose={() => setShowCancel(false)}
           onConfirm={handleCancelRegistration}
           lang={lang} pick={pick}
+        />
+      )}
+
+      {showInvite && (
+        <PlayerInviteSheet
+          e={ed}
+          onClose={() => setShowInvite(false)}
+          onAddGuest={handleAddGuest}
+          lang={lang} pick={pick} t={t}
         />
       )}
 

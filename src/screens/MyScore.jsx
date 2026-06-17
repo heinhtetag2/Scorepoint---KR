@@ -1,4 +1,4 @@
-import { SlidersHorizontal, ScanLine, ChevronRight, TrendingDown } from 'lucide-react'
+import { ScanLine, ChevronRight, TrendingDown } from 'lucide-react'
 import { SectionHead } from '../components/ui.jsx'
 import Spark from '../components/Spark.jsx'
 import { useLang } from '../i18n/LanguageContext.jsx'
@@ -27,7 +27,6 @@ export default function MyScore({ onOpenRecord, onScan }) {
     <>
       <div className="appbar">
         <span className="title">{t('navScore')}</span>
-        <span className="actions"><SlidersHorizontal size={20} strokeWidth={1.8} /></span>
       </div>
 
       <div className="screen ms-screen">

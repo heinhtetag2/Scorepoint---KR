@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ArrowLeft, Check, Pencil, Minus, Plus, ChevronRight, ChevronLeft, Search } from 'lucide-react'
+import { ArrowLeft, Check, Pencil, Minus, Plus, ChevronRight, ChevronLeft, Search, X, Maximize2 } from 'lucide-react'
 import { Button } from '../components/ui.jsx'
 import { useLang } from '../i18n/LanguageContext.jsx'
 import { scannedRound, roundCompanions, partners, popularCourses, buildScorecard, HOLE_PARS } from '../data/mock.js'
@@ -155,6 +155,36 @@ function NineEdit({ label, pars, holes, start, sub, editing, active, check, onCe
   )
 }
 
+/* Faux photo of the scanned scorecard — paper look, handwritten scores.
+   Stands in for the captured image so the user can cross-check the original. */
+function ScannedCard({ title, sub, date, holes, large = false }) {
+  const nines = large ? [0, 9] : [0]   // thumbnail shows front 9; viewer shows both
+  return (
+    <div className={`scan-paper ${large ? 'is-large' : ''}`} aria-hidden={!large}>
+      <div className="sc-head">
+        <span className="sc-title">{title}{sub ? ` · ${sub}` : ''}</span>
+        <span className="sc-date num">{date}</span>
+      </div>
+      {nines.map((s) => (
+        <div className="sc-grid" key={s}>
+          <div className="sc-row sc-row-head">
+            <span className="sc-rk">{s === 0 ? 'OUT' : 'IN'}</span>
+            {Array.from({ length: 9 }).map((_, i) => <span key={i} className="sc-cell">{s + i + 1}</span>)}
+          </div>
+          <div className="sc-row">
+            <span className="sc-rk">PAR</span>
+            {HOLE_PARS.slice(s, s + 9).map((p, i) => <span key={i} className="sc-cell sc-par">{p}</span>)}
+          </div>
+          <div className="sc-row">
+            <span className="sc-rk sc-rk-score">SCORE</span>
+            {holes.slice(s, s + 9).map((v, i) => <span key={i} className="sc-cell sc-hand">{v}</span>)}
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 export default function ScanReview({ onBack, onRegister, manual = false }) {
   const { t, pick } = useLang()
   const r = scannedRound
@@ -169,6 +199,7 @@ export default function ScanReview({ onBack, onRegister, manual = false }) {
   const [date, setDate] = useState(r.date)
   const [companions, setCompanions] = useState(() => (manual ? [] : roundCompanions.map((c) => ({ ko: c.name, en: c.nameEn }))))
   const [picker, setPicker] = useState(null)
+  const [viewer, setViewer] = useState(false)   // full-screen scan preview
 
   const cellEditing = manual || editing
   const checkSet = manual ? EMPTY : CHECK
@@ -212,6 +243,19 @@ export default function ScanReview({ onBack, onRegister, manual = false }) {
           <div className="notice-box sv-ok"><Check size={16} strokeWidth={2.6} /><span>{t('svRecognized')}</span></div>
         )}
 
+        {/* Scanned image — the captured scorecard, tap to view the original */}
+        {!manual && (
+          <button className="sv-scan-thumb" onClick={() => setViewer(true)}>
+            <div className="sv-scan-thumb-img">
+              <ScannedCard title={pick(course?.ko || r.course, course?.en || r.courseEn)} sub={pick(layout?.ko || r.sub, layout?.en || r.subEn)} date={date} holes={holes} />
+            </div>
+            <div className="sv-scan-thumb-meta">
+              <span className="sv-scan-thumb-label">{t('svScanned')}</span>
+              <span className="sv-scan-thumb-view"><Maximize2 size={13} strokeWidth={2.2} /> {t('svViewOriginal')}</span>
+            </div>
+          </button>
+        )}
+
         <div className="section-head"><span className="s-head-left"><span className="s-title">{t('svRound')}</span></span></div>
         <div className="card sv-info-card">
           {info.map((row) => (
@@ -252,6 +296,16 @@ export default function ScanReview({ onBack, onRegister, manual = false }) {
           </div>
         )}
       </div>
+
+      {viewer && (
+        <div className="scan-viewer" onClick={() => setViewer(false)}>
+          <button className="scan-viewer-x" onClick={() => setViewer(false)} aria-label="Close"><X size={22} /></button>
+          <div className="scan-viewer-body" onClick={(e) => e.stopPropagation()}>
+            <ScannedCard title={pick(course?.ko || r.course, course?.en || r.courseEn)} sub={pick(layout?.ko || r.sub, layout?.en || r.subEn)} date={date} holes={holes} large />
+          </div>
+          <span className="scan-viewer-cap">{t('svScanned')}</span>
+        </div>
+      )}
 
       {active !== null && (
         <>
