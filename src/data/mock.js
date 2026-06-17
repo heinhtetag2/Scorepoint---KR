@@ -42,7 +42,7 @@ export const events = [
    status: 'scheduled' | 'ended'. */
 export const eventList = [
   {
-    id: 'ev1', status: 'scheduled', dday: 6,
+    id: 'ev1', status: 'scheduled', dday: 6, mine: true,
     clubKo: '타고플러스 골프클럽', clubEn: 'Tago Plus Golf Club',
     titleKo: '2026년 6월 정기모임', titleEn: 'June 2026 Monthly Meeting',
     courseKo: '남서울CC', courseEn: 'Namseoul CC', subKo: '동코스', subEn: 'East Course',
@@ -83,12 +83,82 @@ export const eventAttendees = [
   { id: 'ec2', nameKo: '장미래', nameEn: 'Jang Mi-rae', color: '#E2571F', status: 'mood', emoji: '🔥' },
 ]
 
-/* Organizer tools for an event (kept for reuse; not currently rendered). */
+/* Organizer tools for an event. */
 export const eventTools = [
-  { id: 'group', icon: 'grid', titleKo: '조 편성', titleEn: 'Group formation', subKo: '4인 1조 · AI 자동 편성', subEn: '4 per team · AI auto formation' },
-  { id: 'results', icon: 'camera', titleKo: '결과 등록', titleEn: 'Register results', subKo: '성적표 사진 > 일괄 등록', subEn: 'Report card photo > Bulk registration' },
-  { id: 'awards', icon: 'trophy', titleKo: '신페리오 계산 · 시상', titleEn: 'Shinperio Calculation · Awards', subKo: '순위 계산 후 시상', subEn: 'Awards after ranking calculation' },
-  { id: 'settle', icon: 'receipt', titleKo: '정산 · 이체', titleEn: 'Settlement · Transfer', subKo: '영수증 촬영 > 1인당 자동 계산', subEn: 'Photo receipt > Auto per-person', locked: true },
+  { id: 'group',   icon: 'grid',    titleKo: '조 편성',           titleEn: 'Group formation',              subKo: '4인 1조 · AI 자동 편성',         subEn: '4 per team · AI auto formation' },
+  { id: 'results', icon: 'camera',  titleKo: '결과 등록',          titleEn: 'Register results',             subKo: '성적표 사진 > 일괄 등록',         subEn: 'Report card photo > Bulk registration' },
+  { id: 'awards',  icon: 'trophy',  titleKo: '신페리오 계산 · 시상', titleEn: 'Shinperio Calculation · Awards', subKo: '순위 계산 후 시상',             subEn: 'Awards after ranking calculation' },
+  { id: 'settle',  icon: 'receipt', titleKo: '정산 · 이체',        titleEn: 'Settlement · Transfer',        subKo: '영수증 촬영 > 1인당 자동 계산', subEn: 'Photo receipt > Auto per-person' },
+]
+
+/* OCR verification results (after scanning group score card). */
+export const verifyResults = [
+  { id: 'v1', nameKo: '문양희',  nameEn: 'Moon Yang-hee',    color: '#0A7A37', gross: 90, conf: 'high' },
+  { id: 'v2', nameKo: '강대호',  nameEn: 'Kang Dae-ho',      color: '#1E8E5A', gross: 88, conf: 'high' },
+  { id: 'v3', nameKo: '홍길동',  nameEn: 'Hong Gil-dong',    color: '#2563EB', gross: 91, conf: 'check' },
+  { id: 'v4', nameKo: '정해성',  nameEn: 'Jeong Hae-seong',  color: '#3B82F6', gross: 93, conf: 'ok' },
+  { id: 'v5', nameKo: '최윤아',  nameEn: 'Choi Yoon-ah',     color: '#E2571F', gross: 97, conf: 'ok' },
+  { id: 'v6', nameKo: '김철수',  nameEn: 'Kim Cheol-su',     color: '#C77B3B', gross: 95, conf: 'ok' },
+  { id: 'v7', nameKo: '박영희',  nameEn: 'Park Young-hee',   color: '#8B5CF6', gross: 99, conf: 'ok' },
+]
+
+/* Shinperio (New Peoria) calculation method — shown in the "계산 방식" sheet.
+   12 hidden holes are used for the handicap; formula:
+   ((sum of hidden holes × 1.5) − 72) × 0.8 = HCP */
+export const shinperioCalc = {
+  hiddenHoles: [2, 4, 5, 7, 9, 11, 12, 14, 15, 16, 17, 18],
+  hiddenSum: 60,
+  multiplier: 1.5,
+  parTotal: 72,
+  correction: 0.8,
+  hcp: 14.4,
+  rules: [
+    { ko: '홀당 상한 2×Par', en: 'Cap 2×Par per hole' },
+    { ko: '핸디캡 0~36', en: 'Handicap 0~36' },
+  ],
+}
+
+/* Event group formation — 4 per team, tee times 8 min apart. */
+export const eventGroups = [
+  { tee: '08:00', members: [
+    { nameKo: '문양희', nameEn: 'Moon Yang-hee',   color: '#0A7A37', hcp: 14.4 },
+    { nameKo: '강대호', nameEn: 'Kang Dae-ho',     color: '#1E8E5A', hcp: 11.2 },
+    { nameKo: '홍길동', nameEn: 'Hong Gil-dong',   color: '#2563EB', hcp: 13.6 },
+    { nameKo: '정해성', nameEn: 'Jeong Hae-seong', color: '#3B82F6', hcp: 15.2 },
+  ]},
+  { tee: '08:08', members: [
+    { nameKo: '최윤아', nameEn: 'Choi Yoon-ah',    color: '#E2571F', hcp: 18.8 },
+    { nameKo: '김철수', nameEn: 'Kim Cheol-su',    color: '#C77B3B', hcp: 16.0 },
+    { nameKo: '박영희', nameEn: 'Park Young-hee',  color: '#8B5CF6', hcp: 19.6 },
+    { nameKo: '윤서연', nameEn: 'Yoon Seo-yeon',   color: '#0EA5A0', hcp: 12.0 },
+  ]},
+  { tee: '08:16', members: [
+    { nameKo: '강도현', nameEn: 'Kang Do-hyun',    color: '#EC4899', hcp: 20.0 },
+    { nameKo: '한지우', nameEn: 'Han Ji-woo',      color: '#6366F1', hcp: 8.4 },
+    { nameKo: '오지호', nameEn: 'Oh Ji-ho',        color: '#14B8A6', hcp: 22.0 },
+    { nameKo: '장미래', nameEn: 'Jang Mi-rae',     color: '#F59E0B', hcp: 17.2 },
+  ]},
+]
+
+/* Shinperio net calculation rankings. */
+export const shinperioRanking = [
+  { rank: 1, nameKo: '문양희',  nameEn: 'Moon Yang-hee',   color: '#0A7A37', gross: 90, hcp: 14.4, net: 75.6 },
+  { rank: 2, nameKo: '강대호',  nameEn: 'Kang Dae-ho',     color: '#1E8E5A', gross: 88, hcp: 11.2, net: 76.8 },
+  { rank: 3, nameKo: '홍길동',  nameEn: 'Hong Gil-dong',   color: '#2563EB', gross: 91, hcp: 13.6, net: 77.4 },
+  { rank: 4, nameKo: '정해성',  nameEn: 'Jeong Hae-seong', color: '#3B82F6', gross: 93, hcp: 15.2, net: 77.8 },
+  { rank: 5, nameKo: '최윤아',  nameEn: 'Choi Yoon-ah',    color: '#E2571F', gross: 97, hcp: 18.8, net: 78.2 },
+  { rank: 6, nameKo: '김철수',  nameEn: 'Kim Cheol-su',    color: '#C77B3B', gross: 95, hcp: 16.0, net: 79.0 },
+  { rank: 7, nameKo: '박영희',  nameEn: 'Park Young-hee',  color: '#8B5CF6', gross: 99, hcp: 19.6, net: 79.4 },
+]
+
+/* Award ceremony results. tier: 'gold'|'green'|'white' */
+export const awardResults = [
+  { id: 'win', catKo: '우승',      catEn: 'Winning',     icon: 'trophy',  nameKo: '문양희', nameEn: 'Moon Yang-hee',   detailKo: 'Net 75.6',          detailEn: 'Net 75.6',           prizeKo: '30만원 상당', prizeEn: 'Worth 300,000 won', tier: 'gold' },
+  { id: 'run', catKo: '준우승',    catEn: 'runner-up',   icon: 'ribbon',  nameKo: '강대호', nameEn: 'Kang Dae-ho',    detailKo: 'Net 76.8',          detailEn: 'Net 76.8',           prizeKo: '20만원 상당', prizeEn: 'Worth 200,000 won', tier: 'green' },
+  { id: 'med', catKo: '메달리스트', catEn: 'medalist',    icon: 'circle',  nameKo: '강대호', nameEn: 'Kang Dae-ho',    detailKo: 'Gross 88 (최저타)', detailEn: 'Gross 88 (lowest hit)', tier: 'green' },
+  { id: 'lng', catKo: '롱기스트',  catEn: 'Longest',     icon: 'zap',     nameKo: '홍길동', nameEn: 'Hong Gil-dong',  detailKo: '14번홀 · 268m',    detailEn: 'Hole 14 · 268m',     tier: 'white' },
+  { id: 'nea', catKo: '니어리스트', catEn: 'Nearest',     icon: 'target',  nameKo: '정해성', nameEn: 'Jeong Hae-seong', detailKo: '7번홀 · 0.8m',    detailEn: 'Hole 7 · 0.8m',      tier: 'white' },
+  { id: 'lky', catKo: '행운상',    catEn: 'Lucky prize', icon: 'star',    nameKo: '박영희', nameEn: 'Park Young-hee', detailKo: '추첨 선정',        detailEn: 'Lucky draw',          tier: 'white' },
 ]
 
 export const scoreTrend = [88, 86, 87, 84, 85, 82, 83, 80, 82, 79]
@@ -438,7 +508,7 @@ export const eventDetail = {
   feeNote: '그린피 + 상금 포함', feeNoteEn: 'green fee + prize',
   noticeKr: '7시까지 클럽하우스 집합 · 4인 1조 신페리오',
   noticeEn: 'Meet at clubhouse by 7AM · New Peoria, 4 per group',
-  formatKr: '신페리오 (New Peoria)', formatEn: 'New Peoria',
+  formatKr: '신페리오', formatEn: 'New Peoria',
   groupKr: '4인 1조', groupEn: '4 per group',
 }
 

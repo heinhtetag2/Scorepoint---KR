@@ -1,6 +1,6 @@
 import { Plus, ChevronRight } from 'lucide-react'
 import { useLang } from '../i18n/LanguageContext.jsx'
-import { eventList } from '../data/mock.js'
+import CourseIllust from '../components/CourseIllust.jsx'
 
 const fmtMd = (d) => d.slice(5).replace('-', '/')                 // '2026-06-15' → '06/15'
 
@@ -14,20 +14,21 @@ function EventCard({ ev, onOpen }) {
   const fee = pick(`${ev.fee / 10000}만원`, `₩${ev.fee.toLocaleString()}`)
 
   return (
-    <div className="event-card" onClick={() => onOpen?.(ev)} role="button" tabIndex={0}>
+    <div className={`event-card ${ended ? 'event-card--past' : 'event-card--upcoming'}`} onClick={() => onOpen?.(ev)} role="button" tabIndex={0}>
+      <CourseIllust />
       <div className="ev-title-row">
         {ended
           ? <span className="dday done">{t('evEnded')}</span>
           : <span className={`dday ${ev.dday > 7 ? 'soft' : ''}`}>D-{ev.dday}</span>}
+        {ev.mine && <span className="ev-host">{pick('주최', 'Host')}</span>}
         <div className="ev-title">{pick(ev.titleKo, ev.titleEn)}</div>
         <ChevronRight size={20} className="ev-go" />
       </div>
       <div className="ev-meta">{meta}</div>
 
       {ended ? (
-        <div className="ev-foot-done">
-          <span className="num">{t('evAttendeesN', { n: ev.joined })}</span>
-          <span className="ev-fee-done num">{fee}</span>
+        <div className="ev-foot-past">
+          <span className="num">{t('evAttendeesN', { n: ev.joined })} · {fee}</span>
         </div>
       ) : (
         <div className="ev-progress">
@@ -43,10 +44,10 @@ function EventCard({ ev, onOpen }) {
 }
 
 /* 일정(Event) tab — scheduled + past events with a create FAB. */
-export default function Events({ onOpen, onCreate }) {
+export default function Events({ events = [], onOpen, onCreate, onDelete }) {
   const { t } = useLang()
-  const scheduled = eventList.filter((e) => e.status === 'scheduled')
-  const past = eventList.filter((e) => e.status === 'ended')
+  const scheduled = events.filter((e) => e.status === 'scheduled')
+  const past = events.filter((e) => e.status === 'ended')
 
   return (
     <>

@@ -152,19 +152,10 @@ export default function ClubDetail({ club, onBack, onOpenEvent, onSettings, onNe
         {/* ── Ranking tab ── */}
         {tab === 'ranking' && (
           <>
-            {/* period toggle */}
-            <div style={{ display: 'flex', background: 'var(--surface-2)', borderRadius: 12, padding: 3, marginBottom: 10 }}>
+            {/* period toggle — Option A: compact outline pill */}
+            <div className="sub-seg-a">
               {RANK_PERIODS.map((p) => (
-                <button key={p.id} onClick={() => setRankPeriod(p.id)}
-                  style={{
-                    flex: 1, padding: '8px 4px', border: 'none', borderRadius: 9,
-                    background: rankPeriod === p.id ? 'var(--surface)' : 'transparent',
-                    boxShadow: rankPeriod === p.id ? '0 1px 4px rgba(0,0,0,0.1)' : 'none',
-                    fontFamily: 'var(--font)', fontSize: 13,
-                    fontWeight: rankPeriod === p.id ? 700 : 500,
-                    color: rankPeriod === p.id ? 'var(--text-1)' : 'var(--text-3)',
-                    cursor: 'pointer', transition: 'all .15s',
-                  }}>{p.label}</button>
+                <button key={p.id} className={`sub-seg-a-item ${rankPeriod === p.id ? 'active' : ''}`} onClick={() => setRankPeriod(p.id)}>{p.label}</button>
               ))}
             </div>
             <p style={{ fontSize: 11, color: 'var(--text-3)', textAlign: 'center', marginBottom: 10 }}>

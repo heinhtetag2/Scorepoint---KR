@@ -1,11 +1,23 @@
 import { useState } from 'react'
 import {
-  ArrowLeft, Share2, CalendarClock, Wallet, Users, Flag, MapPin, CreditCard,
+  ArrowLeft, Share2, CalendarClock, Wallet, Users, UsersRound, Flag, MapPin, CreditCard,
   Megaphone, Crown, User, Medal, Check, X, Link, Trophy,
+  LayoutGrid, Camera, Receipt, Lock, ChevronRight, Info, ScanLine, Download, AlertTriangle,
+  MoreVertical, Trash2, Pencil,
 } from 'lucide-react'
+import KakaoLogo from '../components/KakaoLogo.jsx'
 import { Segmented, Button } from '../components/ui.jsx'
 import { useLang } from '../i18n/LanguageContext.jsx'
-import { eventDetail as ev, participants as initParticipants, leaderboard, settlement, money, paymentMethods } from '../data/mock.js'
+import { eventDetail as ev, participants as initParticipants, eventTools, leaderboard, settlement, money, paymentMethods } from '../data/mock.js'
+import Scan from './Scan.jsx'
+import EventVerify from './EventVerify.jsx'
+import ShinperioResult from './ShinperioResult.jsx'
+import AwardResults from './AwardResults.jsx'
+import GroupFormation from './GroupFormation.jsx'
+import EventSettle from './EventSettle.jsx'
+import CreateEvent from './CreateEvent.jsx'
+
+const ET_ICONS = { grid: UsersRound, camera: ScanLine, trophy: Trophy, receipt: Receipt }
 
 const MEDAL_COLORS = ['#E0A100', '#9AA0AC', '#C77B3B']
 
@@ -194,8 +206,8 @@ function RegisterSheet({ onClose, onSuccess, lang, pick, t }) {
                 return (
                   <button key={pm.id} onClick={() => setPayId(pm.id)}
                     style={{
-                      display: 'flex', alignItems: 'center', gap: 12,
-                      background: sel ? 'color-mix(in srgb, var(--brand) 6%, var(--surface))' : 'var(--surface)',
+                      display: 'flex', alignItems: 'center', gap: 12, outline: 'none',
+                      background: sel ? 'var(--brand-weak)' : 'var(--surface)',
                       border: `1.5px solid ${sel ? 'var(--brand)' : 'var(--line)'}`,
                       borderRadius: 12, padding: '13px 14px', cursor: 'pointer', transition: 'border-color .15s, background .15s',
                     }}>
@@ -228,7 +240,7 @@ function RegisterSheet({ onClose, onSuccess, lang, pick, t }) {
             </div>
 
             <div style={{ background: 'var(--surface-2)', borderRadius: 10, padding: '10px 13px', marginBottom: 20, display: 'flex', gap: 8, alignItems: 'flex-start' }}>
-              <span style={{ fontSize: 16, lineHeight: 1 }}>📋</span>
+              <Info size={15} strokeWidth={2} style={{ color: 'var(--text-3)', flexShrink: 0, marginTop: 1 }} />
               <p style={{ fontSize: 12, color: 'var(--text-3)', lineHeight: 1.6, margin: 0 }}>
                 {lang === 'ko'
                   ? '행사 3일 전까지 취소 시 전액 환불됩니다. 이후에는 환불이 불가합니다.'
@@ -294,12 +306,12 @@ function CloseSettleSheet({ onClose, lang, pick }) {
             }}>
               <div style={{
                 width: 36, height: 36, borderRadius: 10, flexShrink: 0,
-                background: shared === 'kakao' ? '#FEE500' : 'var(--surface)',
-                border: '1px solid var(--line)',
+                background: shared === 'kakao' ? '#FEE500' : 'var(--surface-2)',
+                border: shared === 'kakao' ? 'none' : '1px solid var(--line)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 18,
+                color: 'var(--text-2)',
               }}>
-                {shared === 'kakao' ? '💬' : shared === 'link' ? '🔗' : '📷'}
+                {shared === 'kakao' ? <KakaoLogo size={20} /> : shared === 'link' ? <Link size={18} strokeWidth={2} /> : <Download size={18} strokeWidth={2} />}
               </div>
               <div>
                 <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-1)', margin: 0 }}>
@@ -343,7 +355,6 @@ function CloseSettleSheet({ onClose, lang, pick }) {
               background: 'linear-gradient(135deg, #0A7A37 0%, #1a9e4a 100%)',
               borderRadius: 16, padding: '18px 16px', marginBottom: 16, color: '#fff',
             }}>
-              {/* card header */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
                 <div>
                   <p style={{ fontSize: 11, fontWeight: 600, opacity: 0.7, margin: 0, letterSpacing: 0.5, textTransform: 'uppercase' }}>
@@ -359,10 +370,8 @@ function CloseSettleSheet({ onClose, lang, pick }) {
                 <Trophy size={28} strokeWidth={1.5} style={{ opacity: 0.6 }} />
               </div>
 
-              {/* divider */}
               <div style={{ height: 1, background: 'rgba(255,255,255,0.2)', marginBottom: 14 }} />
 
-              {/* top 3 */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 14 }}>
                 {top3.map((r, i) => (
                   <div key={r.rank} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -386,10 +395,8 @@ function CloseSettleSheet({ onClose, lang, pick }) {
                 ))}
               </div>
 
-              {/* divider */}
               <div style={{ height: 1, background: 'rgba(255,255,255,0.2)', marginBottom: 12 }} />
 
-              {/* settlement total */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontSize: 12, opacity: 0.75 }}>
                   {lang === 'ko' ? `총 참가 ${ev.capacity}명` : `${ev.capacity} participants`}
@@ -404,7 +411,7 @@ function CloseSettleSheet({ onClose, lang, pick }) {
             <SectionLabel label={lang === 'ko' ? '공유 채널' : 'Share via'} />
             <div style={{ display: 'flex', gap: 10, marginBottom: 20 }}>
               <ShareChip
-                emoji="💬"
+                icon={<KakaoLogo size={22} />}
                 label={lang === 'ko' ? '카카오톡' : 'KakaoTalk'}
                 bg="#FEE500" color="#3C1E1E"
                 onClick={() => share('kakao')}
@@ -418,7 +425,7 @@ function CloseSettleSheet({ onClose, lang, pick }) {
                 loading={step === 'loading' && shared === 'link'}
               />
               <ShareChip
-                emoji="📷"
+                icon={<Download size={19} strokeWidth={2} />}
                 label={lang === 'ko' ? '이미지 저장' : 'Save image'}
                 bg="var(--surface-2)" color="var(--text-1)"
                 onClick={() => share('image')}
@@ -437,6 +444,132 @@ function CloseSettleSheet({ onClose, lang, pick }) {
         @keyframes regPop { 0%{transform:scale(0.5);opacity:0} 100%{transform:scale(1);opacity:1} }
         @keyframes spin { to { transform: rotate(360deg); } }
       `}</style>
+    </>
+  )
+}
+
+/* ── Cancel registration confirm sheet ───────────────────────── */
+function CancelSheet({ onClose, onConfirm, lang, pick }) {
+  const [loading, setLoading] = useState(false)
+
+  function confirm() {
+    setLoading(true)
+    setTimeout(() => onConfirm(), 1000)
+  }
+
+  return (
+    <>
+      <SheetScrim onClick={loading ? undefined : onClose} />
+      <SheetWrap>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 8 }}>
+          <div style={{
+            width: 64, height: 64, borderRadius: '50%', background: 'var(--negative-weak)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14, flexShrink: 0,
+          }}>
+            <AlertTriangle size={28} strokeWidth={2.2} color="var(--negative)" />
+          </div>
+          <p style={{ fontSize: 18, fontWeight: 800, color: 'var(--text-1)', letterSpacing: -0.4, margin: 0 }}>
+            {lang === 'ko' ? '참가를 취소하시겠어요?' : 'Cancel registration?'}
+          </p>
+          <p style={{ fontSize: 13, color: 'var(--text-3)', marginTop: 8, marginBottom: 22, textAlign: 'center', lineHeight: 1.6 }}>
+            {lang === 'ko'
+              ? `참가가 취소되고 배정된 조에서 제외됩니다.\n참가비 ${pick(ev.fee, ev.feeEn)}은 전액 환불돼요.`
+              : `Your spot and group assignment will be released.\n${pick(ev.fee, ev.feeEn)} will be fully refunded.`}
+          </p>
+
+          <button onClick={!loading ? confirm : undefined} disabled={loading} style={{
+            width: '100%', height: 52, borderRadius: 'var(--btn-radius)', border: 'none',
+            background: 'var(--negative)', color: '#fff', marginBottom: 8,
+            fontFamily: 'var(--font)', fontWeight: 700, fontSize: 16, letterSpacing: -0.3,
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+            cursor: loading ? 'default' : 'pointer', opacity: loading ? 0.8 : 1, flexShrink: 0,
+          }}>
+            {loading ? <SpinnerRing /> : (lang === 'ko' ? '참가 취소하기' : 'Cancel registration')}
+          </button>
+          <button onClick={!loading ? onClose : undefined} style={{
+            width: '100%', height: 48, borderRadius: 'var(--btn-radius)', border: 'none', background: 'none',
+            color: 'var(--text-2)', fontFamily: 'var(--font)', fontWeight: 700, fontSize: 15,
+            cursor: 'pointer', flexShrink: 0,
+          }}>
+            {lang === 'ko' ? '돌아가기' : 'Keep my spot'}
+          </button>
+        </div>
+      </SheetWrap>
+
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+    </>
+  )
+}
+
+/* ── Event options menu (three-dot) ──────────────────────────── */
+function EventMenuSheet({ onClose, onShare, onEdit, onDelete, lang }) {
+  return (
+    <>
+      <SheetScrim onClick={onClose} />
+      <SheetWrap>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <button className="ev-menu-row" onClick={onShare}>
+            <Share2 size={19} strokeWidth={1.9} />
+            <span>{lang === 'ko' ? '공유하기' : 'Share'}</span>
+          </button>
+          <button className="ev-menu-row" onClick={onEdit}>
+            <Pencil size={19} strokeWidth={1.9} />
+            <span>{lang === 'ko' ? '행사 정보 수정' : 'Edit event'}</span>
+          </button>
+          <button className="ev-menu-row is-danger" onClick={onDelete}>
+            <Trash2 size={19} strokeWidth={1.9} />
+            <span>{lang === 'ko' ? '행사 삭제' : 'Delete event'}</span>
+          </button>
+        </div>
+      </SheetWrap>
+    </>
+  )
+}
+
+/* ── Delete event confirm sheet ──────────────────────────────── */
+function DeleteEventSheet({ onClose, onConfirm, lang }) {
+  const [loading, setLoading] = useState(false)
+  function confirm() {
+    setLoading(true)
+    setTimeout(() => onConfirm(), 1000)
+  }
+  return (
+    <>
+      <SheetScrim onClick={loading ? undefined : onClose} />
+      <SheetWrap>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 8 }}>
+          <div style={{
+            width: 64, height: 64, borderRadius: '50%', background: 'var(--negative-weak)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14, flexShrink: 0,
+          }}>
+            <AlertTriangle size={28} strokeWidth={2.2} color="var(--negative)" />
+          </div>
+          <p style={{ fontSize: 18, fontWeight: 800, color: 'var(--text-1)', letterSpacing: -0.4, margin: 0 }}>
+            {lang === 'ko' ? '행사를 삭제하시겠어요?' : 'Delete this event?'}
+          </p>
+          <p style={{ fontSize: 13, color: 'var(--text-3)', marginTop: 8, marginBottom: 22, textAlign: 'center', lineHeight: 1.6 }}>
+            {lang === 'ko'
+              ? `참가자 ${ev.joined}명에게 취소 알림이 전송되며,\n삭제 후에는 되돌릴 수 없어요.`
+              : `A cancellation notice goes to ${ev.joined} participants.\nThis cannot be undone.`}
+          </p>
+          <button onClick={!loading ? confirm : undefined} disabled={loading} style={{
+            width: '100%', height: 52, borderRadius: 'var(--btn-radius)', border: 'none',
+            background: 'var(--negative)', color: '#fff', marginBottom: 8,
+            fontFamily: 'var(--font)', fontWeight: 700, fontSize: 16, letterSpacing: -0.3,
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+            cursor: loading ? 'default' : 'pointer', opacity: loading ? 0.8 : 1, flexShrink: 0,
+          }}>
+            {loading ? <SpinnerRing /> : (lang === 'ko' ? '삭제하기' : 'Delete')}
+          </button>
+          <button onClick={!loading ? onClose : undefined} style={{
+            width: '100%', height: 48, borderRadius: 'var(--btn-radius)', border: 'none', background: 'none',
+            color: 'var(--text-2)', fontFamily: 'var(--font)', fontWeight: 700, fontSize: 15, cursor: 'pointer', flexShrink: 0,
+          }}>
+            {lang === 'ko' ? '돌아가기' : 'Keep event'}
+          </button>
+        </div>
+      </SheetWrap>
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </>
   )
 }
@@ -461,11 +594,19 @@ function ShareChip({ emoji, icon, label, bg, color, onClick, loading }) {
 }
 
 /* ── Main screen ─────────────────────────────────────────────── */
-export default function Detail({ onBack }) {
+export default function Detail({ onBack, onImmersiveChange, event, onDelete }) {
   const { t, lang, pick } = useLang()
+  const [subScreen, setSubScreen] = useState(null)
+
+  const goSub = (s) => { setSubScreen(s); onImmersiveChange?.(s === 'evScan') }
+  const leaveScan = (next) => { setSubScreen(next); onImmersiveChange?.(false) }
   const [tab, setTab] = useState('info')
   const [showRegister, setShowRegister] = useState(false)
   const [showSettle, setShowSettle] = useState(false)
+  const [showCancel, setShowCancel] = useState(false)
+  const [showMenu, setShowMenu] = useState(false)
+  const [showDelete, setShowDelete] = useState(false)
+  const [toast, setToast] = useState(null)
   const [registered, setRegistered] = useState(false)
   const [participants, setParticipants] = useState(initParticipants)
   const [joinedCount, setJoinedCount] = useState(ev.joined)
@@ -487,17 +628,67 @@ export default function Detail({ onBack }) {
     setTab('people')
   }
 
+  function handleCancelRegistration() {
+    setRegistered(false)
+    setShowCancel(false)
+    setJoinedCount(c => Math.max(0, c - 1))
+    setParticipants(prev => prev.filter(p => !p.isMe))
+  }
+
+  function flashToast(msg) {
+    setToast(msg)
+    setTimeout(() => setToast(null), 1800)
+  }
+
+  function handleShare() {
+    setShowMenu(false)
+    flashToast(lang === 'ko' ? '행사 링크가 복사되었어요' : 'Event link copied')
+  }
+
+  if (subScreen === 'groups')    return <GroupFormation onBack={() => setSubScreen(null)} />
+  if (subScreen === 'evScan')    return <Scan onBack={() => leaveScan(null)} onCaptured={() => leaveScan('evVerify')} />
+  if (subScreen === 'evVerify')  return <EventVerify onBack={() => goSub('evScan')} onNext={() => setSubScreen('shinperio')} />
+  if (subScreen === 'shinperio') return <ShinperioResult onBack={() => setSubScreen('evVerify')} onNext={() => setSubScreen('awards')} />
+  if (subScreen === 'awards')    return <AwardResults onBack={() => setSubScreen('shinperio')} onDone={() => { setSubScreen(null); setTab('info') }} onImmersiveChange={onImmersiveChange} />
+  if (subScreen === 'settle')    return <EventSettle onBack={() => setSubScreen(null)} onDone={() => { setSubScreen(null); setTab('rank') }} onImmersiveChange={onImmersiveChange} />
+  if (subScreen === 'edit')      return (
+    <CreateEvent
+      edit
+      initial={{
+        id: ev.id,
+        name: pick(ev.titleKr, ev.titleEn),
+        course: pick(ev.course, ev.courseEn),
+        date: '2026-05-14',
+        time: ev.time,
+        fee: String(ev.feeEn).replace(/[^0-9]/g, ''),
+        cap: String(ev.capacity),
+        joined: ev.joined,
+      }}
+      onBack={() => setSubScreen(null)}
+      onCreate={() => { setSubScreen(null); flashToast(lang === 'ko' ? '행사 정보를 수정했어요' : 'Event updated') }}
+    />
+  )
+
   return (
     <>
       <div className="appbar">
         <button className="icon-btn" onClick={onBack} aria-label="Back"><ArrowLeft size={20} /></button>
         <span className="title" style={{ flex: 1, textAlign: 'center' }}>{pick(ev.titleKr, ev.titleEn)}</span>
-        <button className="icon-btn" aria-label="Share"><Share2 size={19} strokeWidth={1.8} /></button>
+        <button className="icon-btn" aria-label={lang === 'ko' ? '더보기' : 'More'} onClick={() => setShowMenu(true)}>
+          <MoreVertical size={20} strokeWidth={1.9} />
+        </button>
       </div>
 
       <div className="screen">
         {/* Hero */}
         <div className="card detail-hero">
+          <svg className="dh-illust" viewBox="0 0 140 140" fill="none" aria-hidden="true">
+            <path d="M100 22 V102" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+            <path d="M100 24 L134 35 L100 47 Z" fill="currentColor" />
+            <ellipse cx="100" cy="106" rx="27" ry="8" fill="currentColor" opacity="0.4" />
+            <path d="M14 104 Q56 44 98 26" stroke="currentColor" strokeWidth="3" strokeDasharray="1 9" strokeLinecap="round" />
+            <circle cx="14" cy="104" r="4.5" fill="currentColor" />
+          </svg>
           <div className="dh-chips">
             <span className="dday">D-{ev.dday}</span>
             <span className="ev-status">{t('open')}</span>
@@ -518,6 +709,30 @@ export default function Detail({ onBack }) {
               <div className="ib-row"><span className="ib-ico"><CreditCard size={15} strokeWidth={1.9} /></span><span className="ib-k">{t('rowFee')}</span><span className="ib-v num">{pick(ev.fee, ev.feeEn)} · {pick(ev.feeNote, ev.feeNoteEn)}</span></div>
             </div>
             <div className="notice-box"><Megaphone size={16} strokeWidth={1.9} /><span>{pick(ev.noticeKr, ev.noticeEn)}</span></div>
+
+            {/* General Affairs Tools */}
+            <div className="section-head">
+              <span className="s-head-left"><span className="s-title">{t('edToolsTitle')}</span></span>
+            </div>
+            <div className="card et-list">
+              {eventTools.map((tool) => {
+                const Icon = ET_ICONS[tool.icon] || Flag
+                return (
+                  <button className={`list-row et-row ${tool.locked ? 'et-row--locked' : ''}`} key={tool.id}
+                    onClick={tool.locked ? undefined : tool.id === 'group' ? () => setSubScreen('groups') : tool.id === 'results' ? () => goSub('evScan') : tool.id === 'awards' ? () => setSubScreen('shinperio') : tool.id === 'settle' ? () => setSubScreen('settle') : undefined}
+                  >
+                    <span className="et-icon-box"><Icon size={18} strokeWidth={1.8} /></span>
+                    <span className="et-body">
+                      <span className="et-title">{pick(tool.titleKo, tool.titleEn)}</span>
+                      <span className="et-sub">{pick(tool.subKo, tool.subEn)}</span>
+                    </span>
+                    {tool.locked
+                      ? <span className="et-lock-badge"><Lock size={11} strokeWidth={2.2} />{lang === 'ko' ? '준비중' : 'Soon'}</span>
+                      : <ChevronRight size={17} className="chev" />}
+                  </button>
+                )
+              })}
+            </div>
           </>
         )}
 
@@ -559,7 +774,9 @@ export default function Detail({ onBack }) {
                   </span>
                   <span className="lb-name">{pick(r.nameKr, r.nameEn)}</span>
                   <span className="lb-net num">Net {r.net.toFixed(1)}</span>
-                  <span className="lb-prize num">{pick(r.prize, r.prizeEn)}</span>
+                  <span className="lb-prize-slot">
+                    {pick(r.prize, r.prizeEn) && <span className="lb-prize num">{pick(r.prize, r.prizeEn)}</span>}
+                  </span>
                 </div>
               ))}
             </div>
@@ -589,15 +806,25 @@ export default function Detail({ onBack }) {
               {t('ctaClose')}
             </Button>
           ) : registered ? (
-            <button disabled style={{
-              width: '100%', height: 52, borderRadius: 'var(--btn-radius)', border: 'none',
-              background: 'var(--positive-weak)', color: 'var(--positive)',
-              fontFamily: 'var(--font)', fontWeight: 700, fontSize: 15,
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: 'default',
-            }}>
-              <Check size={18} strokeWidth={2.5} />
-              {lang === 'ko' ? '참가 신청 완료' : 'Registered'}
-            </button>
+            <div style={{ display: 'flex', gap: 10 }}>
+              <span style={{
+                flex: 1, height: 52, borderRadius: 'var(--btn-radius)',
+                background: 'var(--positive-weak)', color: 'var(--positive)',
+                fontFamily: 'var(--font)', fontWeight: 700, fontSize: 15,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+              }}>
+                <Check size={18} strokeWidth={2.5} />
+                {lang === 'ko' ? '참가 신청 완료' : 'Registered'}
+              </span>
+              <button onClick={() => setShowCancel(true)} style={{
+                flexShrink: 0, height: 52, padding: '0 18px', borderRadius: 'var(--btn-radius)',
+                border: '1.5px solid color-mix(in srgb, var(--negative) 40%, transparent)',
+                background: 'var(--negative-weak)', color: 'var(--negative)',
+                fontFamily: 'var(--font)', fontWeight: 700, fontSize: 15, letterSpacing: -0.2, cursor: 'pointer',
+              }}>
+                {lang === 'ko' ? '참가 취소' : 'Cancel'}
+              </button>
+            </div>
           ) : (
             <Button variant="primary" className="btn-block" onClick={() => setShowRegister(true)}>
               {t('ctaRegister', { fee: pick(ev.fee, ev.feeEn) })}
@@ -619,6 +846,39 @@ export default function Detail({ onBack }) {
           onClose={() => setShowSettle(false)}
           lang={lang} pick={pick}
         />
+      )}
+
+      {showCancel && (
+        <CancelSheet
+          onClose={() => setShowCancel(false)}
+          onConfirm={handleCancelRegistration}
+          lang={lang} pick={pick}
+        />
+      )}
+
+      {showMenu && (
+        <EventMenuSheet
+          onClose={() => setShowMenu(false)}
+          onShare={handleShare}
+          onEdit={() => { setShowMenu(false); setSubScreen('edit') }}
+          onDelete={() => { setShowMenu(false); setShowDelete(true) }}
+          lang={lang}
+        />
+      )}
+
+      {showDelete && (
+        <DeleteEventSheet
+          onClose={() => setShowDelete(false)}
+          onConfirm={() => { setShowDelete(false); onDelete ? onDelete() : onBack() }}
+          lang={lang}
+        />
+      )}
+
+      {toast && (
+        <div className="app-toast" role="status">
+          <Check size={14} strokeWidth={2.6} />
+          {toast}
+        </div>
       )}
     </>
   )

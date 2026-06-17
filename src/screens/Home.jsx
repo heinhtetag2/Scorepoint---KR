@@ -5,6 +5,7 @@ import {
   BarChart3, Lightbulb,
 } from 'lucide-react'
 import { SectionHead, QuickAction, Button } from '../components/ui.jsx'
+import CourseIllust from '../components/CourseIllust.jsx'
 import { useLang } from '../i18n/LanguageContext.jsx'
 import { user, aiReport, events, recentMatches, banners, popularCourses } from '../data/mock.js'
 
@@ -15,7 +16,7 @@ const QUICK = [
   { id: 'rank', key: 'qRank', Icon: Trophy, color: '#8B5CF6', img: '/trophy.png' },
 ]
 
-export default function Home({ onOpenEvent, onOpenNoti, onOpenProfile }) {
+export default function Home({ onOpenEvent, onOpenNoti, onOpenProfile, onSearch }) {
   const { t, lang, pick } = useLang()
   const bestScore = Math.min(...recentMatches.map((m) => m.score))
 
@@ -100,7 +101,7 @@ export default function Home({ onOpenEvent, onOpenNoti, onOpenProfile }) {
         </div>
 
         {/* Search bar */}
-        <div className="home-search" role="button" tabIndex={0}>
+        <div className="home-search" role="button" tabIndex={0} onClick={onSearch}>
           <Search size={19} strokeWidth={2} className="hs-ico" />
           <span className="hs-placeholder">{t('searchPlaceholder')}</span>
           <span className="hs-divider" />
@@ -153,9 +154,11 @@ export default function Home({ onOpenEvent, onOpenNoti, onOpenProfile }) {
           const left = ev.capacity - ev.joined
           const pct = Math.round((ev.joined / ev.capacity) * 100)
           return (
-            <div className="event-card" key={ev.id} onClick={() => onOpenEvent(ev.id)}>
+            <div className="event-card event-card--upcoming" key={ev.id} onClick={() => onOpenEvent(ev.id)}>
+              <CourseIllust />
               <div className="ev-title-row">
                 <span className={`dday ${ev.dday > 7 ? 'soft' : ''}`}>D-{ev.dday}</span>
+                {ev.mine && <span className="ev-host">{pick('주최', 'Host')}</span>}
                 <div className="ev-title">{pick(ev.titleKr, ev.titleEn)}</div>
                 <ChevronRight size={20} className="ev-go" />
               </div>
