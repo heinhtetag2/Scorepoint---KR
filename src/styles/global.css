@@ -519,7 +519,7 @@ body {
 .ev-meta { font-size: var(--fs-label); color: var(--text-2); margin-top: 5px; line-height: 1.55; }
 .ev-meta b { color: var(--text-1); font-weight: 700; }
 .ev-title-row { display: flex; align-items: center; gap: 8px; }
-.ev-title-row .ev-title { flex: 1; }
+.ev-title-row .ev-title { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ev-title-row .dday { flex: 0 0 auto; }
 .ev-go { color: var(--text-3); flex: 0 0 auto; }
 .ev-progress { margin-top: 14px; }
@@ -1495,6 +1495,16 @@ body {
 .cd-hero-name .badge { flex: 0 0 auto; }
 .cd-hero-stats { display: flex; align-items: center; gap: 6px; margin-top: 5px; font-size: var(--fs-label); color: var(--text-2); }
 
+/* inline "create round" button on the club schedule tab (organizer) */
+.cd-new-round {
+  display: flex; align-items: center; justify-content: center; gap: 7px; width: 100%;
+  margin-top: 2px; padding: 15px; cursor: pointer;
+  border: 1.5px dashed color-mix(in srgb, var(--brand) 35%, var(--line)); border-radius: var(--card-radius);
+  background: var(--surface); color: var(--brand);
+  font-family: var(--font); font-size: 14px; font-weight: 700; letter-spacing: -0.2px;
+  transition: border-color .12s, background .12s;
+}
+.cd-new-round:active { background: var(--brand-weak); border-color: var(--brand); }
 .cd-list { padding: 2px var(--pad); flex-shrink: 0; overflow: visible; }
 .cd-mem { display: flex; align-items: center; gap: 11px; padding: 11px 0; border-bottom: 1px solid var(--line); }
 .cd-mem:last-child { border-bottom: none; }
