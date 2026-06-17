@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ArrowLeft, ChevronRight, Pencil, Users, Crown, Bell, LogOut, Trash2 } from 'lucide-react'
+import { ArrowLeft, ChevronRight, Pencil, Bell, LogOut, Trash2 } from 'lucide-react'
 import { Button } from '../components/ui.jsx'
 import { useLang } from '../i18n/LanguageContext.jsx'
 import { clubs } from '../data/mock.js'
@@ -12,8 +12,6 @@ export default function ClubSettings({ club, onBack, onEdit, onMembers, onNoti, 
 
   const manage = [
     { id: 'edit', icon: Pencil, label: t('csEdit'), onClick: onEdit },
-    { id: 'members', icon: Users, label: t('csMembersMng'), onClick: onMembers },
-    ...(organizer ? [{ id: 'transfer', icon: Crown, label: t('csTransfer') }] : []),
   ]
 
   return (

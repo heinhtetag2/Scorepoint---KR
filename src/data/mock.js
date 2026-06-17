@@ -390,9 +390,9 @@ export const subHistory = [
 ]
 
 export const clubs = [
-  { id: 'c1', nameKr: '강남골프회', nameEn: 'Gangnam Golf', role: '회원', roleEn: 'Member', members: 42, unpaid: 0, nextKr: '6월 14일 (토) 라운드', nextEn: 'Round · Sat Jun 14', icon: 'flag', img: UNSPLASH('1500932334442-8761ee4810a7') },
+  { id: 'c1', nameKr: '강남골프회', nameEn: 'Gangnam Golf', role: '총무', roleEn: 'Organizer', members: 42, unpaid: 3, nextKr: '6월 14일 (토) 라운드', nextEn: 'Round · Sat Jun 14', icon: 'flag', img: UNSPLASH('1500932334442-8761ee4810a7') },
   { id: 'c2', nameKr: '회사동호회', nameEn: 'Company Club', role: '총무', roleEn: 'Organizer', members: 28, unpaid: 2, nextKr: '6월 20일 (목) 라운드', nextEn: 'Round · Thu Jun 20', icon: 'building', img: UNSPLASH('1611374243147-44a702c2d44c') },
-  { id: 'c3', nameKr: '주말번개', nameEn: 'Weekend Lightning', role: '회원', roleEn: 'Member', members: 16, unpaid: 0, nextKr: '', nextEn: '', icon: 'zap', img: UNSPLASH('1535131749006-b7f58c99034b') },
+  { id: 'c3', nameKr: '주말번개', nameEn: 'Weekend Lightning', role: '총무', roleEn: 'Organizer', members: 16, unpaid: 1, nextKr: '6월 28일 (토) 라운드', nextEn: 'Round · Sat Jun 28', icon: 'zap', img: UNSPLASH('1535131749006-b7f58c99034b') },
 ]
 
 /* The signed-in member's own dues for a club (내 회비 / billing details).
@@ -430,6 +430,18 @@ export const clubMembers = [
   { id: 'cm6', nameKr: '정해인', nameEn: 'Jung Hae-in', role: '회원', handicap: 14, paid: false },
   { id: 'cm7', nameKr: '한지우', nameEn: 'Han Ji-woo', role: '회원', handicap: 21, paid: true },
   { id: 'cm8', nameKr: '오세훈', nameEn: 'Oh Se-hun', role: '회원', handicap: 9, paid: true },
+]
+
+/* Club billing items (회비 항목) — dues the organizer issues to members.
+   `kind` drives the category-badge tint; the first item is treated as the
+   primary due for the collection-rate summary. */
+export const clubBilling = [
+  { id: 'b1', kind: 'annual', catKo: '연회비', catEn: 'Annual fee',
+    titleKo: '2026 연회비', titleEn: '2026 Annual Fee', amount: 200000,
+    dueKo: '5/31까지', dueEn: 'Due 5/31', scopeKo: '전체 멤버', scopeEn: 'All members' },
+  { id: 'b2', kind: 'event', catKo: '행사비', catEn: 'Event fee',
+    titleKo: '6월 정기모임 참가비', titleEn: 'June Meeting Fee', amount: 150000,
+    dueKo: '6/13까지', dueEn: 'Due 6/13', scopeKo: '참석 멤버', scopeEn: 'Attendees' },
 ]
 
 /* Extended club members — used by the new ClubDetail (member/ranking tabs) */
@@ -591,4 +603,21 @@ export const money = (n, lang = 'ko') => {
   const sign = n < 0 ? '-' : ''
   const abs = Math.abs(n).toLocaleString('en-US')
   return lang === 'en' ? `${sign}₩${abs}` : `${n.toLocaleString('ko-KR')}원`
+}
+
+/* Compact amount for tight columns — KO uses 만 units (160만원),
+   EN uses K/M suffixes (₩1.6M). Falls back to full for small values. */
+export const moneyShort = (n, lang = 'ko') => {
+  const sign = n < 0 ? '-' : ''
+  const abs = Math.abs(n)
+  if (lang === 'en') {
+    if (abs >= 1_000_000) return `${sign}₩${(abs / 1_000_000).toFixed(abs % 1_000_000 ? 1 : 0)}M`
+    if (abs >= 1_000) return `${sign}₩${(abs / 1_000).toFixed(abs % 1_000 ? 1 : 0)}K`
+    return `${sign}₩${abs}`
+  }
+  if (abs >= 10000) {
+    const man = abs / 10000
+    return `${sign}${(Number.isInteger(man) ? man : Number(man.toFixed(1))).toLocaleString('ko-KR')}만원`
+  }
+  return `${sign}${abs.toLocaleString('ko-KR')}원`
 }

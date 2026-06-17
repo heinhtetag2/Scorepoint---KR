@@ -1524,11 +1524,6 @@ body {
   font-family: var(--font); text-align: left; transition: background .12s;
 }
 .cd-manage-row:active { background: var(--surface-2); }
-.cd-manage-row .cmr-ico {
-  flex: 0 0 auto; width: 36px; height: 36px; border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  background: var(--brand-weak); color: var(--brand);
-}
 .cd-manage-row .cmr-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .cd-manage-row .cmr-title { font-size: 14px; font-weight: 700; color: var(--text-1); letter-spacing: -0.2px; }
 .cd-manage-row .cmr-sub { font-size: 12px; color: var(--text-3); }
@@ -1546,11 +1541,157 @@ body {
 .cd-mem-hcp { flex: 0 0 auto; font-size: 12px; font-weight: 600; color: var(--text-3); }
 .cd-mem .badge { flex: 0 0 auto; }
 
-.cd-settle-status { align-items: center; gap: 9px; }
+.cd-settle-status { align-items: center; gap: 9px; justify-content: space-between; }
+.cd-ss-msg { display: inline-flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
+.cd-remind { flex: 0 0 auto; border: 1px solid color-mix(in srgb, var(--caution) 38%, transparent); background: var(--surface); color: var(--caution); font-family: var(--font); font-size: 12px; font-weight: 700; padding: 5px 12px; border-radius: 999px; cursor: pointer; }
+.cd-remind:active { transform: scale(0.97); }
 .cd-settle-status.is-ok { background: var(--positive-weak); }
 .cd-settle-status.is-ok svg { color: var(--positive); }
 .cd-settle-status.is-warn { background: var(--caution-weak); }
 .cd-settle-status.is-warn svg { color: var(--caution); }
+
+/* ── Members: transfer ownership (compact, sensitive) ───────── */
+.owner-row {
+  display: flex; align-items: center; gap: 11px; width: 100%; cursor: pointer;
+  padding: 12px 14px; border-radius: var(--card-radius);
+  border: 1px solid color-mix(in srgb, var(--negative) 20%, transparent);
+  background: color-mix(in srgb, var(--negative) 5%, var(--surface));
+  font-family: var(--font); text-align: left; transition: background .12s ease;
+}
+.owner-row:active { background: var(--negative-weak); }
+.owner-row-ico {
+  flex: 0 0 auto; width: 32px; height: 32px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  background: color-mix(in srgb, var(--negative) 12%, #fff); color: var(--negative);
+}
+.owner-row-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.owner-row-title { font-size: 14px; font-weight: 700; color: var(--negative); letter-spacing: -0.2px; }
+.owner-row-desc { font-size: 12px; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.owner-row .chev { flex: 0 0 auto; color: var(--negative); opacity: 0.55; }
+.transfer-list { margin: 2px 0 18px; max-height: 264px; overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none; }
+.transfer-list::-webkit-scrollbar { width: 0; height: 0; }
+.transfer-row { width: 100%; border: none; background: transparent; cursor: pointer; text-align: left; gap: 11px; }
+.owner-confirm { margin-top: 2px; }
+
+/* ── Settlement: remittance account row ─────────────────────── */
+.remit-row {
+  display: flex; align-items: center; gap: 12px; width: 100%; cursor: pointer;
+  padding: 13px 14px; border: 1px solid var(--line); border-radius: var(--card-radius);
+  background: var(--surface); font-family: var(--font); text-align: left; transition: background .12s;
+}
+.remit-row:active { background: var(--surface-2); }
+.remit-row.is-static { cursor: default; }
+.remit-ico { flex: 0 0 auto; width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: var(--brand-weak); color: var(--brand); }
+.remit-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.remit-label { font-size: 12px; font-weight: 600; color: var(--text-3); }
+.remit-acct { font-size: 14px; font-weight: 700; color: var(--text-1); letter-spacing: -0.2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.remit-row .chev { color: var(--text-3); flex: 0 0 auto; }
+
+/* ── Settlement: collection summary ─────────────────────────── */
+.collect-card {
+  display: flex; flex-direction: column; gap: 10px;
+  position: relative; overflow: hidden;
+  background: linear-gradient(150deg, color-mix(in srgb, var(--brand) 10%, var(--surface)) 0%, var(--surface) 58%);
+}
+.collect-card > *:not(.collect-illust) { position: relative; }
+.collect-illust { position: absolute; right: -10px; bottom: -12px; width: 124px; height: 124px; color: var(--brand); opacity: 0.11; pointer-events: none; }
+.collect-top { display: flex; align-items: center; justify-content: space-between; }
+.collect-label { font-size: var(--fs-label); font-weight: 700; color: var(--text-3); letter-spacing: -0.1px; }
+.collect-pct { font-size: var(--fs-label); font-weight: 800; color: var(--brand); letter-spacing: -0.2px; }
+.collect-amount { display: flex; align-items: baseline; gap: 7px; flex-wrap: wrap; }
+.collect-amount b { font-size: 20px; font-weight: 800; color: var(--text-1); letter-spacing: -0.5px; }
+.collect-amount-total { font-size: 12.5px; font-weight: 600; color: var(--text-3); }
+.collect-bar { height: 6px; border-radius: 999px; background: var(--surface-2); overflow: hidden; }
+.collect-bar-fill { display: block; height: 100%; border-radius: 999px; background: var(--brand); transition: width .45s cubic-bezier(.4,0,.2,1); }
+.collect-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-top: 1px; }
+.collect-foot-paid { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; font-weight: 700; color: var(--positive); }
+.collect-foot-due { font-size: 12.5px; font-weight: 600; color: var(--text-3); }
+.collect-foot-due b { font-weight: 800; color: var(--negative); margin-left: 3px; }
+
+/* ── Settlement: billing items ──────────────────────────────── */
+.bill-list { padding: 4px var(--pad); }
+.bill-row { display: flex; align-items: center; gap: 12px; padding: 13px 0; border-top: 1px solid var(--line); }
+.bill-row:first-child { border-top: none; }
+.bill-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; }
+.bill-title { font-size: 14.5px; font-weight: 700; color: var(--text-1); letter-spacing: -0.2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bill-meta { display: flex; align-items: center; gap: 7px; min-width: 0; }
+.bill-scope { font-size: 12px; color: var(--text-3); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cat-badge { flex: 0 0 auto; font-size: 10.5px; font-weight: 700; padding: 2px 8px; border-radius: 6px; white-space: nowrap; }
+.cat-badge.cat-annual { background: var(--brand-weak); color: var(--brand); }
+.cat-badge.cat-event { background: var(--caution-weak); color: var(--caution); }
+.bill-right { flex: 0 0 auto; display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
+.bill-amt { font-size: 15px; font-weight: 800; color: var(--text-1); letter-spacing: -0.3px; }
+.bill-due { font-size: 11.5px; font-weight: 600; color: var(--text-3); }
+
+/* ── Settlement: payment status rows (colored avatar) ───────── */
+.cd-mem--pay { align-items: center; gap: 12px; }
+.cd-mem-av--color { width: 36px; height: 36px; color: #fff; font-size: 14px; font-weight: 700; }
+.pay-badge { display: inline-flex; align-items: center; gap: 5px; flex: 0 0 auto; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 999px; }
+.pay-badge .pb-dot { width: 5px; height: 5px; border-radius: 50%; }
+.pay-badge.is-paid { background: var(--positive-weak); color: var(--positive); }
+.pay-badge.is-paid .pb-dot { background: var(--positive); }
+.pay-badge.is-unpaid { background: var(--negative-weak); color: var(--negative); }
+.pay-badge.is-unpaid .pb-dot { background: var(--negative); }
+
+/* monthly fee tint (annual = brand, event = caution) */
+.cat-badge.cat-monthly { background: var(--info-weak, #e8f0f8); color: var(--info, #2b6394); }
+
+/* ── Member manage sheet — separate role vs. destructive zone ── */
+.ms-divider { height: 1px; background: var(--line); margin: 22px -20px 16px; }
+.ms-remove-link {
+  display: flex; align-items: center; gap: 8px; width: 100%;
+  padding: 13px 14px; border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--negative) 24%, transparent);
+  background: transparent; color: var(--negative);
+  font-family: var(--font); font-size: 14px; font-weight: 700; cursor: pointer;
+  transition: background .12s ease;
+}
+.ms-remove-link:active { background: var(--negative-weak); }
+
+/* ── Settlement: organizer actions ──────────────────────────── */
+.section-head .s-count { font-size: 13px; font-weight: 700; color: var(--text-3); margin-left: 2px; }
+.section-head .s-more--hint { color: var(--brand); font-weight: 700; cursor: default; }
+.fee-confirm { flex: 0 0 auto; height: 30px; padding: 0 13px; border: 1.5px solid var(--brand); border-radius: 999px; background: var(--surface); color: var(--brand); font-family: var(--font); font-size: 12px; font-weight: 700; cursor: pointer; }
+.fee-confirm:active { transform: scale(0.97); }
+.fee-confirm.is-cancel { border-color: var(--line); color: var(--text-3); }
+
+/* Floating organizer dock — settlement tab */
+.fee-dock {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 50;
+  display: flex; gap: 10px;
+  padding: 18px var(--pad) calc(16px + env(safe-area-inset-bottom, 8px));
+  background: linear-gradient(to top, var(--page) 82%, transparent);
+  pointer-events: none;
+}
+.fee-dock-btn { pointer-events: auto; flex: 1; gap: 7px; }
+.fee-dock-btn:active { transform: scale(0.98); }
+.fee-dock-btn svg { flex: 0 0 auto; }
+.fee-dock-btn.is-primary { background: var(--brand); color: var(--on-brand); box-shadow: 0 8px 22px -6px color-mix(in srgb, var(--brand) 52%, transparent); }
+.fee-dock-btn.is-ghost { background: var(--surface); color: var(--text-1); border: 1px solid var(--line); box-shadow: 0 8px 22px -8px rgba(0,0,0,0.22); }
+.fee-dock-btn.is-ghost svg { color: var(--brand); }
+.fee-dock-btn.is-ghost.is-active { border-color: var(--brand); background: var(--brand-weak); color: var(--brand); }
+.fee-dock-spacer { height: 80px; }
+
+/* ── Create fee — form bits (extends .field) ────────────────── */
+.create-fee-sub { font-size: 13px; color: var(--text-3); font-weight: 500; margin: 2px 2px 4px; }
+.seg-pills { display: flex; gap: 8px; }
+.seg-pill { flex: 1; padding: 12px 6px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); font-family: var(--font); font-size: 14px; font-weight: 600; color: var(--text-2); cursor: pointer; text-align: center; transition: border-color .12s ease, background .12s ease; }
+.seg-pill.active { border-color: var(--brand); background: var(--brand-weak); color: var(--brand); font-weight: 700; }
+.input-wrap { position: relative; }
+.input-wrap .field-input { padding-right: 46px; }
+.input-suffix { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-size: 14px; font-weight: 600; color: var(--text-3); pointer-events: none; }
+.field-optional { font-size: 12px; font-weight: 500; color: var(--text-3); margin-left: 5px; }
+.field-date { position: relative; display: flex; align-items: center; gap: 10px; cursor: pointer; }
+.field-date-text { flex: 1; min-width: 0; font-size: 15px; color: var(--text-1); letter-spacing: 0.2px; }
+.field-date-text.is-empty { color: var(--text-3); letter-spacing: -0.1px; }
+.field-date-ico { flex: 0 0 auto; color: var(--text-3); }
+.field-date:focus-within { border-color: var(--brand); }
+.field-date:focus-within .field-date-ico { color: var(--brand); }
+.field-date-native { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; padding: 0; border: none; opacity: 0; cursor: pointer; -webkit-appearance: none; appearance: none; }
+.fee-pick { padding: 2px var(--pad); }
+.fee-pick-row { width: 100%; border: none; background: transparent; cursor: pointer; text-align: left; }
+.fee-pick-check { flex: 0 0 auto; width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--line); display: flex; align-items: center; justify-content: center; color: #fff; transition: background .12s ease, border-color .12s ease; }
+.fee-pick-check.on { background: var(--brand); border-color: var(--brand); }
 
 /* create club — form fields */
 .field { display: flex; flex-direction: column; gap: 8px; }
