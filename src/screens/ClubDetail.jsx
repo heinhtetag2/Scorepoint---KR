@@ -765,7 +765,7 @@ export default function ClubDetail({ club, onBack, onOpenEvent, onSettings, onNe
       {tab === 'settle' && organizer && !remitOpen && (
         <div className="fee-dock">
           <button className="btn fee-dock-btn is-primary" onClick={() => setCreateFee(true)}>
-            <Plus size={18} strokeWidth={2.6} />{t('cdFeeCreate')}
+            <Plus size={18} strokeWidth={2.6} />{t('cdFeeAdd')}
           </button>
           <button
             className={`btn fee-dock-btn is-ghost ${confirmMode ? 'is-active' : ''}`}

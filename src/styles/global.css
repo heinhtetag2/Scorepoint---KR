@@ -1663,11 +1663,11 @@ body {
   background: linear-gradient(to top, var(--page) 82%, transparent);
   pointer-events: none;
 }
-.fee-dock-btn { pointer-events: auto; flex: 1; gap: 7px; }
+.fee-dock-btn { pointer-events: auto; flex: 1; gap: 6px; white-space: nowrap; }
 .fee-dock-btn:active { transform: scale(0.98); }
 .fee-dock-btn svg { flex: 0 0 auto; }
-.fee-dock-btn.is-primary { background: var(--brand); color: var(--on-brand); box-shadow: 0 8px 22px -6px color-mix(in srgb, var(--brand) 52%, transparent); }
-.fee-dock-btn.is-ghost { background: var(--surface); color: var(--text-1); border: 1px solid var(--line); box-shadow: 0 8px 22px -8px rgba(0,0,0,0.22); }
+.fee-dock-btn.is-primary { background: var(--brand); color: var(--on-brand); }
+.fee-dock-btn.is-ghost { background: var(--surface); color: var(--text-1); border: 1px solid var(--line); }
 .fee-dock-btn.is-ghost svg { color: var(--brand); }
 .fee-dock-btn.is-ghost.is-active { border-color: var(--brand); background: var(--brand-weak); color: var(--brand); }
 .fee-dock-spacer { height: 80px; }
