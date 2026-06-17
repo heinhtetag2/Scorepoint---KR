@@ -15,27 +15,28 @@ function holeClass(stroke, par) {
   return 'is-double'
 }
 
-function NineTable({ label, pars, holes, start, sub, t }) {
+function NineTable({ label, pars, holes, start, t }) {
+  const parSum = pars.reduce((a, b) => a + b, 0)
+  const scoreSum = holes.reduce((a, b) => a + b, 0)
   return (
     <div className="rd-nine">
-      <div className="rd-nine-head">
-        <span>{label}</span>
-        <span className="num">{sub}</span>
-      </div>
       <div className="rd-grid">
         <div className="rd-grid-row rd-grid-head">
           <span className="rd-cell rd-cell-k">{t('rdHole')}</span>
           {holes.map((_, i) => <span className="rd-cell num" key={i}>{start + i}</span>)}
+          <span className="rd-cell rd-cell-tot">{label}</span>
         </div>
         <div className="rd-grid-row">
           <span className="rd-cell rd-cell-k">{t('rdParRow')}</span>
           {pars.map((p, i) => <span className="rd-cell num rd-par" key={i}>{p}</span>)}
+          <span className="rd-cell num rd-par rd-cell-tot">{parSum}</span>
         </div>
         <div className="rd-grid-row">
           <span className="rd-cell rd-cell-k">{t('rdScoreRow')}</span>
           {holes.map((s, i) => (
             <span className={`rd-cell num rd-mark ${holeClass(s, pars[i])}`} key={i}>{s}</span>
           ))}
+          <span className="rd-cell num rd-cell-tot rd-tot-score">{scoreSum}</span>
         </div>
       </div>
     </div>
@@ -78,6 +79,32 @@ export default function RecordDetail({ record, onBack }) {
       <div className="screen">
         {/* Hero — gross score, to-par, net */}
         <div className="card rd-hero">
+          <svg className="rd-illust" viewBox="0 0 260 150" preserveAspectRatio="none" fill="none" aria-hidden="true">
+            {/* sun + rays */}
+            <circle cx="38" cy="34" r="12" fill="currentColor" opacity="0.5" />
+            <path d="M38 13 V7 M16 34 H10 M22 18 L18 14 M22 50 L18 54 M54 18 L58 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity="0.38" />
+            {/* birds */}
+            <path d="M104 26 Q108 22 112 26 Q116 22 120 26" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity="0.5" />
+            <path d="M132 34 Q135 31 138 34 Q141 31 144 34" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity="0.4" />
+            {/* cloud */}
+            <ellipse cx="206" cy="28" rx="18" ry="6" fill="currentColor" opacity="0.2" />
+            {/* hills — three layers, full width */}
+            <path d="M0 96 Q60 70 130 88 Q200 104 260 82 L260 150 L0 150 Z" fill="currentColor" opacity="0.26" />
+            <path d="M0 114 Q70 86 150 102 Q212 114 260 96 L260 150 L0 150 Z" fill="currentColor" opacity="0.44" />
+            <path d="M0 132 Q80 108 162 120 Q220 128 260 112 L260 150 L0 150 Z" fill="currentColor" />
+            {/* bunker */}
+            <ellipse cx="86" cy="128" rx="16" ry="4.5" fill="currentColor" opacity="0.3" />
+            {/* flag on the green */}
+            <path d="M198 74 V118" stroke="currentColor" strokeWidth="3" strokeLinecap="round" opacity="0.9" />
+            <path d="M198 74 L220 81 L198 88 Z" fill="currentColor" />
+            {/* golf ball */}
+            <circle cx="150" cy="120" r="4" fill="currentColor" opacity="0.9" />
+            {/* trees + bush */}
+            <path d="M26 124 V106" stroke="currentColor" strokeWidth="3" strokeLinecap="round" opacity="0.85" />
+            <circle cx="26" cy="100" r="9" fill="currentColor" opacity="0.78" />
+            <path d="M48 126 V114" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" opacity="0.78" />
+            <circle cx="48" cy="109" r="6.5" fill="currentColor" opacity="0.66" />
+          </svg>
           <div className="rd-hero-top">
             <div className="rd-hero-meta">
               <div className="rd-hero-row"><CalendarDays size={14} strokeWidth={1.9} /><span className="num">{r.date}</span></div>
@@ -101,9 +128,9 @@ export default function RecordDetail({ record, onBack }) {
         {/* Scorecard */}
         <div className="section-head"><span className="s-head-left"><span className="s-title">{t('rdScorecard')}</span></span></div>
         <div className="card rd-card">
-          <NineTable label={t('rdOut')} sub={out} start={1} pars={HOLE_PARS.slice(0, 9)} holes={holes.slice(0, 9)} t={t} />
+          <NineTable label={t('rdOut')} start={1} pars={HOLE_PARS.slice(0, 9)} holes={holes.slice(0, 9)} t={t} />
           <div className="rd-divider" />
-          <NineTable label={t('rdIn')} sub={inn} start={10} pars={HOLE_PARS.slice(9)} holes={holes.slice(9)} t={t} />
+          <NineTable label={t('rdIn')} start={10} pars={HOLE_PARS.slice(9)} holes={holes.slice(9)} t={t} />
           <div className="rd-total">
             <span className="rd-total-k">{t('rdTotal')}</span>
             <span className="rd-total-v num">{r.score} <em>({toPar >= 0 ? '+' : ''}{toPar})</em></span>

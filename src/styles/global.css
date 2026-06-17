@@ -1378,7 +1378,13 @@ body {
 .noti-time { font-size: 10.5px; color: var(--text-3); margin-top: 4px; }
 
 /* ── Record detail (single round) ──────────────────────────── */
-.rd-hero { display: flex; flex-direction: column; }
+.rd-hero {
+  display: flex; flex-direction: column;
+  position: relative; overflow: hidden;
+  background: linear-gradient(150deg, color-mix(in srgb, var(--brand) 9%, var(--surface)) 0%, var(--surface) 58%);
+}
+.rd-hero > *:not(.rd-illust) { position: relative; }
+.rd-illust { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 150px; color: var(--brand); opacity: 0.13; pointer-events: none; }
 .rd-hero-top { display: flex; align-items: flex-start; justify-content: space-between; }
 .rd-hero-meta { display: flex; flex-direction: column; gap: 4px; }
 .rd-hero-row { display: flex; align-items: center; gap: 6px; font-size: var(--fs-cap); color: var(--text-2); }
@@ -1403,18 +1409,18 @@ body {
 .rd-divider { height: 1px; background: var(--line); margin: 14px 0; }
 
 .rd-grid { display: flex; flex-direction: column; gap: 5px; }
-.rd-grid-row { display: grid; grid-template-columns: 26px repeat(9, 1fr); gap: 3px; align-items: center; }
+.rd-grid-row { display: grid; grid-template-columns: 24px repeat(9, 1fr) 30px; gap: 3px; align-items: center; }
 .rd-cell { display: flex; align-items: center; justify-content: center; height: 22px; font-size: 10.5px; }
+.rd-cell-tot { font-weight: 800; color: var(--text-1); border-left: 1px solid var(--line); margin-left: 2px; }
+.rd-grid-head .rd-cell-tot { color: var(--text-2); font-weight: 700; letter-spacing: 0.3px; }
+.rd-par.rd-cell-tot { color: var(--text-2); font-weight: 700; }
+.rd-tot-score { color: var(--brand); }
 .rd-cell-k { justify-content: flex-start; font-size: 9.5px; font-weight: 600; color: var(--text-3); letter-spacing: 0.2px; }
 .rd-grid-head .rd-cell { color: var(--text-3); font-weight: 600; }
 .rd-par { color: var(--text-3); font-weight: 500; }
 
 /* score cells — birdie/eagle read as rounded, over-par as subtle squares */
-.rd-mark { font-weight: 700; color: var(--text-1); border-radius: 5px; }
-.rd-mark.is-eagle { color: var(--point); background: color-mix(in srgb, var(--point) 12%, #fff); border-radius: 50%; }
-.rd-mark.is-birdie { color: var(--brand); background: var(--brand-weak); border-radius: 50%; }
-.rd-mark.is-bogey { color: var(--text-2); background: var(--surface-2); }
-.rd-mark.is-double { color: var(--negative); background: var(--negative-weak); }
+.rd-mark { font-weight: 700; color: var(--text-1); background: none; border-radius: 0; }
 
 .rd-total { display: flex; align-items: baseline; justify-content: space-between; margin-top: 16px; padding-top: 13px; border-top: 1px solid var(--line); }
 .rd-total-k { font-size: 11px; font-weight: 700; letter-spacing: 0.4px; color: var(--text-3); }

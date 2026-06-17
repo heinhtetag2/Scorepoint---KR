@@ -56,7 +56,7 @@ export default function MyScore({ onOpenRecord, onScan }) {
           <span className="ms-trend-title">{hl(t('trendTitle'))}</span>
           <span className="ms-trend-badge"><TrendingDown size={13} strokeWidth={2.4} /> {t('improving')}</span>
         </div>
-        <div className="ms-chart"><Spark points={scoreTrend} w={300} h={120} strokeWidth={2.6} area showLast gradId="msTrend" /></div>
+        <div className="ms-chart"><Spark points={scoreTrend} w={300} h={120} strokeWidth={2.6} area interactive gradId="msTrend" /></div>
         <div className="ms-axis"><span>{t('axisStart')}</span><span>{t('axisEnd')}</span></div>
 
         <div className="ms-band" />

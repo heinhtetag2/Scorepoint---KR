@@ -185,26 +185,49 @@ export const HOLE_PARS = [4, 4, 3, 5, 4, 4, 3, 4, 5, 4, 3, 4, 4, 5, 4, 3, 4, 5]
 
 /* Build a believable 18-hole scorecard whose strokes sum EXACTLY to `gross`.
    Deterministic from `seed` (record index) so a given record always renders the
-   same card. Plants 2 birdies for realism, then fills bogeys/doubles to hit gross. */
+   same card. Plants a few birdies, then spreads the remaining over-par strokes
+   as a varied mix of bogeys/doubles — leaving several pars so the card reads like
+   a real round rather than a wall of identical bogeys. */
 export function buildScorecard(gross, seed = 0) {
+  const n = HOLE_PARS.length
   const holes = HOLE_PARS.slice()
-  const birdieCand = HOLE_PARS.map((p, i) => (p >= 4 ? i : -1)).filter((i) => i >= 0)
-  const b1 = birdieCand[(seed * 2 + 1) % birdieCand.length]
-  let b2 = birdieCand[(seed * 2 + 5) % birdieCand.length]
-  if (b2 === b1) b2 = birdieCand[(seed * 2 + 6) % birdieCand.length]
-  const birdies = new Set([b1, b2])
-  holes[b1] -= 1
-  holes[b2] -= 1
+  // deterministic pseudo-random in [0,1) from (seed, k)
+  const rand = (k) => {
+    const x = Math.sin((seed + 1) * 12.9898 + k * 78.233) * 43758.5453
+    return x - Math.floor(x)
+  }
+  // deterministic Fisher–Yates shuffle of hole indices
+  const order = holes.map((_, i) => i)
+  for (let i = n - 1; i > 0; i--) {
+    const j = Math.floor(rand(i) * (i + 1))
+    const tmp = order[i]; order[i] = order[j]; order[j] = tmp
+  }
 
-  let need = gross - 72 + 2 // strokes to add back after the two birdies
-  let idx = seed % 18
+  // plant birdies — better rounds carry a couple more
+  const overPar = gross - 72
+  const birdieGoal = overPar <= 0 ? 4 : overPar <= 5 ? 3 : overPar <= 12 ? 2 : 1
+  const par4plus = order.filter((i) => HOLE_PARS[i] >= 4)
+  const birdies = new Set()
+  for (let i = 0; i < birdieGoal && i < par4plus.length; i++) { birdies.add(par4plus[i]); holes[par4plus[i]] -= 1 }
+
+  let remaining = gross - holes.reduce((a, b) => a + b, 0)
+  // hand birdies back if a low gross overshot
+  for (let i = par4plus.length - 1; i >= 0 && remaining < 0; i--) {
+    const h = par4plus[i]
+    if (birdies.has(h)) { holes[h] += 1; birdies.delete(h); remaining += 1 }
+  }
+
+  // spread the rest as a 1/2 mix (occasional triple on later passes), walking the
+  // shuffled order so untouched holes stay par and the damage lands at random holes
   let guard = 0
-  while (need > 0 && guard < 1000) {
-    if (!birdies.has(idx) && holes[idx] - HOLE_PARS[idx] < 2) {
-      holes[idx] += 1
-      need -= 1
+  while (remaining > 0 && guard < 600) {
+    const h = order[guard % n]
+    if (!birdies.has(h)) {
+      const over = holes[h] - HOLE_PARS[h]
+      const want = rand(200 + guard) < 0.4 ? 2 : 1
+      const bump = Math.min(remaining, want, 3 - over)
+      if (bump > 0) { holes[h] += bump; remaining -= bump }
     }
-    idx = (idx + 1) % 18
     guard += 1
   }
 
