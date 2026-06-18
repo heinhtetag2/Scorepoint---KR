@@ -410,8 +410,15 @@ export default function Landing({ onEnter, onBack }) {
         <div className="lp-ratings">
           <p className="lp-ratings-title">{L('전국의 골프 모임이 신뢰합니다', 'Trusted by golf societies nationwide')}</p>
           <div className="lp-trustlogos">
-            {['그린필드 CC', '파인밸리 GC', '한라 CC', '레이크사이드', '스카이72', '남서울 CC'].map((n) => (
-              <span key={n}>{n}</span>
+            {[
+              { n: '그린필드 CC', e: (<svg viewBox="0 0 24 24" fill="none"><path d="M7 21V4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M7 5h10l-2.5 3.2L17 11.4H7" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"/></svg>) },
+              { n: '파인밸리 GC', e: (<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" strokeWidth="1.8"/><circle cx="12" cy="9.5" r="1.1" fill="currentColor"/><circle cx="9.4" cy="13" r="1.1" fill="currentColor"/><circle cx="14.6" cy="13" r="1.1" fill="currentColor"/></svg>) },
+              { n: '한라 CC', e: (<svg viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v5c0 4.4-3 8-7 10-4-2-7-5.6-7-10V6l7-3Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"/></svg>) },
+              { n: '레이크사이드', e: (<svg viewBox="0 0 24 24" fill="none"><path d="M3 18c2.5-2 4-2 6.5 0M14.5 18c2.5-2 4-2 6.5 0M3 13c2.5-2 4-2 6.5 0M14.5 13c2.5-2 4-2 6.5 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>) },
+              { n: '스카이72', e: (<svg viewBox="0 0 24 24" fill="none"><path d="M4 16l5-6 4 4 7-8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/><circle cx="20" cy="6" r="2" fill="currentColor"/></svg>) },
+              { n: '남서울 CC', e: (<svg viewBox="0 0 24 24" fill="none"><path d="M12 3l2.5 5.2 5.5.8-4 3.9 1 5.6L12 16l-5 2.5 1-5.6-4-3.9 5.5-.8L12 3Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round"/></svg>) },
+            ].map((c) => (
+              <span className="lp-trustlogo" key={c.n}>{c.e}{c.n}</span>
             ))}
           </div>
           <div className="lp-ratings-row">
@@ -523,6 +530,11 @@ export default function Landing({ onEnter, onBack }) {
               <h3>{L('잡일에서 해방', 'Freed from the busywork')}</h3>
               <p>{L('조 편성·시상·정산을 자동으로. 라운드 후 3시간이 15분으로 줄어듭니다.', 'Grouping, awards and settlement, automated. 3 hours after a round become 15 minutes.')}</p>
             </div>
+            <div className="lp-bento-glass">
+              <div className="lp-bento-glass-head">{L('라운드 정산', 'Settlement')}</div>
+              <p><strong>₩336,000</strong> · {L('8명', '8 players')}<br />{L('1인당 ₩42,000 · 송금 링크', '₩42,000 each · transfer link')}</p>
+            </div>
+            <img className="lp-bento-graphic" src="/cards/bento-organizer.png" alt="" aria-hidden="true" loading="lazy" />
             <span className="lp-bento-arrow" aria-hidden="true">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M9 7h8v8" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </span>
@@ -534,6 +546,11 @@ export default function Landing({ onEnter, onBack }) {
               <h3>{L('한눈에 파악', 'See everything at a glance')}</h3>
               <p>{L('누가 왔고, 누가 냈고, 라운드가 어떻게 진행되는지 실시간으로 확인하세요.', 'Who showed up, who paid, and how the round is going — all in real time.')}</p>
             </div>
+            <div className="lp-bento-glass">
+              <div className="lp-bento-glass-head">{L('실시간 현황', 'Live status')}</div>
+              <p>{L('참석', 'Attending')} <strong>12/16</strong> · {L('정산', 'Paid')} <strong>6/8</strong><br />{L('3조 편성 완료', '3 groups set')}</p>
+            </div>
+            <img className="lp-bento-graphic" src="/cards/bento-owner.png" alt="" aria-hidden="true" loading="lazy" />
             <span className="lp-bento-arrow" aria-hidden="true">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M9 7h8v8" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </span>
