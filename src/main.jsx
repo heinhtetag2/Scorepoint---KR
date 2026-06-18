@@ -6,6 +6,7 @@ import { LanguageProvider } from './i18n/LanguageContext.jsx'
 import './styles/global.css'
 import './styles/concept.css'
 import './styles/onboarding.css'
+import './styles/landing.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

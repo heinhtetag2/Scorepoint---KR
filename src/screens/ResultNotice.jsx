@@ -43,7 +43,7 @@ export default function ResultNotice({ onBack, onDone }) {
           <span className="rn-deco rn-deco-1" />
           <span className="rn-deco rn-deco-2" />
           <div className="rn-card-head">
-            <span className="rn-brand">ScoreShot</span>
+            <span className="rn-brand">LABEON</span>
             <Trophy size={22} strokeWidth={1.6} className="rn-card-trophy" />
           </div>
           <div className="rn-card-title">{pick(ev.titleKr, ev.titleEn)}</div>

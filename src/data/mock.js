@@ -1,4 +1,4 @@
-/* Static mock content for the ScoreShot prototype (no backend). Bilingual EN/KR. */
+/* Static mock content for the LABEON prototype (no backend). Bilingual EN/KR. */
 
 export const user = {
   name: '문양희',
@@ -298,7 +298,7 @@ export const account = {
   tierKo: '버디', tierEn: 'Birdie', tierLevel: 3,
   badges: 6,
   memberNo: 'SS-26-0612',
-  phone: '010-1234-5678', email: 'yang-hee@scoreshot.kr',
+  phone: '010-1234-5678', email: 'yang-hee@labeon.kr',
   introKo: '주말 골퍼 · 베스트 78타', introEn: 'Weekend golfer · best 78',
 }
 

@@ -358,7 +358,7 @@ function CloseSettleSheet({ onClose, lang, pick }) {
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
                 <div>
                   <p style={{ fontSize: 11, fontWeight: 600, opacity: 0.7, margin: 0, letterSpacing: 0.5, textTransform: 'uppercase' }}>
-                    ScoreShot
+                    LABEON
                   </p>
                   <p style={{ fontSize: 16, fontWeight: 800, margin: '3px 0 0', letterSpacing: -0.3 }}>
                     {pick(ev.titleKr, ev.titleEn)}

@@ -1,5 +1,5 @@
 /* ============================================================
-   ScoreShot · Korean UI Style Test — global stylesheet
+   LABEON · Korean UI Style Test — global stylesheet
    All component styling reads CSS custom properties that are
    injected per-theme on .phone (see ThemeContext / themes.js).
    ============================================================ */
@@ -39,8 +39,25 @@ body {
   gap: 18px;
 }
 
-.app-head { width: 100%; max-width: 460px; text-align: center; }
-.app-head h1 { font-size: 19px; font-weight: 800; color: #191f28; letter-spacing: -0.3px; }
+.app-head { position: relative; width: 100%; max-width: 460px; text-align: center; }
+.app-back {
+  position: absolute; left: 0; top: -2px;
+  display: inline-flex; align-items: center; gap: 7px;
+  border: none; border-radius: 999px;
+  padding: 11px 18px; font-family: var(--font); font-size: 13.5px; font-weight: 700;
+  color: #fff; cursor: pointer;
+  background: linear-gradient(135deg, #0F5132, #198754);
+  box-shadow: 0 8px 20px rgba(15,81,50,0.30), inset 0 1px 0 rgba(255,255,255,0.16);
+  transition: filter 0.15s ease, transform 0.12s ease, box-shadow 0.16s ease;
+}
+.app-back:hover { filter: brightness(1.08); box-shadow: 0 12px 26px rgba(15,81,50,0.36); }
+.app-back:active { transform: scale(0.96); }
+.app-back svg { opacity: 0.92; }
+@media (max-width: 720px) {
+  .app-back { position: static; margin-bottom: 14px; }
+}
+.app-head h1 { display: inline-flex; align-items: center; gap: 8px; font-size: 19px; font-weight: 800; color: #191f28; letter-spacing: -0.3px; }
+.app-mark { height: 24px; width: 24px; display: block; }
 .app-head p { font-size: 12.5px; color: #6b7280; margin-top: 4px; line-height: 1.5; }
 
 .lang-toggle {
@@ -200,7 +217,8 @@ body {
   background: var(--page);
 }
 .appbar .title { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; }
-.appbar .brand { font-size: 17px; font-weight: 800; color: var(--brand); letter-spacing: -0.4px; }
+.appbar .brand { display: inline-flex; align-items: center; gap: 7px; font-size: 17px; font-weight: 800; color: var(--brand); letter-spacing: -0.4px; }
+.appbar .brand-mark { height: 22px; width: 22px; display: block; }
 .appbar .actions { display: flex; gap: 14px; align-items: center; font-size: 17px; }
 .appbar .actions > * { display: inline-flex; align-items: center; }
 .appbar .actions svg { display: block; }

@@ -68,7 +68,7 @@ export default function Home({ onOpenEvent, onOpenNoti, onOpenProfile, onSearch 
   return (
     <>
       <div className="appbar">
-        <span className="brand">ScoreShot</span>
+        <span className="brand"><img className="brand-mark" src="/logo-mark.png" alt="" />LABEON</span>
         <span className="actions">
           <span className="dot-badge" role="button" tabIndex={0} onClick={onOpenNoti}>
             <Bell size={21} strokeWidth={1.9} />

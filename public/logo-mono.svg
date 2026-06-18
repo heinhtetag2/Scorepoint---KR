@@ -1,0 +1,22 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ScoreShot" color="#0F5132">
+  <!-- Single-color mark. Inherits `color` / `currentColor` so it can be tinted
+       via CSS (fill/stroke = currentColor). Default is deep brand green. -->
+  <g fill="none" stroke="currentColor" stroke-linecap="round">
+    <!-- scan brackets -->
+    <g stroke-width="13">
+      <path d="M64 90 V72 Q64 64 72 64 H90"/>
+      <path d="M166 64 H184 Q192 64 192 72 V90"/>
+      <path d="M192 166 V184 Q192 192 184 192 H166"/>
+      <path d="M90 192 H72 Q64 192 64 184 V166"/>
+    </g>
+    <!-- golf ball outline -->
+    <circle cx="128" cy="128" r="40" stroke-width="9"/>
+  </g>
+  <!-- dimples -->
+  <g fill="currentColor">
+    <circle cx="128" cy="110" r="3.4"/>
+    <circle cx="112" cy="118" r="3.4"/><circle cx="144" cy="118" r="3.4"/>
+    <circle cx="106" cy="134" r="3.4"/><circle cx="128" cy="130" r="3.4"/><circle cx="150" cy="134" r="3.4"/>
+    <circle cx="114" cy="146" r="3.4"/><circle cx="142" cy="146" r="3.4"/>
+  </g>
+</svg>

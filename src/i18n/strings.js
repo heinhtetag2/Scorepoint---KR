@@ -299,7 +299,7 @@ const STR = {
   promoTitle: { ko: '올 시즌 내가 기록한 라운드', en: 'Rounds you logged this season' },
   promoCount: { ko: '{n}건', en: '{n}' },
   promoTitleEnd: { ko: '이 있습니다.', en: ' rounds.' },
-  promoSub: { ko: '평균 스코어와 약점 홀,\n핸디 변화까지 한눈에\n스코어샷에서 확인하세요!', en: 'Average score, weak holes,\nand handicap trends — all\nat a glance in ScoreShot!' },
+  promoSub: { ko: '평균 스코어와 약점 홀,\n핸디 변화까지 한눈에\n라베온에서 확인하세요!', en: 'Average score, weak holes,\nand handicap trends — all\nat a glance in LABEON!' },
   parLabel: { ko: '파 대비', en: 'vs Par' },
   strokeUnit: { ko: '타', en: 'pts' },
   kvBest: { ko: '최고 스코어', en: 'Best score' },
@@ -423,7 +423,7 @@ const STR = {
   obSlide3Title: { ko: '복잡한 정산도\n자동으로', en: 'Even settlement,\ndone for you' },
   obSlide3Sub: { ko: '신페리오 순위와 상금·정산까지 한 번에 계산해요.', en: 'New Peoria rankings, prizes & balances in one tap.' },
 
-  obLoginTitle: { ko: '골프가 더 쉬워지는\n스코어샷', en: 'Golf, made easier\nwith ScoreShot' },
+  obLoginTitle: { ko: '골프가 더 쉬워지는\n라베온', en: 'Golf, made easier\nwith LABEON' },
   obLoginSub: { ko: '3초 만에 시작해 보세요', en: 'Get started in 3 seconds' },
   obKakao: { ko: '카카오로 시작하기', en: 'Continue with Kakao' },
   obApple: { ko: 'Apple로 시작하기', en: 'Continue with Apple' },
@@ -447,7 +447,7 @@ const STR = {
 
   obDoneTitle: { ko: '준비 완료!', en: "You're all set!" },
   obDoneSub: { ko: '{name}님, 좋은 라운드 되세요', en: 'Enjoy your round, {name}' },
-  obEnter: { ko: '스코어샷 시작하기', en: 'Enter ScoreShot' },
+  obEnter: { ko: '라베온 시작하기', en: 'Enter LABEON' },
 
   // profile (내 정보) + sub-screens
   profileTitle: { ko: '내 정보', en: 'My Info' },
@@ -517,7 +517,7 @@ const STR = {
   rpSuggested: { ko: '추천', en: 'Suggested' },
   rpPayNamed: { ko: '{plan} 결제하기', en: 'Pay for {plan}' },
   rpCurrentCta: { ko: '현재 이용 중인 요금제', en: 'Your current plan' },
-  pBizFooter: { ko: '(주) 스코어샷', en: 'ScoreShot Inc.' },
+  pBizFooter: { ko: '(주) 라베온', en: 'LABEON Inc.' },
   pBizInfo: { ko: '사업자정보확인', en: 'Business info' },
 
   // profile edit (내 정보 관리)
@@ -546,7 +546,7 @@ const STR = {
   peAvatarTitle: { ko: '프로필 편집', en: 'Edit profile' },
   peComplete: { ko: '완료', en: 'Done' },
   peNoticeTitle: { ko: '확인해주세요', en: 'Please note' },
-  peNotice1: { ko: '프로필 정보는 스코어샷 모임과 랭킹에 표시돼요.', en: 'Your profile appears in ScoreShot clubs & rankings.' },
+  peNotice1: { ko: '프로필 정보는 라베온 모임과 랭킹에 표시돼요.', en: 'Your profile appears in LABEON clubs & rankings.' },
   peNotice2: { ko: '다른 회원에게는 닉네임과 사진만 공개돼요.', en: 'Only your nickname and photo are shown to others.' },
 
   // points
@@ -560,7 +560,7 @@ const STR = {
 
   // tier
   tierTitle: { ko: '등급 · 혜택', en: 'Tier & benefits' },
-  tierEyebrow: { ko: '스코어샷 멤버십', en: 'ScoreShot Membership' },
+  tierEyebrow: { ko: '라베온 멤버십', en: 'LABEON Membership' },
   tierCur: { ko: '현재 등급', en: 'Current tier' },
   tierNext: { ko: '다음 등급까지 {n}라운드', en: '{n} rounds to next tier' },
   tierNextNamed: { ko: '{tier}까지 {n}라운드 남았어요', en: '{n} rounds to {tier}' },

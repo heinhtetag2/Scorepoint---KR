@@ -502,7 +502,7 @@ h1{font-size:18px;margin:0 0 4px}.sub{color:#6B7077;font-size:13px;margin:0 0 20
 .amt{font-size:26px;font-weight:800;letter-spacing:-1px;margin:18px 0 6px}.paid{display:inline-block;font-size:12px;font-weight:700;color:#0A7A37;background:#E5F4EA;padding:3px 10px;border-radius:999px}
 table{width:100%;border-collapse:collapse;margin-top:20px}td{padding:9px 0;font-size:14px;border-bottom:1px solid #EFEFEF}td:first-child{color:#6B7077}
 .tot td{border-top:2px solid #1A1D21;border-bottom:none;padding-top:12px;font-weight:700}</style></head>
-<body><h1>ScoreShot ${t('srTitle')}</h1><p class="sub">${receiptNo}</p>
+<body><h1>LABEON ${t('srTitle')}</h1><p class="sub">${receiptNo}</p>
 <div class="amt">${money(total, lang)}</div><span class="paid">${t('srPaidStatus')}</span>
 <table><tr><td>${t('srItem')}</td><td style="text-align:right">${itemName}</td></tr>
 ${row(t('srDate'), item.date)}${row(t('srMethod'), method)}${row(t('srNo'), receiptNo)}
@@ -991,19 +991,19 @@ function TermsOfService({ onBack }) {
       <PolicyDate ko="시행일: 2025년 1월 1일" en="Effective: January 1, 2025" />
       <PolicySection heading={isKo ? '제1조 (목적)' : 'Article 1 — Purpose'}>
         {isKo
-          ? '이 약관은 ScoreShot(이하 "서비스")이 제공하는 골프 스코어 기록, 이벤트 관리, 클럽 운영 서비스의 이용에 관한 기본적인 사항을 규정함을 목적으로 합니다.'
-          : 'These Terms govern your use of ScoreShot ("Service"), including golf score tracking, event management, and club administration features provided by ScoreShot Inc.'}
+          ? '이 약관은 LABEON(이하 "서비스")이 제공하는 골프 스코어 기록, 이벤트 관리, 클럽 운영 서비스의 이용에 관한 기본적인 사항을 규정함을 목적으로 합니다.'
+          : 'These Terms govern your use of LABEON ("Service"), including golf score tracking, event management, and club administration features provided by LABEON Inc.'}
       </PolicySection>
       <PolicySection heading={isKo ? '제2조 (정의)' : 'Article 2 — Definitions'}>
         {isKo ? (
           <>
-            <PolicyItem n="①">"서비스"란 ScoreShot이 제공하는 모든 앱, 웹, API 기반 서비스를 말합니다.</PolicyItem>
+            <PolicyItem n="①">"서비스"란 LABEON이 제공하는 모든 앱, 웹, API 기반 서비스를 말합니다.</PolicyItem>
             <PolicyItem n="②">"회원"이란 이 약관에 동의하고 서비스를 이용하는 자를 말합니다.</PolicyItem>
             <PolicyItem n="③">"콘텐츠"란 회원이 서비스 내에 게시·등록한 점수, 사진, 텍스트 등 모든 정보를 의미합니다.</PolicyItem>
           </>
         ) : (
           <>
-            <PolicyItem n="1">"Service" means all apps, APIs, and web interfaces operated by ScoreShot Inc.</PolicyItem>
+            <PolicyItem n="1">"Service" means all apps, APIs, and web interfaces operated by LABEON Inc.</PolicyItem>
             <PolicyItem n="2">"Member" means any person who agrees to these Terms and uses the Service.</PolicyItem>
             <PolicyItem n="3">"Content" means scores, photos, text, and any other material posted by Members.</PolicyItem>
           </>
@@ -1033,13 +1033,13 @@ function TermsOfService({ onBack }) {
       </PolicySection>
       <PolicySection heading={isKo ? '제5조 (서비스 변경 및 중단)' : 'Article 5 — Changes & Suspension'}>
         {isKo
-          ? 'ScoreShot은 운영상 또는 기술상의 필요에 따라 서비스의 전부 또는 일부를 변경하거나 일시 중단할 수 있으며, 이에 대해 회원에게 사전 고지합니다. 단, 긴급한 경우 사후 고지할 수 있습니다.'
-          : 'ScoreShot may modify or temporarily suspend the Service for operational or technical reasons, with prior notice to Members. In urgent cases, notice may be given after the fact.'}
+          ? 'LABEON은 운영상 또는 기술상의 필요에 따라 서비스의 전부 또는 일부를 변경하거나 일시 중단할 수 있으며, 이에 대해 회원에게 사전 고지합니다. 단, 긴급한 경우 사후 고지할 수 있습니다.'
+          : 'LABEON may modify or temporarily suspend the Service for operational or technical reasons, with prior notice to Members. In urgent cases, notice may be given after the fact.'}
       </PolicySection>
       <PolicySection heading={isKo ? '제6조 (책임의 한계)' : 'Article 6 — Limitation of Liability'}>
         {isKo
-          ? 'ScoreShot은 천재지변, 불가항력, 서비스 점검 등 회사의 귀책사유가 없는 경우로 인한 서비스 중단에 대해 책임을 지지 않습니다. 회원이 서비스를 통해 얻은 정보로 인해 발생한 손해에 대해서도 회사는 책임을 부담하지 않습니다.'
-          : 'ScoreShot is not liable for service interruptions caused by force majeure, scheduled maintenance, or circumstances beyond its control. ScoreShot is not responsible for damages arising from information obtained through the Service.'}
+          ? 'LABEON은 천재지변, 불가항력, 서비스 점검 등 회사의 귀책사유가 없는 경우로 인한 서비스 중단에 대해 책임을 지지 않습니다. 회원이 서비스를 통해 얻은 정보로 인해 발생한 손해에 대해서도 회사는 책임을 부담하지 않습니다.'
+          : 'LABEON is not liable for service interruptions caused by force majeure, scheduled maintenance, or circumstances beyond its control. LABEON is not responsible for damages arising from information obtained through the Service.'}
       </PolicySection>
       <PolicySection heading={isKo ? '제7조 (준거법 및 관할)' : 'Article 7 — Governing Law'}>
         {isKo
@@ -1059,8 +1059,8 @@ function PrivacyPolicy({ onBack }) {
       <PolicyDate ko="시행일: 2025년 1월 1일" en="Effective: January 1, 2025" />
       <PolicySection heading={isKo ? '수집하는 개인정보 항목' : 'Information We Collect'}>
         {isKo
-          ? 'ScoreShot은 서비스 제공을 위해 다음 정보를 수집합니다: 이름, 이메일 주소, 전화번호, 프로필 사진, 골프 스코어 및 라운드 기록, 클럽 활동 정보, 기기 정보(OS, 기기 모델, 앱 버전), 서비스 이용 기록(접속 일시, IP 주소).'
-          : 'ScoreShot collects: name, email address, phone number, profile photo, golf scores and round history, club activity, device information (OS, model, app version), and service usage logs (access time, IP address).'}
+          ? 'LABEON은 서비스 제공을 위해 다음 정보를 수집합니다: 이름, 이메일 주소, 전화번호, 프로필 사진, 골프 스코어 및 라운드 기록, 클럽 활동 정보, 기기 정보(OS, 기기 모델, 앱 버전), 서비스 이용 기록(접속 일시, IP 주소).'
+          : 'LABEON collects: name, email address, phone number, profile photo, golf scores and round history, club activity, device information (OS, model, app version), and service usage logs (access time, IP address).'}
       </PolicySection>
       <PolicySection heading={isKo ? '개인정보 수집 및 이용 목적' : 'Why We Collect It'}>
         {isKo ? (
@@ -1088,13 +1088,13 @@ function PrivacyPolicy({ onBack }) {
       </PolicySection>
       <PolicySection heading={isKo ? '개인정보 제3자 제공' : 'Third-Party Sharing'}>
         {isKo
-          ? 'ScoreShot은 원칙적으로 회원의 개인정보를 외부에 제공하지 않습니다. 다만, 회원의 사전 동의가 있거나 법령에 근거한 경우에는 예외로 합니다.'
-          : 'ScoreShot does not share personal information with third parties without consent, except as required by law or with prior member agreement.'}
+          ? 'LABEON은 원칙적으로 회원의 개인정보를 외부에 제공하지 않습니다. 다만, 회원의 사전 동의가 있거나 법령에 근거한 경우에는 예외로 합니다.'
+          : 'LABEON does not share personal information with third parties without consent, except as required by law or with prior member agreement.'}
       </PolicySection>
       <PolicySection heading={isKo ? '개인정보 처리 위탁' : 'Processing Entrusted to Third Parties'}>
         {isKo
-          ? 'ScoreShot은 서비스 운영을 위해 일부 업무를 외부 전문업체에 위탁합니다: Amazon Web Services (서버 호스팅 및 데이터 저장), Google Firebase (푸시 알림), Sentry (오류 추적).'
-          : 'ScoreShot entrusts certain operations to third parties: Amazon Web Services (hosting & storage), Google Firebase (push notifications), Sentry (error tracking).'}
+          ? 'LABEON은 서비스 운영을 위해 일부 업무를 외부 전문업체에 위탁합니다: Amazon Web Services (서버 호스팅 및 데이터 저장), Google Firebase (푸시 알림), Sentry (오류 추적).'
+          : 'LABEON entrusts certain operations to third parties: Amazon Web Services (hosting & storage), Google Firebase (push notifications), Sentry (error tracking).'}
       </PolicySection>
       <PolicySection heading={isKo ? '회원의 권리' : 'Your Rights'}>
         {isKo
@@ -1103,8 +1103,8 @@ function PrivacyPolicy({ onBack }) {
       </PolicySection>
       <PolicySection heading={isKo ? '개인정보 보호 책임자' : 'Privacy Officer'}>
         {isKo
-          ? '개인정보 처리방침에 관한 문의는 아래로 연락하시기 바랍니다.\n이름: 김도현 / 직책: 개인정보 보호 책임자\n이메일: privacy@scoreshot.kr'
-          : 'For privacy inquiries, contact us at:\nName: Dohyun Kim / Title: Privacy Officer\nEmail: privacy@scoreshot.kr'}
+          ? '개인정보 처리방침에 관한 문의는 아래로 연락하시기 바랍니다.\n이름: 김도현 / 직책: 개인정보 보호 책임자\n이메일: privacy@labeon.kr'
+          : 'For privacy inquiries, contact us at:\nName: Dohyun Kim / Title: Privacy Officer\nEmail: privacy@labeon.kr'}
       </PolicySection>
     </PolicyDoc>
   )
@@ -1119,8 +1119,8 @@ function LocationTerms({ onBack }) {
       <PolicyDate ko="시행일: 2025년 1월 1일" en="Effective: January 1, 2025" />
       <PolicySection heading={isKo ? '위치기반 서비스 개요' : 'Overview'}>
         {isKo
-          ? 'ScoreShot은 위치정보의 보호 및 이용 등에 관한 법률에 따라 회원의 위치 정보를 수집·이용합니다. 이 약관은 위치기반 서비스 이용에 관한 사항을 규정합니다.'
-          : 'ScoreShot collects and uses location data in accordance with applicable law. These Terms govern the use of location-based services within the app.'}
+          ? 'LABEON은 위치정보의 보호 및 이용 등에 관한 법률에 따라 회원의 위치 정보를 수집·이용합니다. 이 약관은 위치기반 서비스 이용에 관한 사항을 규정합니다.'
+          : 'LABEON collects and uses location data in accordance with applicable law. These Terms govern the use of location-based services within the app.'}
       </PolicySection>
       <PolicySection heading={isKo ? '수집하는 위치 정보' : 'Location Data Collected'}>
         {isKo ? (
@@ -1198,8 +1198,8 @@ function OpenSourceLicenses({ onBack }) {
     <PolicyDoc title={isKo ? '오픈소스 라이선스' : 'Open-source Licenses'} onBack={onBack}>
       <p style={{ fontSize: 13, color: 'var(--text-3)', marginBottom: 16, lineHeight: 1.6 }}>
         {isKo
-          ? 'ScoreShot은 아래의 오픈소스 소프트웨어를 사용합니다.'
-          : 'ScoreShot uses the following open-source software.'}
+          ? 'LABEON은 아래의 오픈소스 소프트웨어를 사용합니다.'
+          : 'LABEON uses the following open-source software.'}
       </p>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
         {OSS_LIST.map((lib) => (

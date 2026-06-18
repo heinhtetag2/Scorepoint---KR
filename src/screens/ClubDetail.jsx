@@ -814,7 +814,7 @@ export default function ClubDetail({ club, onBack, onOpenEvent, onSettings, onNe
             <div className="invite-sub">{t('inviteSub', { club: pick(c.nameKr, c.nameEn) })}</div>
 
             <div className="invite-link">
-              <span className="invite-link-text">scoreshot.kr/c/{c.id}</span>
+              <span className="invite-link-text">labeon.kr/c/{c.id}</span>
               <button className="invite-copy" onClick={() => setCopied(true)}>{copied ? t('inviteCopied') : t('inviteCopy')}</button>
             </div>
 

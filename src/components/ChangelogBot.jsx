@@ -55,7 +55,7 @@ export default function ChangelogBot() {
             <header className="cl-head">
               <span className="cl-bot"><Sparkles size={16} strokeWidth={2.4} /></span>
               <div className="cl-head-txt">
-                <strong>{ko ? 'ScoreShot 업데이트 봇' : 'ScoreShot update bot'}</strong>
+                <strong>{ko ? 'LABEON 업데이트 봇' : 'LABEON update bot'}</strong>
                 <span>{ko ? '오늘 작업한 UI 변경 내역' : "Today's UI changes"}</span>
               </div>
               <button className="cl-close" onClick={() => setOpen(false)} aria-label="close"><X size={18} /></button>

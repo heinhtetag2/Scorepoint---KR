@@ -1,5 +1,5 @@
 /**
- * Theme token system for the ScoreShot style test.
+ * Theme token system for the LABEON style test.
  *
  * Two FAMILIES of design directions:
  *  - family: 'classic'  → Kakao / Toss / Naver. Same shared screens, re-skinned.

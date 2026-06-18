@@ -106,7 +106,7 @@ export default function Onboarding({ onDone, onIntroChange }) {
       <div className="ob ob-intro" style={{ background: `url(${s.img}) center/cover, ${s.grad}` }}>
         <span className="ob-intro-scrim" />
         <div className="ob-intro-top">
-          <span className="ob-wordmark">ScoreShot</span>
+          <span className="ob-wordmark"><span className="ob-mark"><img src="/logo-mark.png" alt="" /></span>LABEON</span>
           <button className="ob-skip" onClick={onDone}>{t('obSkip')}</button>
         </div>
 

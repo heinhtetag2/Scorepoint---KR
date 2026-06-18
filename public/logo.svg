@@ -1,0 +1,55 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ScoreShot">
+  <defs>
+    <!-- Deep-green brand tile -->
+    <linearGradient id="ss-tile" x1="32" y1="20" x2="224" y2="240" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#198754"/>
+      <stop offset="0.55" stop-color="#0F5132"/>
+      <stop offset="1" stop-color="#0A3D26"/>
+    </linearGradient>
+    <!-- Gold scan brackets -->
+    <linearGradient id="ss-gold" x1="48" y1="48" x2="208" y2="208" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#EBD27A"/>
+      <stop offset="0.5" stop-color="#C9A227"/>
+      <stop offset="1" stop-color="#A6841B"/>
+    </linearGradient>
+    <!-- Golf ball sphere -->
+    <radialGradient id="ss-ball" cx="0.38" cy="0.32" r="0.85" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="0.65" stop-color="#F2F4F1"/>
+      <stop offset="1" stop-color="#D7DCD6"/>
+    </radialGradient>
+    <radialGradient id="ss-shadow" cx="0.5" cy="0.5" r="0.5" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#062A1A" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#062A1A" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Brand tile -->
+  <rect x="0" y="0" width="256" height="256" rx="58" fill="url(#ss-tile)"/>
+  <!-- top sheen -->
+  <path d="M0 58 Q0 0 58 0 H198 Q256 0 256 58 V96 Q128 60 0 96 Z" fill="#FFFFFF" opacity="0.06"/>
+
+  <!-- Scan / viewfinder corner brackets (camera "shot" + OCR frame) -->
+  <g stroke="url(#ss-gold)" stroke-width="13" stroke-linecap="round" fill="none">
+    <path d="M64 90 V72 Q64 64 72 64 H90"/>
+    <path d="M166 64 H184 Q192 64 192 72 V90"/>
+    <path d="M192 166 V184 Q192 192 184 192 H166"/>
+    <path d="M90 192 H72 Q64 192 64 184 V166"/>
+  </g>
+
+  <!-- Golf ball as the lens subject (golf "shot") -->
+  <ellipse cx="128" cy="150" rx="46" ry="14" fill="url(#ss-shadow)"/>
+  <circle cx="128" cy="128" r="42" fill="url(#ss-ball)"/>
+  <!-- dimples -->
+  <g fill="#C5CCC4" opacity="0.55">
+    <circle cx="128" cy="106" r="3.2"/>
+    <circle cx="111" cy="113" r="3.2"/><circle cx="145" cy="113" r="3.2"/>
+    <circle cx="103" cy="128" r="3.2"/><circle cx="128" cy="128" r="3.2"/><circle cx="153" cy="128" r="3.2"/>
+    <circle cx="111" cy="143" r="3.2"/><circle cx="145" cy="143" r="3.2"/>
+    <circle cx="128" cy="150" r="3.2"/>
+    <circle cx="119" cy="121" r="2.4"/><circle cx="137" cy="121" r="2.4"/>
+    <circle cx="119" cy="135" r="2.4"/><circle cx="137" cy="135" r="2.4"/>
+  </g>
+  <!-- specular highlight -->
+  <ellipse cx="114" cy="114" rx="11" ry="7.5" fill="#FFFFFF" opacity="0.85" transform="rotate(-32 114 114)"/>
+</svg>

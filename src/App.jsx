@@ -22,13 +22,18 @@ import ClubMembers from './screens/ClubMembers.jsx'
 import ClubNoti from './screens/ClubNoti.jsx'
 import Notifications from './screens/Notifications.jsx'
 import Onboarding from './screens/Onboarding.jsx'
+import Landing from './screens/Landing.jsx'
+import PortalGate from './screens/PortalGate.jsx'
 import ChangelogBot from './components/ChangelogBot.jsx'
 import { scannedRound, clubs as seedClubs, eventList as seedEvents } from './data/mock.js'
 import { useLang } from './i18n/LanguageContext.jsx'
+import { useTheme } from './theme/ThemeContext.jsx'
 
-/* ScoreShot — Kakao-style direction (single, locked design) with KO/EN toggle. */
+/* LABEON — Kakao-style direction (single, locked design) with KO/EN toggle. */
 export default function App() {
   const { t, lang, setLang } = useLang()
+  const { setTheme } = useTheme()
+  const [view, setView] = useState('gate')   // 'gate' | 'landing' | 'app' — gate is the front door on every load/refresh
   const [onboarded, setOnboarded] = useState(false)
   const [obImmersive, setObImmersive] = useState(true)
   const [profilePushed, setProfilePushed] = useState(false)
@@ -87,10 +92,20 @@ export default function App() {
       onImmersiveChange={setDetailImmersive}
     />
 
+  // Entry gate (Website vs App) is the front door, shown on every load.
+  // From the website, choosing a design portal also sets its theme + enters the app.
+  const enterPortal = (key) => { setTheme(key); setView('app') }
+  if (view === 'gate') return <PortalGate onPick={setView} />
+  if (view === 'landing') return <Landing onEnter={enterPortal} onBack={() => setView('gate')} />
+
   return (
     <div className="app-shell">
       <header className="app-head">
-        <h1>ScoreShot</h1>
+        <button className="app-back" onClick={() => setView('gate')}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          {lang === 'ko' ? '포털 선택' : 'Portals'}
+        </button>
+        <h1><img className="app-mark" src="/logo-mark.png" alt="" />LABEON</h1>
         <p>{t('tagline')}</p>
         <div className="lang-toggle" role="group" aria-label="Language">
           <button className={lang === 'ko' ? 'active' : ''} onClick={() => setLang('ko')}>한국어</button>
