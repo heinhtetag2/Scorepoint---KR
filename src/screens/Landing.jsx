@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useLayoutEffect, useRef } from 'react'
 import { useLang } from '../i18n/LanguageContext.jsx'
 import PhoneFrame from '../components/PhoneFrame.jsx'
+import Scan from './Scan.jsx'
 import ScanReview from './ScanReview.jsx'
 import GroupFormation from './GroupFormation.jsx'
 import AwardResults from './AwardResults.jsx'
@@ -18,7 +19,7 @@ import { eventList } from '../data/mock.js'
 const COPY = {
   ko: {
     nav_demo: '데모 보기', nav_download: '다운로드', nav_features: '기능',
-    anno: '새로워진 AI 캐디, LABEON을 소개합니다.', anno_cta: '둘러보기',
+    anno: '새로워진 AI 캐디, 라베온을 소개합니다.', anno_cta: '둘러보기',
     badge: 'AI 골프 모임 비서',
     h1a: '사진 한 장으로 끝나는',
     h1b: '골프 모임 운영',
@@ -48,14 +49,14 @@ const COPY = {
     step1_t: '스캔', step1_d: '태블릿·종이 스코어카드를 카메라로 한 번. AI OCR이 점수를 구조화합니다.',
     step2_t: '채점', step2_d: '신페리오·핸디캡 자동 계산. 시상과 순위가 즉시 정리됩니다.',
     step3_t: '정산', step3_d: '비용을 1/n로 나누고 송금 링크 생성. 돈은 절대 보관하지 않습니다.',
-    feat_kicker: '왜 LABEON인가',
+    feat_kicker: '왜 라베온인가',
     feat_title: '모임 운영의 모든 잡일을 하나로',
     f1_t: '사진 → 점수', f1_d: '스코어카드 사진만 찍으면 끝. 손으로 옮겨 적을 필요가 없습니다.',
     f2_t: '총무의 로봇', f2_d: '조 편성, 순위 계산, 비용 분배, 결과 메시지까지 자동 생성.',
     f3_t: '안전한 돈 관리', f3_d: '자금을 보관하지 않고 송금 링크만 발행 — 믿을 수 있는 구조.',
     f4_t: '한국 골프 맥락', f4_d: '총무·회사 모임·동호회. 신페리오와 핸디캡을 이해합니다.',
     dl_kicker: '지금 시작하기',
-    dl_title: '오늘 라운드부터\nLABEON과 함께',
+    dl_title: '오늘 라운드부터\n라베온과 함께',
     dl_sub: 'iOS와 Android에서 무료로 다운로드하세요.',
     dl_note: 'iOS 14+ · Android 8+ · 개인 사용 무료',
     uc_kicker: '누구를 위한 앱',
@@ -147,6 +148,45 @@ export default function Landing({ onEnter, onBack }) {
     return () => el.removeEventListener('scroll', onScroll)
   }, [])
 
+  // Smooth scroll-reveal: fade + rise as blocks enter view (staggered for grids, respects reduced motion).
+  // useLayoutEffect tags elements before first paint so there's no flash of un-hidden content.
+  useLayoutEffect(() => {
+    const root = scrollerRef.current
+    if (!root) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const GROUPS = [
+      { sel: '.lp-spot-head' },
+      { sel: '.lp-spot-media', cls: 'reveal-scale' },
+      { sel: '.lp-use-head' },
+      { sel: '.lp-uc-head' },
+      { sel: '.lp-bento-card', stagger: true },
+      { sel: '.lp-story-head' },
+      { sel: '.lp-story-feature', cls: 'reveal-scale' },
+      { sel: '.lp-story-card', stagger: true },
+      { sel: '.lp-features' },
+      { sel: '.lp-showcase', cls: 'reveal-scale' },
+      { sel: '.lp-dl-card', cls: 'reveal-scale' },
+      { sel: '.lp-foot-top' },
+    ]
+    const els = []
+    GROUPS.forEach(({ sel, cls = 'reveal', stagger }) => {
+      const group = Array.from(root.querySelectorAll(sel))
+      group.forEach((el, i) => {
+        el.classList.add(cls)
+        if (stagger && group.length > 1) el.style.transitionDelay = `${Math.min(i, 6) * 0.07}s`
+        els.push(el)
+      })
+    })
+    if (!els.length) return
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target) }
+      })
+    }, { root, rootMargin: '0px 0px -6% 0px', threshold: 0.04 })
+    els.forEach((el) => io.observe(el))
+    return () => io.disconnect()
+  }, [])
+
   // Below 860px the sticky two-column collapses; render inline phones instead of the pinned one
   const [isNarrow, setIsNarrow] = useState(false)
   useEffect(() => {
@@ -155,6 +195,28 @@ export default function Landing({ onEnter, onBack }) {
     sync()
     mq.addEventListener('change', sync)
     return () => mq.removeEventListener('change', sync)
+  }, [])
+
+  // Step 1 (Score scan) cycles through capture → result → manual entry while it's in view.
+  // Pauses while the user is interacting with the phone so screens don't swap mid-tap.
+  const [scanSub, setScanSub] = useState(0)
+  const phoneHover = useRef(false)
+  useEffect(() => {
+    if (useTab !== 0) { setScanSub(0); return }
+    const id = setInterval(() => { if (!phoneHover.current) setScanSub((s) => (s + 1) % 3) }, 2600)
+    return () => clearInterval(id)
+  }, [useTab])
+
+  // "How to use" panel expands to full-bleed as it scrolls into view, collapses back when above
+  useEffect(() => {
+    const root = scrollerRef.current
+    const sec = root?.querySelector('.lp-use')
+    if (!root || !sec) return
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => sec.classList.toggle('is-wide', e.isIntersecting))
+    }, { root, rootMargin: '0px 0px -62% 0px', threshold: 0 })
+    io.observe(sec)
+    return () => io.disconnect()
   }, [])
 
   // "How to use" sticky scroll — highlight the step crossing the viewport center
@@ -325,8 +387,6 @@ export default function Landing({ onEnter, onBack }) {
 
         {/* Auto-scrolling product card carousel (right → left, slow) */}
         <div className="lp-carousel"
-             onMouseEnter={() => { pausedRef.current = true }}
-             onMouseLeave={() => { pausedRef.current = false }}
              onFocusCapture={() => { pausedRef.current = true }}
              onBlurCapture={() => { pausedRef.current = false }}>
           <div className="lp-car-stage">
@@ -367,14 +427,15 @@ export default function Landing({ onEnter, onBack }) {
         <div className="lp-spot-head">
           <div className="lp-spot-left">
             <h2 className="lp-spot-h2">
-              <span className="lp-spot-accent">{L('스코어 스캔', 'Score scan')}</span>
-              <span>{L('사진 한 장이면 입력 끝', 'Scoring, done in one photo')}</span>
+              <span className="lp-spot-accent">{L('라운드에 집중하세요', 'Focus on your round')}</span>
+              <span>{L('기록과 정산은 라베온이', 'Leave the scoring & settling to LABEON')}</span>
             </h2>
+            <p className="lp-spot-desc">{L('스코어 기록부터 조 편성·시상·정산까지, 번거로운 모임 운영은 라베온이 자동으로 처리합니다.', 'From scoring to grouping, awards and settlement — LABEON automates the busywork so you can just enjoy the round.')}</p>
           </div>
           <button className="lp-spot-cta" onClick={() => scrollTo('features')}>{L('기능 둘러보기', 'Explore features')}</button>
         </div>
         <div className="lp-spot-media">
-          <img src="/cards/spotlight.jpg" alt={L('LABEON 스코어 스캔 화면', 'LABEON score scan screen')} loading="lazy" />
+          <img src="/cards/spotlight-people.png" alt={L('함께 라운드를 즐기는 골프 친구들', 'Friends enjoying a round of golf together')} loading="lazy" />
         </div>
       </section>
 
@@ -408,14 +469,19 @@ export default function Landing({ onEnter, onBack }) {
           ]},
         ]
         const noop = () => {}
-        // Real LABEON app screens, one per feature, shown live in the device frame
-        const SCREENS = [
+        // All screens stay mounted and crossfade by opacity (no remount → no flash).
+        // First three are the scan flow (capture → result → manual) shown under step 1.
+        const FLAT = [
+          <Scan onBack={noop} onCaptured={noop} onManual={noop} />,
           <ScanReview onBack={noop} onRegister={noop} />,
+          <ScanReview onBack={noop} onRegister={noop} manual />,
           <GroupFormation onBack={noop} />,
           <AwardResults onBack={noop} onDone={noop} onImmersiveChange={noop} />,
           <EventSettle onBack={noop} onDone={noop} onImmersiveChange={noop} />,
           <Detail event={eventList[0]} onBack={noop} onDelete={noop} onImmersiveChange={noop} />,
         ]
+        const activeFlat = useTab === 0 ? scanSub : 2 + useTab   // step 0 → scan sub-step; steps 1-4 → screens 3-6
+        const flatFor = (step) => (step === 0 ? scanSub : 2 + step)
         return (
           <section className="lp-use" id="use">
             <div className="lp-use-bg" aria-hidden="true"><div className="lp-use-bg-inner" /></div>
@@ -425,12 +491,14 @@ export default function Landing({ onEnter, onBack }) {
             </div>
             <div className="lp-sticky">
               <div className="lp-sticky-media" aria-hidden="true">
-                <div className="lp-flow-stage">
-                  {!isNarrow && (
-                    <div className="lp-flow-phone" key={useTab}>
-                      <PhoneFrame>{SCREENS[useTab]}</PhoneFrame>
+                <div className="lp-flow-stage"
+                     onPointerEnter={() => { phoneHover.current = true }}
+                     onPointerLeave={() => { phoneHover.current = false }}>
+                  {!isNarrow && FLAT.map((screen, i) => (
+                    <div className={`lp-flow-phone ${i === activeFlat ? 'on' : ''}`} key={i} aria-hidden={i !== activeFlat}>
+                      <PhoneFrame>{screen}</PhoneFrame>
                     </div>
-                  )}
+                  ))}
                 </div>
               </div>
               <div className="lp-sticky-steps">
@@ -442,7 +510,7 @@ export default function Landing({ onEnter, onBack }) {
                       {isNarrow && (
                         <div className="lp-flow-media">
                           <div className="lp-flow-stage sm">
-                            <div className="lp-flow-phone"><PhoneFrame>{SCREENS[i]}</PhoneFrame></div>
+                            <div className="lp-flow-phone"><PhoneFrame>{FLAT[flatFor(i)]}</PhoneFrame></div>
                           </div>
                         </div>
                       )}

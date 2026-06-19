@@ -1,3 +1,26 @@
+/* Motion system — scroll-reveal + staggered hero load-in. Class toggled by JS; honors reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+  .lp .reveal {
+    opacity: 0; transform: translateY(34px);
+    transition: opacity 0.8s cubic-bezier(0.22, 0.61, 0.21, 1), transform 0.8s cubic-bezier(0.22, 0.61, 0.21, 1);
+    will-change: opacity, transform;
+  }
+  .lp .reveal-scale {
+    opacity: 0; transform: scale(0.955);
+    transition: opacity 0.9s cubic-bezier(0.22, 0.61, 0.21, 1), transform 0.9s cubic-bezier(0.22, 0.61, 0.21, 1);
+    will-change: opacity, transform;
+  }
+  .lp .reveal.is-in, .lp .reveal-scale.is-in { opacity: 1; transform: none; }
+
+  /* Hero entrance on load — staggered rise */
+  @keyframes lpRise { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+  .lp-hero .lp-anno { animation: lpRise 0.7s cubic-bezier(0.22, 0.61, 0.21, 1) both; }
+  .lp-hero-in .lp-h1 { animation: lpRise 0.85s cubic-bezier(0.22, 0.61, 0.21, 1) both 0.1s; }
+  .lp-hero-in .lp-sub { animation: lpRise 0.85s cubic-bezier(0.22, 0.61, 0.21, 1) both 0.24s; }
+  .lp-hero-in .lp-cta-row { animation: lpRise 0.85s cubic-bezier(0.22, 0.61, 0.21, 1) both 0.38s; }
+  .lp-carousel { animation: lpRise 0.9s cubic-bezier(0.22, 0.61, 0.21, 1) both 0.5s; }
+}
+
 /* ============================================================
    LABEON — landing page styles.
    Brand tokens: deep green #0F5132 · green #198754 · gold #C9A227.
@@ -51,7 +74,7 @@
   padding-left: clamp(24px, 3.4vw, 56px);
   padding-right: clamp(24px, 3.4vw, 56px);
 }
-.lp section.lp-spot { padding-top: clamp(60px, 6.5vw, 104px); }
+.lp section.lp-spot { padding-top: clamp(84px, 8.5vw, 140px); }
 /* Tinted, rounded panel so the "How to use" flow reads as its own block, not floating on white */
 .lp section.lp-use {
   position: relative;
@@ -63,17 +86,28 @@
   background-size: 24px 24px, 100% 100%, 100% 100%, 100% 100%;
   background-position: center;
   border-radius: clamp(28px, 3vw, 44px);
-  width: min(1280px, calc(100% - clamp(32px, 6vw, 96px)));
+  /* max-width:none so width alone controls the inset — otherwise an un-animated max-width snaps on collapse */
+  width: min(1240px, calc(100% - clamp(32px, 6vw, 96px)));
+  max-width: none;
   margin-inline: auto;
+  transition: width 0.38s cubic-bezier(0.4, 0, 0.2, 1), border-radius 0.38s cubic-bezier(0.4, 0, 0.2, 1);
 }
+/* As it scrolls into view the panel expands full-bleed (inner content stays capped/centered, so no reflow) */
+.lp section.lp-use.is-wide { width: 100%; max-width: none; border-radius: 0; }
+.lp section.lp-use.is-wide .lp-use-bg { -webkit-clip-path: inset(0); clip-path: inset(0); }
 /* Decoration layer: scan rings spread across the whole panel (clipped to its rounded shape,
    without using overflow on the section itself — that would break the sticky media) */
 .lp-use-bg {
-  position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none;
-  border-radius: clamp(28px, 3vw, 44px);
+  position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  /* clip-path (not overflow:hidden) clips the rings to the rounded panel WITHOUT
+     creating a scroll container — overflow:hidden here would break the sticky pin below */
+  -webkit-clip-path: inset(0 round clamp(28px, 3vw, 44px));
+  clip-path: inset(0 round clamp(28px, 3vw, 44px));
+  transition: clip-path 0.38s cubic-bezier(0.4, 0, 0.2, 1);
 }
 /* Sticky inner so the rings stay pinned in view (with the phone) instead of scrolling away */
-.lp-use-bg-inner { position: sticky; top: 92px; height: 660px; width: 100%; }
+/* Fixed centered width so the ring graphic stays anchored to the content and does NOT drift when the panel expands full-bleed */
+.lp-use-bg-inner { position: sticky; top: 92px; height: 660px; width: 100%; max-width: 1240px; margin-inline: auto; }
 .lp-use-bg-inner::before {
   content: ''; position: absolute; left: 0%; top: 70px;
   width: 520px; height: 520px; border-radius: 50%;
@@ -378,7 +412,7 @@
   font-size: 13px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--green);
 }
-.lp-kicker.on-dark { color: var(--gold); }
+.lp-kicker.on-dark { color: #6FD49B; }
 .lp-h2 { margin-top: 12px; font-size: clamp(26px, 3.6vw, 38px); font-weight: 800; color: var(--text-1); }
 .lp-h2.on-dark { color: #fff; }
 
@@ -403,17 +437,18 @@
 /* ── Feature spotlight (below hero) ──────────────────── */
 .lp-spot { max-width: 1154px; margin: 0 auto; }
 .lp-spot-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
-.lp-spot-left { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
+.lp-spot-left { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; flex: 1; min-width: 0; }
 .lp-spot-ic {
   width: 48px; height: 48px; border-radius: 14px; display: inline-flex; align-items: center; justify-content: center;
   color: var(--ink); background: linear-gradient(150deg, rgba(25,135,84,0.16), rgba(201,162,39,0.12));
 }
 .lp-spot-h2 { display: flex; flex-direction: column; font-size: clamp(28px, 4vw, 46px); font-weight: 800; letter-spacing: -0.02em; line-height: 1.14; }
 .lp-spot-accent {
-  background: linear-gradient(110deg, var(--green) 0%, var(--ink) 55%, var(--gold) 130%);
+  background: linear-gradient(110deg, var(--green) 0%, var(--ink) 90%);
   -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
 }
 .lp-spot-h2 > span:last-child { color: var(--text-1); }
+.lp-spot-desc { margin: 0; font-size: clamp(15px, 1.5vw, 17px); line-height: 1.65; color: var(--text-2); max-width: none; white-space: nowrap; }
 .lp-spot-cta {
   display: inline-flex; align-items: center; cursor: pointer; border: none; font-family: var(--font);
   padding: 13px 24px; border-radius: 13px; font-size: 15px; font-weight: 700; color: #fff;
@@ -444,12 +479,16 @@
   background: transparent;   /* blend into the panel — no separate box color */
 }
 .lp-flow-phone {
-  position: relative; z-index: 1; width: 348px; flex: 0 0 auto;
-  transform: scale(0.72); transform-origin: top center;
-  animation: lpPhoneIn 0.45s ease both;
+  width: 348px; transform: scale(0.72); transform-origin: top center;
 }
 .lp-flow-phone .phone { height: 753px; max-width: none; }
-@keyframes lpPhoneIn { from { opacity: 0 } to { opacity: 1 } }
+/* Desktop: every screen stays mounted, stacked; only opacity changes → smooth crossfade, no remount/flash */
+.lp-sticky-media .lp-flow-phone {
+  position: absolute; top: 58px; left: 50%; margin-left: -174px;
+  z-index: 1; opacity: 0; pointer-events: none;
+  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.lp-sticky-media .lp-flow-phone.on { opacity: 1; z-index: 2; pointer-events: auto; }
 
 .lp-sticky-steps { display: flex; flex-direction: column; }
 .lp-flow-step {
@@ -679,6 +718,7 @@
 .lp-foot {
   background: #05231A; color: rgba(255,255,255,0.7);
   padding: clamp(48px, 6vw, 76px) 24px clamp(26px, 3vw, 34px);
+  border-radius: clamp(28px, 3vw, 44px) clamp(28px, 3vw, 44px) 0 0;
 }
 .lp-foot-top {
   max-width: 1160px; margin: 0 auto;
@@ -989,19 +1029,22 @@
 .sc-send { margin-top: 14px; text-align: center; padding: 12px; border-radius: 12px; background: var(--green); color: #fff; font-size: 14px; font-weight: 800; }
 
 /* ── Download band ───────────────────────────────────── */
-.lp-download { max-width: 1120px; margin: 0 auto; }
+.lp-download { max-width: 1160px; margin: 0 auto; }
 .lp-dl-card {
   position: relative; overflow: hidden; border-radius: 28px;
   display: grid; grid-template-columns: 1.3fr 0.7fr; gap: 32px; align-items: center;
   padding: clamp(36px, 5vw, 60px);
   background:
+    radial-gradient(circle 7px at 55% 26%, rgba(255, 255, 255, 0.12), transparent 100%),
+    radial-gradient(circle 5px at 63% 72%, rgba(120, 220, 160, 0.22), transparent 100%),
+    radial-gradient(circle 4px at 47% 84%, rgba(255, 255, 255, 0.10), transparent 100%),
+    radial-gradient(circle 9px at 70% 40%, rgba(255, 255, 255, 0.07), transparent 100%),
     radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
     radial-gradient(560px 320px at 88% 118%, rgba(46, 168, 104, 0.32), transparent 64%),
     radial-gradient(420px 280px at 6% -10%, rgba(120, 220, 160, 0.14), transparent 66%),
     linear-gradient(150deg, #11603b 0%, #0F5132 50%, #0b3c26 100%);
-  background-size: 22px 22px, 100% 100%, 100% 100%, 100% 100%;
+  background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 22px 22px, 100% 100%, 100% 100%, 100% 100%;
   background-position: center;
-  box-shadow: 0 30px 70px rgba(11,60,38,0.30);
 }
 /* Concentric scan rings echoing the rest of the site — faint white over the dark green */
 .lp-dl-card::before {
@@ -1019,6 +1062,7 @@
   mask-image: radial-gradient(circle, #000 52%, transparent 74%);
 }
 .lp-dl-copy, .lp-dl-art { position: relative; z-index: 1; }
+.lp-dl-copy .lp-h2 { font-size: clamp(23px, 2.6vw, 31px); line-height: 1.28; margin-top: 10px; }
 .lp-dl-sub { margin-top: 14px; font-size: 16px; color: rgba(255,255,255,0.82); }
 .lp-h2.on-dark { white-space: pre-line; }
 .lp-stores { margin-top: 26px; display: flex; flex-wrap: wrap; gap: 12px; }
