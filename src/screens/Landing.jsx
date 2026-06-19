@@ -1,5 +1,12 @@
 import { useState, useEffect, useRef } from 'react'
 import { useLang } from '../i18n/LanguageContext.jsx'
+import PhoneFrame from '../components/PhoneFrame.jsx'
+import ScanReview from './ScanReview.jsx'
+import GroupFormation from './GroupFormation.jsx'
+import AwardResults from './AwardResults.jsx'
+import EventSettle from './EventSettle.jsx'
+import Detail from './Detail.jsx'
+import { eventList } from '../data/mock.js'
 
 /* ============================================================
    LABEON — marketing landing page (the product's front door).
@@ -138,6 +145,31 @@ export default function Landing({ onEnter, onBack }) {
     onScroll()
     el.addEventListener('scroll', onScroll, { passive: true })
     return () => el.removeEventListener('scroll', onScroll)
+  }, [])
+
+  // Below 860px the sticky two-column collapses; render inline phones instead of the pinned one
+  const [isNarrow, setIsNarrow] = useState(false)
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 860px)')
+    const sync = () => setIsNarrow(mq.matches)
+    sync()
+    mq.addEventListener('change', sync)
+    return () => mq.removeEventListener('change', sync)
+  }, [])
+
+  // "How to use" sticky scroll — highlight the step crossing the viewport center
+  useEffect(() => {
+    const root = scrollerRef.current
+    if (!root) return
+    const steps = root.querySelectorAll('.lp-flow-step')
+    if (!steps.length) return
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) setUseTab(Number(e.target.dataset.i))
+      })
+    }, { root, rootMargin: '-48% 0px -48% 0px', threshold: 0 })
+    steps.forEach((s) => io.observe(s))
+    return () => io.disconnect()
   }, [])
 
   // Auto-scrolling card carousel (right → left), with arrows + dot indicators
@@ -307,11 +339,11 @@ export default function Landing({ onEnter, onBack }) {
                   <div className="lp-marquee-set" key={set}>
                     {MCARDS.map((m, i) => (
                       <article className="lp-mcard" key={i} tabIndex={0}>
-                        <img className="lp-mcard-img" src={m.img} alt="" loading="lazy" />
-                        <div className="lp-mcard-label">
+                        <div className="lp-mcard-head">
                           <span className="lp-mcard-title">{m.icon}{m.title}</span>
                           <span className="lp-mcard-sub">{m.sub}</span>
                         </div>
+                        <div className="lp-mcard-media"><img src={m.img} alt="" loading="lazy" /></div>
                       </article>
                     ))}
                   </div>
@@ -346,7 +378,7 @@ export default function Landing({ onEnter, onBack }) {
         </div>
       </section>
 
-      {/* ── How to use it — tabbed use cases ────────────── */}
+      {/* ── How to use it — sticky-scroll feature flow ──── */}
       {(() => {
         const TABS = [
           { tab: L('스코어 스캔', 'Score scan'), img: '/cards/scan.png', bullets: [
@@ -375,31 +407,55 @@ export default function Landing({ onEnter, onBack }) {
             { h: L('자동 알림 발송', 'Automatic reminders'), d: L('라운드 전 자동으로 알림을 발송해 참석 누락과 노쇼를 방지합니다.', 'Reminders go out automatically before the round to prevent missed tee times and no-shows.') },
           ]},
         ]
-        const t = TABS[useTab]
+        const noop = () => {}
+        // Real LABEON app screens, one per feature, shown live in the device frame
+        const SCREENS = [
+          <ScanReview onBack={noop} onRegister={noop} />,
+          <GroupFormation onBack={noop} />,
+          <AwardResults onBack={noop} onDone={noop} onImmersiveChange={noop} />,
+          <EventSettle onBack={noop} onDone={noop} onImmersiveChange={noop} />,
+          <Detail event={eventList[0]} onBack={noop} onDelete={noop} onImmersiveChange={noop} />,
+        ]
         return (
           <section className="lp-use" id="use">
+            <div className="lp-use-bg" aria-hidden="true"><div className="lp-use-bg-inner" /></div>
             <div className="lp-use-head">
               <p className="lp-kicker">{c.sc_kicker}</p>
               <h2 className="lp-h2">{L('한 번 찍으면, 나머지는 자동으로', 'Snap once — the rest is automatic')}</h2>
             </div>
-            <div className="lp-tabs" role="tablist">
-              {TABS.map((x, i) => (
-                <button key={i} role="tab" aria-selected={useTab === i}
-                  className={`lp-tab ${useTab === i ? 'on' : ''}`} onClick={() => setUseTab(i)}>
-                  {x.tab}
-                </button>
-              ))}
-            </div>
-            <div className="lp-tab-panel" key={useTab}>
-              <div className="lp-tab-copy">
-                <ul className="lp-tab-list">
-                  {t.bullets.map((b, j) => (
-                    <li key={j}><strong>{b.h}</strong> · {b.d}</li>
-                  ))}
-                </ul>
-                <button className="lp-tab-cta" onClick={() => scrollTo('download')}>{c.cta_btn}</button>
+            <div className="lp-sticky">
+              <div className="lp-sticky-media" aria-hidden="true">
+                <div className="lp-flow-stage">
+                  {!isNarrow && (
+                    <div className="lp-flow-phone" key={useTab}>
+                      <PhoneFrame>{SCREENS[useTab]}</PhoneFrame>
+                    </div>
+                  )}
+                </div>
               </div>
-              <div className="lp-tab-media"><img src={t.img} alt={t.tab} /></div>
+              <div className="lp-sticky-steps">
+                {TABS.map((x, i) => (
+                  <article key={i} className={`lp-flow-step ${useTab === i ? 'on' : ''}`} data-i={i}>
+                    <span className="lp-flow-num num">{String(i + 1).padStart(2, '0')}</span>
+                    <div className="lp-flow-body">
+                      <h3 className="lp-flow-title">{x.tab}</h3>
+                      {isNarrow && (
+                        <div className="lp-flow-media">
+                          <div className="lp-flow-stage sm">
+                            <div className="lp-flow-phone"><PhoneFrame>{SCREENS[i]}</PhoneFrame></div>
+                          </div>
+                        </div>
+                      )}
+                      <ul className="lp-tab-list">
+                        {x.bullets.map((b, j) => (
+                          <li key={j}><strong>{b.h}</strong> · {b.d}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </article>
+                ))}
+                <button className="lp-tab-cta lp-flow-cta" onClick={() => scrollTo('download')}>{c.cta_btn}</button>
+              </div>
             </div>
           </section>
         )
@@ -407,6 +463,8 @@ export default function Landing({ onEnter, onBack }) {
 
       {/* ── Why LABEON (featured story, Zoom-style) ─────── */}
       <section className="lp-story-sec" id="features">
+        {/* Trust logos + ratings hidden — placeholder clubs & unverified ratings */}
+        {false && (
         <div className="lp-ratings">
           <p className="lp-ratings-title">{L('전국의 골프 모임이 신뢰합니다', 'Trusted by golf societies nationwide')}</p>
           <div className="lp-trustlogos">
@@ -439,6 +497,7 @@ export default function Landing({ onEnter, onBack }) {
             ))}
           </div>
         </div>
+        )}
         <div className="lp-story-head">
           <p className="lp-story-kicker">{L('총무들의 이야기', 'Customer stories')}</p>
           <h2 className="lp-story-h2">{L('복잡했던 모임 운영, 이렇게 달라졌어요', 'Running a society, made simple')}</h2>
@@ -497,25 +556,6 @@ export default function Landing({ onEnter, onBack }) {
         </div>
       </section>
 
-      {/* ── How it works (3 steps) ──────────────────────── */}
-      <section className="lp-steps">
-        <p className="lp-kicker">{c.steps_kicker}</p>
-        <h2 className="lp-h2">{c.steps_title}</h2>
-        <div className="lp-steps-grid">
-          {[
-            { n: '01', t: c.step1_t, d: c.step1_d },
-            { n: '02', t: c.step2_t, d: c.step2_d },
-            { n: '03', t: c.step3_t, d: c.step3_d },
-          ].map((s) => (
-            <div className="lp-step" key={s.n}>
-              <span className="lp-step-n">{s.n}</span>
-              <h3>{s.t}</h3>
-              <p>{s.d}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
       {/* ── Who it's for — bento grid ───────────────────── */}
       <section className="lp-uc" id="who">
         <div className="lp-uc-head">
@@ -530,14 +570,15 @@ export default function Landing({ onEnter, onBack }) {
               <h3>{L('잡일에서 해방', 'Freed from the busywork')}</h3>
               <p>{L('조 편성·시상·정산을 자동으로. 라운드 후 3시간이 15분으로 줄어듭니다.', 'Grouping, awards and settlement, automated. 3 hours after a round become 15 minutes.')}</p>
             </div>
-            <div className="lp-bento-glass">
-              <div className="lp-bento-glass-head">{L('라운드 정산', 'Settlement')}</div>
-              <p><strong>₩336,000</strong> · {L('8명', '8 players')}<br />{L('1인당 ₩42,000 · 송금 링크', '₩42,000 each · transfer link')}</p>
-            </div>
+            <ul className="lp-bento-list">
+              {[L('조 편성 자동', 'Auto grouping'), L('시상 계산 자동', 'Auto awards'), L('정산 1/n 자동', 'Auto settlement')].map((x) => (
+                <li key={x}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  {x}
+                </li>
+              ))}
+            </ul>
             <img className="lp-bento-graphic" src="/cards/bento-organizer.png" alt="" aria-hidden="true" loading="lazy" />
-            <span className="lp-bento-arrow" aria-hidden="true">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M9 7h8v8" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"/></svg>
-            </span>
           </article>
 
           <article className="lp-bento-card lp-bento-tall">
@@ -551,9 +592,6 @@ export default function Landing({ onEnter, onBack }) {
               <p>{L('참석', 'Attending')} <strong>12/16</strong> · {L('정산', 'Paid')} <strong>6/8</strong><br />{L('3조 편성 완료', '3 groups set')}</p>
             </div>
             <img className="lp-bento-graphic" src="/cards/bento-owner.png" alt="" aria-hidden="true" loading="lazy" />
-            <span className="lp-bento-arrow" aria-hidden="true">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M9 7h8v8" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"/></svg>
-            </span>
           </article>
 
           <article className="lp-bento-card">
@@ -562,9 +600,6 @@ export default function Landing({ onEnter, onBack }) {
               <h3>{L('간편하게 참여', 'Join in, effortlessly')}</h3>
               <p>{L('내 스코어를 보고 회비를 한 번에. 복잡한 과정 없이 탭 몇 번이면 끝.', 'Check your scores and pay dues in one tap. No fuss, just a few taps.')}</p>
             </div>
-            <span className="lp-bento-arrow" aria-hidden="true">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M9 7h8v8" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"/></svg>
-            </span>
           </article>
 
           <article className="lp-bento-card">
@@ -573,9 +608,6 @@ export default function Landing({ onEnter, onBack }) {
               <h3>{L('초대만으로 OK', 'Just an invite away')}</h3>
               <p>{L('앱 설치 없이 링크로 참여하고, 조 편성과 결과를 바로 확인합니다.', 'Join by link with no install, and see groupings and results right away.')}</p>
             </div>
-            <span className="lp-bento-arrow" aria-hidden="true">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M9 7h8v8" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"/></svg>
-            </span>
           </article>
         </div>
       </section>
@@ -595,7 +627,7 @@ export default function Landing({ onEnter, onBack }) {
           </div>
           <div className="lp-dl-art" aria-hidden="true">
             <div className="lp-qr">
-              <div className="lp-qr-grid">{Array.from({ length: 64 }).map((_, i) => <span key={i} className={QR[i] ? 'on' : ''} />)}</div>
+              <div className="lp-qr-grid" style={{ gridTemplateColumns: `repeat(${QR_N}, 1fr)` }}>{QR.map((on, i) => <span key={i} className={on ? 'on' : ''} />)}</div>
             </div>
             <span className="lp-qr-cap">{lang === 'ko' ? 'QR 스캔으로 바로 설치' : 'Scan to install'}</span>
           </div>
@@ -693,10 +725,32 @@ function PlayStoreBadge({ small }) {
 }
 
 /* Decorative QR pattern (deterministic, not a real code) */
+// Decorative (non-scannable) QR built to look authentic: 21×21 modules with the
+// three corner finder patterns, separators, timing rows and a dense data field.
+const QR_N = 21
 const QR = (() => {
-  const a = Array.from({ length: 64 }, (_, i) => ((i * 37 + (i % 7) * 13 + ((i / 8) | 0) * 5) % 3) === 0)
-  ;[0, 1, 6, 7, 8, 15, 48, 55, 56, 57, 62, 63].forEach((i) => (a[i] = true)) // corner finders
-  return a
+  const N = QR_N
+  const finder = (r, c, R, C) => {
+    const dr = r - R, dc = c - C
+    if (dr < 0 || dr > 6 || dc < 0 || dc > 6) return null
+    const edge = dr === 0 || dr === 6 || dc === 0 || dc === 6
+    const core = dr >= 2 && dr <= 4 && dc >= 2 && dc <= 4
+    return edge || core
+  }
+  const on = (r, c) => {
+    for (const [R, C] of [[0, 0], [0, N - 7], [N - 7, 0]]) {
+      const f = finder(r, c, R, C)
+      if (f !== null) return f
+    }
+    // white separators around the finder patterns
+    if ((r <= 7 && c <= 7) || (r <= 7 && c >= N - 8) || (r >= N - 8 && c <= 7)) return false
+    if (r === 6) return c % 2 === 0          // horizontal timing
+    if (c === 6) return r % 2 === 0          // vertical timing
+    return (r * 31 + c * 17 + ((r * c) % 11) * 3 + (r % 5) * 7) % 2 === 0   // data field
+  }
+  const cells = []
+  for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) cells.push(on(r, c))
+  return cells
 })()
 
 /* ── App-screen mockups for the showcase rows ─────────── */
