@@ -202,10 +202,10 @@ export default function Landing({ onEnter, onBack }) {
   const [scanSub, setScanSub] = useState(0)
   const phoneHover = useRef(false)
   useEffect(() => {
-    if (useTab !== 0) { setScanSub(0); return }
+    if (useTab !== 0 || isNarrow) { setScanSub(0); return }   // skip cycling on mobile (would remount the phone)
     const id = setInterval(() => { if (!phoneHover.current) setScanSub((s) => (s + 1) % 3) }, 2600)
     return () => clearInterval(id)
-  }, [useTab])
+  }, [useTab, isNarrow])
 
   // "How to use" panel expands to full-bleed as it scrolls into view, collapses back when above
   useEffect(() => {
@@ -232,7 +232,27 @@ export default function Landing({ onEnter, onBack }) {
     }, { root, rootMargin: '-48% 0px -48% 0px', threshold: 0 })
     steps.forEach((s) => io.observe(s))
     return () => io.disconnect()
-  }, [])
+  }, [isNarrow])
+
+  // Story carousel (mobile): swipe + arrow nudge by one card width
+  const storyRef = useRef(null)
+  const storyNudge = (dir) => {
+    const el = storyRef.current
+    if (!el) return
+    const first = el.querySelector('.lp-story-feature, .lp-story-thumb')
+    const stride = first ? first.offsetWidth + 14 : el.clientWidth * 0.84
+    el.scrollBy({ left: dir * stride, behavior: 'smooth' })
+  }
+
+  // "Who it's for" bento carousel (mobile): swipe + arrow nudge by one card width
+  const bentoRef = useRef(null)
+  const bentoNudge = (dir) => {
+    const el = bentoRef.current
+    if (!el) return
+    const first = el.querySelector('.lp-bento-card')
+    const stride = first ? first.offsetWidth + 14 : el.clientWidth * 0.84
+    el.scrollBy({ left: dir * stride, behavior: 'smooth' })
+  }
 
   // Auto-scrolling card carousel (right → left), with arrows + dot indicators
   const carRef = useRef(null)
@@ -248,15 +268,19 @@ export default function Landing({ onEnter, onBack }) {
     const el = carRef.current
     if (!el) return
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    // Start centered on a card that has neighbors peeking on both sides (not flush at the empty edge)
+    el.scrollLeft = carStride()
     let raf
     const tick = () => {
-      const half = el.scrollWidth / 2
-      if (!pausedRef.current && !reduce && half > 0) {
+      // Reset by one set-width (not scrollWidth/2) so mobile side-padding can't break the seamless loop
+      const stride = carStride()
+      const setWidth = stride * CARD_COUNT
+      if (!pausedRef.current && !reduce && setWidth > 0) {
         el.scrollLeft += 0.5
-        if (el.scrollLeft >= half) el.scrollLeft -= half
+        if (el.scrollLeft >= setWidth) el.scrollLeft -= setWidth
       }
-      if (half > 0) {
-        const idx = ((Math.round((el.scrollLeft % half) / carStride())) % CARD_COUNT + CARD_COUNT) % CARD_COUNT
+      if (setWidth > 0) {
+        const idx = ((Math.round(el.scrollLeft / stride)) % CARD_COUNT + CARD_COUNT) % CARD_COUNT
         if (idx !== activeRef.current) { activeRef.current = idx; setActive(idx) }
       }
       raf = requestAnimationFrame(tick)
@@ -424,19 +448,17 @@ export default function Landing({ onEnter, onBack }) {
 
       {/* ── Feature spotlight (below hero) ──────────────── */}
       <section className="lp-spot">
-        <div className="lp-spot-head">
-          <div className="lp-spot-left">
-            <h2 className="lp-spot-h2">
-              <span className="lp-spot-accent">{L('라운드에 집중하세요', 'Focus on your round')}</span>
-              <span>{L('기록과 정산은 라베온이', 'Leave the scoring & settling to LABEON')}</span>
-            </h2>
-            <p className="lp-spot-desc">{L('스코어 기록부터 조 편성·시상·정산까지, 번거로운 모임 운영은 라베온이 자동으로 처리합니다.', 'From scoring to grouping, awards and settlement — LABEON automates the busywork so you can just enjoy the round.')}</p>
-          </div>
-          <button className="lp-spot-cta" onClick={() => scrollTo('features')}>{L('기능 둘러보기', 'Explore features')}</button>
+        <div className="lp-spot-left">
+          <h2 className="lp-spot-h2">
+            <span className="lp-spot-accent">{L('라운드에 집중하세요', 'Focus on your round')}</span>
+            <span>{L('기록과 정산은 라베온이', 'Leave the scoring & settling to LABEON')}</span>
+          </h2>
+          <p className="lp-spot-desc">{L('스코어 기록부터 조 편성·시상·정산까지, 번거로운 모임 운영은 라베온이 자동으로 처리합니다.', 'From scoring to grouping, awards and settlement — LABEON automates the busywork so you can just enjoy the round.')}</p>
         </div>
         <div className="lp-spot-media">
           <img src="/cards/spotlight-people.png" alt={L('함께 라운드를 즐기는 골프 친구들', 'Friends enjoying a round of golf together')} loading="lazy" />
         </div>
+        <button className="lp-spot-cta" onClick={() => scrollTo('features')}>{L('기능 둘러보기', 'Explore features')}</button>
       </section>
 
       {/* ── How to use it — sticky-scroll feature flow ──── */}
@@ -489,12 +511,38 @@ export default function Landing({ onEnter, onBack }) {
               <p className="lp-kicker">{c.sc_kicker}</p>
               <h2 className="lp-h2">{L('한 번 찍으면, 나머지는 자동으로', 'Snap once — the rest is automatic')}</h2>
             </div>
+            {isNarrow ? (
+              /* Mobile: a single interactive tabbed viewer instead of 5 stacked phones */
+              <div className="lp-usem">
+                <div className="lp-usem-tabs" role="tablist">
+                  {TABS.map((x, i) => (
+                    <button key={i} role="tab" aria-selected={useTab === i}
+                            className={`lp-usem-tab ${useTab === i ? 'on' : ''}`}
+                            onClick={() => setUseTab(i)}>
+                      <span className="lp-usem-tab-num num">{String(i + 1).padStart(2, '0')}</span>
+                      {x.tab}
+                    </button>
+                  ))}
+                </div>
+                <div className="lp-flow-media">
+                  <div className="lp-flow-stage sm">
+                    <div className="lp-flow-phone" key={flatFor(useTab)}><PhoneFrame>{FLAT[flatFor(useTab)]}</PhoneFrame></div>
+                  </div>
+                </div>
+                <ul className="lp-tab-list">
+                  {TABS[useTab].bullets.map((b, j) => (
+                    <li key={j}><strong>{b.h}</strong> · {b.d}</li>
+                  ))}
+                </ul>
+                <button className="lp-tab-cta lp-flow-cta" onClick={() => scrollTo('download')}>{c.cta_btn}</button>
+              </div>
+            ) : (
             <div className="lp-sticky">
               <div className="lp-sticky-media" aria-hidden="true">
                 <div className="lp-flow-stage"
                      onPointerEnter={() => { phoneHover.current = true }}
                      onPointerLeave={() => { phoneHover.current = false }}>
-                  {!isNarrow && FLAT.map((screen, i) => (
+                  {FLAT.map((screen, i) => (
                     <div className={`lp-flow-phone ${i === activeFlat ? 'on' : ''}`} key={i} aria-hidden={i !== activeFlat}>
                       <PhoneFrame>{screen}</PhoneFrame>
                     </div>
@@ -507,13 +555,6 @@ export default function Landing({ onEnter, onBack }) {
                     <span className="lp-flow-num num">{String(i + 1).padStart(2, '0')}</span>
                     <div className="lp-flow-body">
                       <h3 className="lp-flow-title">{x.tab}</h3>
-                      {isNarrow && (
-                        <div className="lp-flow-media">
-                          <div className="lp-flow-stage sm">
-                            <div className="lp-flow-phone"><PhoneFrame>{FLAT[flatFor(i)]}</PhoneFrame></div>
-                          </div>
-                        </div>
-                      )}
                       <ul className="lp-tab-list">
                         {x.bullets.map((b, j) => (
                           <li key={j}><strong>{b.h}</strong> · {b.d}</li>
@@ -525,6 +566,7 @@ export default function Landing({ onEnter, onBack }) {
                 <button className="lp-tab-cta lp-flow-cta" onClick={() => scrollTo('download')}>{c.cta_btn}</button>
               </div>
             </div>
+            )}
           </section>
         )
       })()}
@@ -570,7 +612,7 @@ export default function Landing({ onEnter, onBack }) {
           <p className="lp-story-kicker">{L('총무들의 이야기', 'Customer stories')}</p>
           <h2 className="lp-story-h2">{L('복잡했던 모임 운영, 이렇게 달라졌어요', 'Running a society, made simple')}</h2>
         </div>
-        <div className="lp-story-row">
+        <div className="lp-story-row" ref={storyRef}>
           <article className="lp-story-feature">
             <img src="/cards/grouping.png" alt="" loading="lazy" />
             <div className="lp-story-ov" aria-hidden="true" />
@@ -622,6 +664,14 @@ export default function Landing({ onEnter, onBack }) {
             </article>
           ))}
         </div>
+        <div className="lp-story-nav" aria-hidden="true">
+          <button className="lp-story-arrow" onClick={() => storyNudge(-1)} aria-label={L('이전', 'Previous')}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          </button>
+          <button className="lp-story-arrow" onClick={() => storyNudge(1)} aria-label={L('다음', 'Next')}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          </button>
+        </div>
       </section>
 
       {/* ── Who it's for — bento grid ───────────────────── */}
@@ -631,7 +681,7 @@ export default function Landing({ onEnter, onBack }) {
           <h2 className="lp-h2">{c.uc_title}</h2>
           <p className="lp-uc-sub">{c.uc_sub}</p>
         </div>
-        <div className="lp-bento">
+        <div className="lp-bento" ref={bentoRef}>
           <article className="lp-bento-card lp-bento-tall">
             <div className="lp-bento-copy">
               <span className="lp-bento-role">{L('총무', 'Organizer')}</span>
@@ -677,6 +727,14 @@ export default function Landing({ onEnter, onBack }) {
               <p>{L('앱 설치 없이 링크로 참여하고, 조 편성과 결과를 바로 확인합니다.', 'Join by link with no install, and see groupings and results right away.')}</p>
             </div>
           </article>
+        </div>
+        <div className="lp-bento-nav" aria-hidden="true">
+          <button className="lp-story-arrow" onClick={() => bentoNudge(-1)} aria-label={L('이전', 'Previous')}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          </button>
+          <button className="lp-story-arrow" onClick={() => bentoNudge(1)} aria-label={L('다음', 'Next')}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          </button>
         </div>
       </section>
 
